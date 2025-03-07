@@ -2,6 +2,8 @@
     "name": "planifyitTAB",
     "newInstancePrefix": "planifyit_tab",
     "vendor": "Planifyit",
+     "eula": "",
+     "license": "",
     "id": "planifyit_tab",
     "version": "1.0.0",
     "description": "An interactive SAC widget with a modern table supporting single and multiple row selection modes.",
