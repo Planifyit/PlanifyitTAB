@@ -5,7 +5,7 @@
     "id": "planifyit_tab",
     "version": "1.0.0",
     "description": "An interactive SAC widget with a modern table supporting single and multiple row selection modes.",
-    "icon": "https://planifyit.github.io/assets/icons/table_widget.png",
+    "icon": "https://planifyit.github.io/Pie_chart/PlanifyIT_Logo2.png",
     "webcomponents": [
         {
             "kind": "main",
