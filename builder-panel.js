@@ -108,5 +108,5 @@
         }
     }
 
-    customElements.define('com-sap-sample-sac-cockpit-builder', BuilderPanel);
+    customElements.define('com-planifyit-tab-builder', BuilderPanel);
 })();
