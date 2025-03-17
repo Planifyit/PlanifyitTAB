@@ -416,6 +416,29 @@
             // Update "select all" checkbox state
             this._updateSelectAllCheckbox();
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         // Update "select all" checkbox state based on selected rows
         _updateSelectAllCheckbox() {
@@ -519,8 +542,82 @@
         onCustomWidgetBeforeUpdate(changedProperties) {
             this._props = { ...this._props, ...changedProperties };
         }
+
+
+// Define the data binding method
+_updateDataBinding(dataBinding) {
+    if (dataBinding && dataBinding.state === 'success' && Array.isArray(dataBinding.data)) {
+        console.log('Data binding successful:', dataBinding);
+        
+        // Extract columns from the data structure
+        const columns = [];
+        
+        // Add dimension columns
+        if (dataBinding.metadata && dataBinding.metadata.dimensions) {
+            dataBinding.metadata.dimensions.forEach((dimension, index) => {
+                columns.push({
+                    name: `dimension_${index}`,
+                    label: dimension.label || dimension.id
+                });
+            });
+        }
+        
+        // Add measure columns
+        if (dataBinding.metadata && dataBinding.metadata.mainStructureMembers) {
+            dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
+                columns.push({
+                    name: `measure_${index}`,
+                    label: measure.label || measure.id
+                });
+            });
+        }
+        
+        // Transform the data into a format suitable for the table
+        const tableData = dataBinding.data.map(row => {
+            const transformedRow = {};
+            
+            // Add dimension values
+            if (dataBinding.metadata && dataBinding.metadata.dimensions) {
+                dataBinding.metadata.dimensions.forEach((dimension, index) => {
+                    const dimId = `dimensions_${index}`;
+                    if (row[dimId]) {
+                        transformedRow[`dimension_${index}`] = row[dimId].label || row[dimId].id;
+                    }
+                });
+            }
+            
+            // Add measure values
+            if (dataBinding.metadata && dataBinding.metadata.mainStructureMembers) {
+                dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
+                    const measureId = `measures_${index}`;
+                    if (row[measureId]) {
+                        transformedRow[`measure_${index}`] = row[measureId].formattedValue || row[measureId].raw;
+                    }
+                });
+            }
+            
+            return transformedRow;
+        });
+        
+        // Update the table with the extracted data
+        this._tableColumns = columns;
+        this._tableData = tableData;
+        
+        // Render the table with the new data
+        this._renderTable();
+    }
+}
+
         
         onCustomWidgetAfterUpdate(changedProperties) {
+
+                if ("tableDataBinding" in changedProperties) {
+        const dataBinding = changedProperties.tableDataBinding;
+        if (dataBinding.state === 'success') {
+            this._updateDataBinding(dataBinding);
+        }
+    }
+    
             if ('tableData' in changedProperties) {
                 try {
                     this._tableData = JSON.parse(changedProperties.tableData);
