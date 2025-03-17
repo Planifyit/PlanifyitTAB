@@ -108,16 +108,14 @@ _submit(e) {
             return this._shadowRoot.getElementById("builder_public_version_location").value;
         }
         
-set tableDataBinding(value) {
-    // This property is managed by SAP Analytics Cloud
+        get tableDataBinding() {
+            return this._tableDataBinding;
+        }
 
-}
-
-get tableDataBinding() {
-    // This property is managed by SAP Analytics Cloud
-    // Return an empty object as placeholder
-    return {};
-}
+        set tableDataBinding(value) {
+            this._tableDataBinding = value;
+            this.updateBindingSelection(value);
+        }
 
         
     }
