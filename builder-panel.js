@@ -52,20 +52,21 @@
  
         }
 
-        _submit(e) {
-            e.preventDefault();
-            this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                detail: {
-                    properties: {
-                        modelId: this.modelId,
-                        tenantUrl: this.tenantUrl,
-                        apiString: this.apiString,
-                        privateVersionLocation: this.privateVersionLocation,
-                        publicVersionLocation: this.publicVersionLocation
-                    }
-                }
-            }));
+_submit(e) {
+    e.preventDefault();
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: {
+            properties: {
+                modelId: this.modelId,
+                tenantUrl: this.tenantUrl,
+                apiString: this.apiString,
+                privateVersionLocation: this.privateVersionLocation,
+                publicVersionLocation: this.publicVersionLocation,
+                tableDataBinding: this.tableDataBinding
+            }
         }
+    }));
+}
 
         set modelId(newModelId) {
             this._shadowRoot.getElementById("builder_model_id").value = newModelId;
@@ -106,6 +107,19 @@
         get publicVersionLocation() {
             return this._shadowRoot.getElementById("builder_public_version_location").value;
         }
+        
+set tableDataBinding(value) {
+    // This property is managed by SAP Analytics Cloud
+
+}
+
+get tableDataBinding() {
+    // This property is managed by SAP Analytics Cloud
+    // Return an empty object as placeholder
+    return {};
+}
+
+        
     }
 
     customElements.define('com-planifyit-tab-builder', BuilderPanel);
