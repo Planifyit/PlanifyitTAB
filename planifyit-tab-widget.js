@@ -563,14 +563,16 @@
                         const dimMeta = dims[dimKey];
                         columns.push({
                             name: dimKey,
-                            label: dimMeta.label || dimMeta.id
+                             label: dimMeta.description || dimMeta.label || dimMeta.id
+                 
                         });
                     });
                 } else if (Array.isArray(dims)) {
                     dims.forEach((dimension, index) => {
                         columns.push({
                             name: `dimensions_${index}`,
-                            label: dimension.label || dimension.id
+                              label: dimension.description || dimension.label || dimension.id
+               
                         });
                     });
                 }
