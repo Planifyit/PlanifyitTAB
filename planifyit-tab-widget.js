@@ -462,6 +462,7 @@
             // Create column headers
             this._tableColumns.forEach(col => {
                 const th = document.createElement('th');
+                // Use col.label or a fallback
                 th.textContent = col.label || col.name;
                 this._headerRow.appendChild(th);
             });
@@ -532,7 +533,7 @@
         }
 
         /**
-         * Handle the Data Binding from SAC
+         * Handle the Data Binding from SAC.
          * This method picks up dynamic dimensions/measures from the metadata
          * and transforms them into columns & rows for the table.
          */
@@ -545,49 +546,54 @@
                 console.log('Data binding successful:', dataBinding);
                 
                 const columns = [];
-
-                // 1) If "dimensions" is an object with keys like "dimensions_0"
-                //    then iterate those. If it's an array, we handle that too.
-                const dims = dataBinding.metadata.dimensions;
-                if (dims && typeof dims === "object") {
+                
+                // Handle dimensions: if metadata.dimensions is an object, iterate its keys.
+                const dims = dataBinding.metadata && dataBinding.metadata.dimensions;
+                if (dims && typeof dims === "object" && !Array.isArray(dims)) {
                     Object.keys(dims).forEach(dimKey => {
-                        const dimMeta = dims[dimKey]; // e.g. { id: 'ADSO', label: 'ADSO' }
+                        const dimMeta = dims[dimKey];
                         columns.push({
-                            name: dimKey,                    // "dimensions_0"
+                            name: dimKey,
                             label: dimMeta.label || dimMeta.id
                         });
                     });
-                }
-
-                // 2) If "mainStructureMembers" is an object with keys like "measures_0"
-                //    then iterate those. (It might also appear as an array in some cases.)
-                const measures = dataBinding.metadata.mainStructureMembers;
-                if (measures && typeof measures === "object") {
-                    Object.keys(measures).forEach(measKey => {
-                        const measMeta = measures[measKey]; // e.g. { id: "...", label: "..." }
+                } else if (Array.isArray(dims)) {
+                    dims.forEach((dimension, index) => {
                         columns.push({
-                            name: measKey, 
-                            label: measMeta.label || measMeta.id
+                            name: `dimensions_${index}`,
+                            label: dimension.label || dimension.id
                         });
                     });
                 }
-
-                // 3) Build row data
-                const tableData = dataBinding.data.map(row => {
+                
+                // Handle measures: if metadata.mainStructureMembers is an object, iterate its keys.
+                const measures = dataBinding.metadata && dataBinding.metadata.mainStructureMembers;
+                if (measures && typeof measures === "object" && !Array.isArray(measures)) {
+                    Object.keys(measures).forEach(measKey => {
+                        const measMeta = measures[measKey];
+                        columns.push({
+                            name: measKey,
+                            label: measMeta.label || measMeta.id
+                        });
+                    });
+                } else if (Array.isArray(measures)) {
+                    measures.forEach((measure, index) => {
+                        columns.push({
+                            name: `measures_${index}`,
+                            label: measure.label || measure.id
+                        });
+                    });
+                }
+                
+                // Transform raw data rows into a simplified structure.
+                // For each column (by name), pick the appropriate value.
+                const tableData = dataBinding.data.map((row) => {
                     const transformedRow = {};
-
-                    // For each column discovered, store label, formattedValue, etc.
                     columns.forEach(col => {
-                        // The row might have row["dimensions_0"] or row["measures_1"]
-                        const cellObj = row[col.name];
+                        let cellObj = row[col.name];
                         if (!cellObj) {
                             transformedRow[col.name] = "";
-                            return;
-                        }
-                        
-                        // If dimension object => label or id
-                        // If measure object => formattedValue or raw
-                        if (cellObj.label) {
+                        } else if (cellObj.label) {
                             transformedRow[col.name] = cellObj.label;
                         } else if (cellObj.formattedValue) {
                             transformedRow[col.name] = cellObj.formattedValue;
@@ -599,21 +605,18 @@
                             transformedRow[col.name] = "";
                         }
                     });
-
                     return transformedRow;
                 });
                 
-                // Assign to our widget's internal data
+                // Update widget's internal data and render table.
                 this._tableColumns = columns;
                 this._tableData = tableData;
-                
-                // Render
                 this._renderTable();
             }
         }
 
         onCustomWidgetAfterUpdate(changedProperties) {
-            // 1) If the dataBinding changed, parse it
+            // 1) If the dataBinding changed, parse it.
             if ("tableDataBinding" in changedProperties) {
                 const dataBinding = changedProperties.tableDataBinding;
                 if (dataBinding && dataBinding.state === 'success') {
@@ -621,7 +624,7 @@
                 }
             }
 
-            // 2) If tableData property changed, parse & re-render
+            // 2) If tableData property changed (overwritten manually), parse & re-render.
             if ('tableData' in changedProperties) {
                 try {
                     this._tableData = JSON.parse(changedProperties.tableData);
@@ -631,7 +634,7 @@
                 }
             }
             
-            // 3) If tableColumns property changed, parse & re-render
+            // 3) If tableColumns property changed, parse & re-render.
             if ('tableColumns' in changedProperties) {
                 try {
                     this._tableColumns = JSON.parse(changedProperties.tableColumns);
@@ -641,7 +644,7 @@
                 }
             }
             
-            // 4) If selectedRows property changed, parse & update selection
+            // 4) If selectedRows property changed, parse & update selection.
             if ('selectedRows' in changedProperties) {
                 try {
                     this._selectedRows = JSON.parse(changedProperties.selectedRows);
@@ -652,7 +655,7 @@
                 }
             }
             
-            // 5) If isMultiSelectMode changed, update UI
+            // 5) If isMultiSelectMode changed, update UI.
             if ('isMultiSelectMode' in changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
                 
@@ -661,14 +664,14 @@
                     this._cancelButton.style.display = 'inline-block';
                     this._editButton.style.display = 'none';
                     
-                    // Show checkboxes
+                    // Show checkboxes.
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
                 } else {
                     this._multiSelectButton.style.display = 'inline-block';
                     this._cancelButton.style.display = 'none';
                     
-                    // Hide checkboxes
+                    // Hide checkboxes.
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.remove('show'));
                     
@@ -676,7 +679,7 @@
                 }
             }
             
-            // 6) Apply styling properties if provided
+            // 6) Apply styling properties if provided.
             if ('headerColor' in changedProperties) {
                 const headerEl = this._shadowRoot.querySelector('.table-header');
                 if (headerEl) {
@@ -687,7 +690,6 @@
             if ('buttonColor' in changedProperties) {
                 const buttons = this._shadowRoot.querySelectorAll('.table-button');
                 buttons.forEach(btn => {
-                    // Avoid overriding "Edit" or "Cancel" colors, unless you prefer
                     if (!btn.classList.contains('edit-button') && !btn.classList.contains('cancel-button')) {
                         btn.style.color = changedProperties.buttonColor;
                     }
@@ -799,6 +801,6 @@
         }
     }
 
-    // Register the custom element
+    // Register the custom element in the browser
     customElements.define('planifyit-tab-widget', PlanifyITTable);
 })();
