@@ -296,10 +296,10 @@
             }));
         }
         
-        _handleEdit() {
-             const detail = { selectedRows: this._selectedRows };
-            this.dispatchEvent(new Event("onEditSelected"));
-        }
+_handleEdit() {
+    const detail = { selectedRows: this._selectedRows };
+    this.dispatchEvent(new CustomEvent("onEditSelected", { detail }));
+}
         
         /* ------------------------------------------------------------------
          *  Select All / Row Selection
