@@ -297,6 +297,7 @@
         }
         
         _handleEdit() {
+             const detail = { selectedRows: this._selectedRows };
             this.dispatchEvent(new Event("onEditSelected"));
         }
         
