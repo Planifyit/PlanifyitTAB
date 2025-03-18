@@ -400,6 +400,8 @@ _handleEdit() {
                 this._selectedRows.length < this._tableData.length;
             this._selectAllCheckbox.checked = allSelected;
             this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
+            this.selectedRowsData = JSON.stringify(this._selectedRows.map(index => this._tableData[index]));
+
         }
         
  _updateEditButtonVisibility() {
@@ -664,13 +666,6 @@ _handleEdit() {
             }
         }
 
-
-_getSelectedRowData() {
-    const tableData = JSON.parse(this.getTableData());
-    const selectedIndices = JSON.parse(this.getSelectedRows());
-    const selectedData = selectedIndices.map(index => tableData[index]);
-    return JSON.stringify(selectedData);
-}
 
 
         /* ------------------------------------------------------------------
