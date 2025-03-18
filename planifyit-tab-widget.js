@@ -401,14 +401,14 @@
             this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
         }
         
-        _updateEditButtonVisibility() {
-            if (this._isMultiSelectMode) {
-                this._editButton.style.display = 'none';
-            } else {
-                this._editButton.style.display =
-                    this._selectedRows.length === 1 ? 'inline-block' : 'none';
-            }
-        }
+ _updateEditButtonVisibility() {
+    if (this._isMultiSelectMode) {
+        this._editButton.style.display = this._selectedRows.length > 0 ? 'inline-block' : 'none';
+    } else {
+        this._editButton.style.display = this._selectedRows.length === 1 ? 'inline-block' : 'none';
+    }
+}
+
         
         /* ------------------------------------------------------------------
          *  Main Table Rendering
