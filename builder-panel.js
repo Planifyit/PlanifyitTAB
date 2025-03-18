@@ -82,24 +82,28 @@
                 <legend>Widget Configuration</legend>
                 <table>
                     <tr>
-                        <td><label for="builder_model_id">Model ID:</label></td>
-                        <td><input id="builder_model_id" type="text"></td>
+                        <td><label for="builder_header_color">Header Color:</label></td>
+                        <td><input id="builder_header_color" type="text" value="#1a73e8"></td>
                     </tr>
                     <tr>
-                        <td><label for="builder_tenant_url">Tenant URL:</label></td>
-                        <td><input id="builder_tenant_url" type="text"></td>
+                        <td><label for="builder_button_color">Button Text Color:</label></td>
+                        <td><input id="builder_button_color" type="text" value="#ffffff"></td>
                     </tr>
                     <tr>
-                        <td><label for="builder_api_string">API String:</label></td>
-                        <td><input id="builder_api_string" type="text"></td>
+                        <td><label for="builder_selected_row_color">Selected Row Color:</label></td>
+                        <td><input id="builder_selected_row_color" type="text" value="#e8f0fe"></td>
                     </tr>
                     <tr>
-                        <td><label for="builder_private_version_location">Private Version Location:</label></td>
-                        <td><input id="builder_private_version_location" type="text"></td>
+                        <td><label for="builder_hover_row_color">Hover Row Color:</label></td>
+                        <td><input id="builder_hover_row_color" type="text" value="#f5f5f5"></td>
                     </tr>
                     <tr>
-                        <td><label for="builder_public_version_location">Public Version Location:</label></td>
-                        <td><input id="builder_public_version_location" type="text"></td>
+                        <td><label for="builder_table_text_color">Table Text Color:</label></td>
+                        <td><input id="builder_table_text_color" type="text" value="#333333"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="builder_header_text_color">Header Text Color:</label></td>
+                        <td><input id="builder_header_text_color" type="text" value="#ffffff"></td>
                     </tr>
                 </table>
             </fieldset>
@@ -236,65 +240,65 @@
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
-                        modelId: this.modelId,
-                        tenantUrl: this.tenantUrl,
-                        apiString: this.apiString,
-                        privateVersionLocation: this.privateVersionLocation,
-                        publicVersionLocation: this.publicVersionLocation,
+                        headerColor: this.headerColor,
+                        buttonColor: this.buttonColor,
+                        selectedRowColor: this.selectedRowColor,
+                        hoverRowColor: this.hoverRowColor,
+                        tableTextColor: this.tableTextColor,
+                        headerTextColor: this.headerTextColor,
                         tableDataBinding: tableDataBinding
                     }
                 }
             }));
-            
-            console.log("Properties submitted:", {
-                modelId: this.modelId,
-                tenantUrl: this.tenantUrl,
-                apiString: this.apiString,
-                privateVersionLocation: this.privateVersionLocation,
-                publicVersionLocation: this.publicVersionLocation,
-                tableDataBinding: tableDataBinding
-            });
         }
 
         // Getter and setter methods for properties
-        set modelId(newModelId) {
-            this._shadowRoot.getElementById("builder_model_id").value = newModelId;
+        set headerColor(newColor) {
+            this._shadowRoot.getElementById("builder_header_color").value = newColor;
         }
 
-        get modelId() {
-            return this._shadowRoot.getElementById("builder_model_id").value;
+        get headerColor() {
+            return this._shadowRoot.getElementById("builder_header_color").value;
         }
 
-        set tenantUrl(newTenantUrl) {
-            this._shadowRoot.getElementById("builder_tenant_url").value = newTenantUrl;
+        set buttonColor(newColor) {
+            this._shadowRoot.getElementById("builder_button_color").value = newColor;
         }
 
-        get tenantUrl() {
-            return this._shadowRoot.getElementById("builder_tenant_url").value;
+        get buttonColor() {
+            return this._shadowRoot.getElementById("builder_button_color").value;
         }
 
-        set apiString(newApiString) {
-            this._shadowRoot.getElementById("builder_api_string").value = newApiString;
+        set selectedRowColor(newColor) {
+            this._shadowRoot.getElementById("builder_selected_row_color").value = newColor;
         }
 
-        get apiString() {
-            return this._shadowRoot.getElementById("builder_api_string").value;
+        get selectedRowColor() {
+            return this._shadowRoot.getElementById("builder_selected_row_color").value;
         }
 
-        set privateVersionLocation(newPrivateVersionLocation) {
-            this._shadowRoot.getElementById("builder_private_version_location").value = newPrivateVersionLocation;
+        set hoverRowColor(newColor) {
+            this._shadowRoot.getElementById("builder_hover_row_color").value = newColor;
         }
 
-        get privateVersionLocation() {
-            return this._shadowRoot.getElementById("builder_private_version_location").value;
-        }
-        
-        set publicVersionLocation(newPublicVersionLocation) {
-            this._shadowRoot.getElementById("builder_public_version_location").value = newPublicVersionLocation;
+        get hoverRowColor() {
+            return this._shadowRoot.getElementById("builder_hover_row_color").value;
         }
 
-        get publicVersionLocation() {
-            return this._shadowRoot.getElementById("builder_public_version_location").value;
+        set tableTextColor(newColor) {
+            this._shadowRoot.getElementById("builder_table_text_color").value = newColor;
+        }
+
+        get tableTextColor() {
+            return this._shadowRoot.getElementById("builder_table_text_color").value;
+        }
+
+        set headerTextColor(newColor) {
+            this._shadowRoot.getElementById("builder_header_text_color").value = newColor;
+        }
+
+        get headerTextColor() {
+            return this._shadowRoot.getElementById("builder_header_text_color").value;
         }
 
         // Getter and setter for tableDataBinding
