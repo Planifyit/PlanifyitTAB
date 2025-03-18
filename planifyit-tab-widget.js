@@ -54,6 +54,7 @@
                 display: flex;
                 flex-direction: column;
                 width: 100%;
+                height: 100%;
                 background-color: #ffffff;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -110,6 +111,11 @@
                 background-color: #FF5370;
             }
 
+            .table-body-container {
+                overflow-y: auto;
+                flex: 1;
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -117,9 +123,9 @@
 
             .column-headers {
                 position: sticky;
-                top: 50px;
+                top: 0;
                 z-index: 5;
-                background-color: #f0f0f0;
+                background-color: #f8f9fa;
             }
 
             th {
@@ -169,11 +175,6 @@
                 display: table-cell;
             }
 
-            .table-body {
-                overflow-y: auto;
-                max-height: calc(100% - 50px);
-            }
-
             .no-data-message {
                 padding: 20px;
                 text-align: center;
@@ -183,9 +184,6 @@
         </style>
 
         <div class="table-container">
-            <div class="image-container"></div>
-            <div class="app-title">PlanifyIT Table</div>
-            
             <div class="table-header">
                 <div class="table-header-title">Data Table</div>
                 <div class="action-buttons">
@@ -195,7 +193,7 @@
                 </div>
             </div>
             
-            <div class="table-body">
+            <div class="table-body-container">
                 <table id="dataTable">
                     <thead class="column-headers">
                         <tr id="headerRow">
@@ -212,7 +210,7 @@
                 </table>
             </div>
             
-            <a href="https://www.linkedin.com/company/planifyit" target="_blank" class="follow-link">Follow us on LinkedIn - Planifyit</a>
+            <div class="app-title">PlanifyIT Table</div>
         </div>
     `;
 
@@ -229,6 +227,7 @@
             this._tableColumns = [];
             this._selectedRows = [];
             this._isMultiSelectMode = false;
+            this._tableDataBinding = null;
             
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
@@ -416,29 +415,6 @@
             // Update "select all" checkbox state
             this._updateSelectAllCheckbox();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
         // Update "select all" checkbox state based on selected rows
         _updateSelectAllCheckbox() {
@@ -462,6 +438,75 @@
                 // Show edit button only when exactly one row is selected in single-select mode
                 this._editButton.style.display = this._selectedRows.length === 1 ? 'inline-block' : 'none';
             }
+        }
+        
+        // Process SAC data binding
+        _processDataBinding(dataBinding) {
+            if (!dataBinding || !dataBinding.data || !Array.isArray(dataBinding.data)) {
+                console.error('Invalid data binding object:', dataBinding);
+                return;
+            }
+            
+            console.log('Processing data binding:', dataBinding);
+            
+            // Extract dimensions and measures from metadata
+            const dimensions = dataBinding.metadata?.dimensions || [];
+            const measures = dataBinding.metadata?.mainStructureMembers || [];
+            
+            // Create columns array
+            const columns = [];
+            
+            // Add dimension columns
+            dimensions.forEach((dimension, index) => {
+                columns.push({
+                    name: `dimension_${index}`,
+                    label: dimension.label || dimension.id || `Dimension ${index + 1}`,
+                    type: 'dimension'
+                });
+            });
+            
+            // Add measure columns
+            measures.forEach((measure, index) => {
+                columns.push({
+                    name: `measure_${index}`,
+                    label: measure.label || measure.id || `Measure ${index + 1}`,
+                    type: 'measure'
+                });
+            });
+            
+            // Process data rows
+            const rows = dataBinding.data.map(row => {
+                const processedRow = {};
+                
+                // Process dimensions
+                dimensions.forEach((dimension, index) => {
+                    const dimId = `dimensions_${index}`;
+                    if (row[dimId]) {
+                        processedRow[`dimension_${index}`] = row[dimId].label || row[dimId].id || row[dimId].toString();
+                    } else {
+                        processedRow[`dimension_${index}`] = '';
+                    }
+                });
+                
+                // Process measures
+                measures.forEach((measure, index) => {
+                    const measureId = `measures_${index}`;
+                    if (row[measureId]) {
+                        processedRow[`measure_${index}`] = row[measureId].formattedValue || row[measureId].raw || row[measureId].toString();
+                    } else {
+                        processedRow[`measure_${index}`] = '';
+                    }
+                });
+                
+                return processedRow;
+            });
+            
+            // Update internal state
+            this._tableColumns = columns;
+            this._tableData = rows;
+            
+            // Render the table
+            this._renderTable();
         }
         
         // Render table columns and data
@@ -530,7 +575,6 @@
             // Update edit button visibility
             this._updateEditButtonVisibility();
         }
-        
         // Lifecycle callbacks and property management
         connectedCallback() {
             // Initialize with empty data if needed
