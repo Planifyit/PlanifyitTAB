@@ -2,6 +2,19 @@
     let tmpl = document.createElement('template');
     tmpl.innerHTML = `
         <style>
+            /* Ensure the container takes the full height available (e.g. widget height) */
+            .table-container {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                margin-top: 10px;
+                overflow: hidden;
+            }
+
             .image-container {
                 width: 100%;
                 height: 50px;
@@ -48,17 +61,6 @@
             .follow-link:hover::after {
                 transform: scaleX(1);
                 transform-origin: left;
-            }
-
-            .table-container {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                margin-top: 10px;
-                overflow: hidden;
             }
 
             .table-header {
@@ -169,9 +171,10 @@
                 display: table-cell;
             }
 
+            /* Use flex to allow the table body to take remaining space and scroll */
             .table-body {
+                flex: 1;
                 overflow-y: auto;
-                max-height: calc(100% - 50px);
             }
 
             .no-data-message {
@@ -253,21 +256,14 @@
          * ------------------------------------------------------------------ */
         
         _toggleMultiSelectMode() {
-            // Switch to multi-select
             this._isMultiSelectMode = true;
             this._multiSelectButton.style.display = 'none';
             this._cancelButton.style.display = 'inline-block';
             this._editButton.style.display = 'none';
-            
-            // Show checkboxes
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.add('show'));
-            
-            // Clear any single-selection
             this._selectedRows = [];
             this._updateRowSelection();
-            
-            // Dispatch event for property changes
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -279,24 +275,15 @@
         }
         
         _cancelMultiSelect() {
-            // Return to single-select
             this._isMultiSelectMode = false;
             this._multiSelectButton.style.display = 'inline-block';
             this._cancelButton.style.display = 'none';
             this._editButton.style.display = 'none';
-            
-            // Hide checkboxes
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.remove('show'));
-            
-            // Clear selections
             this._selectedRows = [];
             this._updateRowSelection();
-            
-            // Uncheck "select all" checkbox
             this._selectAllCheckbox.checked = false;
-            
-            // Dispatch event for property changes
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -308,7 +295,6 @@
         }
         
         _handleEdit() {
-            // Dispatch event with selected row info if needed
             this.dispatchEvent(new Event("onEditSelected"));
         }
         
@@ -318,22 +304,16 @@
         
         _handleSelectAll(e) {
             const isChecked = e.target.checked;
-            
             if (isChecked) {
-                // Select all rows
                 this._selectedRows = Array.from(
                     { length: this._tableData.length },
                     (_, index) => index
                 );
             } else {
-                // Deselect all
                 this._selectedRows = [];
             }
-            
             this._updateRowSelection();
             this._updateEditButtonVisibility();
-            
-            // Fire selection-changed event
             this.dispatchEvent(new Event("onSelectionChanged"));
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
@@ -344,16 +324,12 @@
             }));
         }
         
-        // Single-select row click
         _handleRowClick(index, e) {
-            // If clicking on a checkbox, do nothing here.
             if (e.target.type === 'checkbox') return;
-            
             if (!this._isMultiSelectMode) {
                 this._selectedRows = [index];
                 this._updateRowSelection();
                 this._updateEditButtonVisibility();
-                
                 this.dispatchEvent(new Event("onSelectionChanged"));
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
                     detail: {
@@ -365,7 +341,6 @@
             }
         }
         
-        // Multi-select checkbox toggled
         _handleCheckboxChange(index, e) {
             const isChecked = e.target.checked;
             if (isChecked) {
@@ -377,7 +352,6 @@
             }
             this._updateSelectAllCheckbox();
             this._updateEditButtonVisibility();
-            
             this.dispatchEvent(new Event("onSelectionChanged"));
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
@@ -396,14 +370,11 @@
             const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
             rows.forEach((row, index) => {
                 const isSelected = this._selectedRows.includes(index);
-                
                 if (isSelected) {
                     row.classList.add('selected');
                 } else {
                     row.classList.remove('selected');
                 }
-                
-                // Update checkbox state if in multi-select mode
                 if (this._isMultiSelectMode) {
                     const checkbox = row.querySelector('.select-checkbox');
                     if (checkbox) {
@@ -424,7 +395,6 @@
             const someSelected = 
                 this._selectedRows.length > 0 &&
                 this._selectedRows.length < this._tableData.length;
-            
             this._selectAllCheckbox.checked = allSelected;
             this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
         }
@@ -448,19 +418,13 @@
                     <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
                 </th>`;
             this._tableBody.innerHTML = '';
-            
-            // Re-attach select-all checkbox listener
             this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
-            
-            // Create column headers dynamically
             this._tableColumns.forEach(col => {
                 const th = document.createElement('th');
                 th.textContent = col.label || col.name;
                 this._headerRow.appendChild(th);
             });
-            
-            // Render table data rows
             if (this._tableData.length === 0) {
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
@@ -471,11 +435,8 @@
                 this._tableBody.appendChild(row);
                 return;
             }
-            
             this._tableData.forEach((rowData, rowIndex) => {
                 const row = document.createElement('tr');
-                
-                // Create checkbox cell
                 const checkboxCell = document.createElement('td');
                 checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
                 const checkbox = document.createElement('input');
@@ -485,21 +446,17 @@
                 checkbox.addEventListener('change', (e) => this._handleCheckboxChange(rowIndex, e));
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
-                
-                // Create data cells
                 this._tableColumns.forEach(col => {
                     const cell = document.createElement('td');
                     cell.textContent = rowData[col.name] || '';
                     row.appendChild(cell);
                 });
-                
                 row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
                 if (this._selectedRows.includes(rowIndex)) {
                     row.classList.add('selected');
                 }
                 this._tableBody.appendChild(row);
             });
-            
             this._updateSelectAllCheckbox();
             this._updateEditButtonVisibility();
         }
@@ -509,7 +466,6 @@
          * ------------------------------------------------------------------ */
         
         connectedCallback() {
-            // On initial load, read any saved attributes.
             if (this.hasAttribute("tableData")) {
                 try {
                     this._tableData = JSON.parse(this.getAttribute("tableData"));
@@ -531,7 +487,6 @@
                     console.error("Invalid selectedRows attribute", e);
                 }
             }
-            // If a data binding object is already available, update the data.
             if (this.tableDataBinding) {
                 this._updateDataBinding(this.tableDataBinding);
             }
@@ -553,31 +508,24 @@
                 Array.isArray(dataBinding.data)
             ) {
                 console.log('Data binding successful:', dataBinding);
-                
                 const columns = [];
-                
-                // Process dimensions
                 const dims = dataBinding.metadata && dataBinding.metadata.dimensions;
                 if (dims && typeof dims === "object" && !Array.isArray(dims)) {
                     Object.keys(dims).forEach(dimKey => {
                         const dimMeta = dims[dimKey];
                         columns.push({
                             name: dimKey,
-                             label: dimMeta.description || dimMeta.label || dimMeta.id
-                 
+                            label: dimMeta.description || dimMeta.label || dimMeta.id
                         });
                     });
                 } else if (Array.isArray(dims)) {
                     dims.forEach((dimension, index) => {
                         columns.push({
                             name: `dimensions_${index}`,
-                              label: dimension.description || dimension.label || dimension.id
-               
+                            label: dimension.description || dimension.label || dimension.id
                         });
                     });
                 }
-                
-                // Process measures
                 const measures = dataBinding.metadata && dataBinding.metadata.mainStructureMembers;
                 if (measures && typeof measures === "object" && !Array.isArray(measures)) {
                     Object.keys(measures).forEach(measKey => {
@@ -595,8 +543,6 @@
                         });
                     });
                 }
-                
-                // Transform each row's data
                 const tableData = dataBinding.data.map((row) => {
                     const transformedRow = {};
                     columns.forEach(col => {
@@ -617,7 +563,6 @@
                     });
                     return transformedRow;
                 });
-                
                 this._tableColumns = columns;
                 this._tableData = tableData;
                 this._renderTable();
@@ -625,7 +570,6 @@
         }
 
         onCustomWidgetAfterUpdate(changedProperties) {
-            // If data binding changed or table data is empty, update binding.
             if ("tableDataBinding" in changedProperties) {
                 const dataBinding = changedProperties.tableDataBinding;
                 if (dataBinding && dataBinding.state === 'success') {
@@ -665,21 +609,17 @@
             
             if ('isMultiSelectMode' in changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
-                
                 if (this._isMultiSelectMode) {
                     this._multiSelectButton.style.display = 'none';
                     this._cancelButton.style.display = 'inline-block';
                     this._editButton.style.display = 'none';
-                    
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
                 } else {
                     this._multiSelectButton.style.display = 'inline-block';
                     this._cancelButton.style.display = 'none';
-                    
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.remove('show'));
-                    
                     this._updateEditButtonVisibility();
                 }
             }
@@ -784,19 +724,15 @@
                 this._multiSelectButton.style.display = 'none';
                 this._cancelButton.style.display = 'inline-block';
                 this._editButton.style.display = 'none';
-                
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.add('show'));
             } else {
                 this._multiSelectButton.style.display = 'inline-block';
                 this._cancelButton.style.display = 'none';
-                
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.remove('show'));
-                
                 this._updateEditButtonVisibility();
             }
-            
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: { properties: { isMultiSelectMode: value } }
             }));
