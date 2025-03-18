@@ -462,7 +462,6 @@
             // Create column headers
             this._tableColumns.forEach(col => {
                 const th = document.createElement('th');
-                // Use col.label or a fallback
                 th.textContent = col.label || col.name;
                 this._headerRow.appendChild(th);
             });
@@ -547,66 +546,61 @@
                 
                 const columns = [];
 
-                // Dimensions in metadata
-                if (
-                    dataBinding.metadata &&
-                    Array.isArray(dataBinding.metadata.dimensions)
-                ) {
-                    dataBinding.metadata.dimensions.forEach((dimension, index) => {
+                // 1) If "dimensions" is an object with keys like "dimensions_0"
+                //    then iterate those. If it's an array, we handle that too.
+                const dims = dataBinding.metadata.dimensions;
+                if (dims && typeof dims === "object") {
+                    Object.keys(dims).forEach(dimKey => {
+                        const dimMeta = dims[dimKey]; // e.g. { id: 'ADSO', label: 'ADSO' }
                         columns.push({
-                            name: `dimensions_${index}`,
-                            label: dimension.label || dimension.id
+                            name: dimKey,                    // "dimensions_0"
+                            label: dimMeta.label || dimMeta.id
                         });
                     });
                 }
 
-                // Measures in metadata
-                if (
-                    dataBinding.metadata &&
-                    Array.isArray(dataBinding.metadata.mainStructureMembers)
-                ) {
-                    dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
+                // 2) If "mainStructureMembers" is an object with keys like "measures_0"
+                //    then iterate those. (It might also appear as an array in some cases.)
+                const measures = dataBinding.metadata.mainStructureMembers;
+                if (measures && typeof measures === "object") {
+                    Object.keys(measures).forEach(measKey => {
+                        const measMeta = measures[measKey]; // e.g. { id: "...", label: "..." }
                         columns.push({
-                            name: `measures_${index}`,
-                            label: measure.label || measure.id
+                            name: measKey, 
+                            label: measMeta.label || measMeta.id
                         });
                     });
                 }
 
-                // Transform the raw rows into a simpler structure:
-                // row["dimensions_0"].label => put in rowObj["dimensions_0"]
-                // row["measures_0"].formattedValue => put in rowObj["measures_0"], etc.
-                const tableData = dataBinding.data.map((row) => {
-                    const transformed = {};
-                    
-                    // Map dimension fields
-                    if (dataBinding.metadata.dimensions) {
-                        dataBinding.metadata.dimensions.forEach((dim, i) => {
-                            const dimId = `dimensions_${i}`;
-                            if (row[dimId]) {
-                                transformed[dimId] =
-                                    row[dimId].label ||
-                                    row[dimId].id ||
-                                    "";
-                            }
-                        });
-                    }
+                // 3) Build row data
+                const tableData = dataBinding.data.map(row => {
+                    const transformedRow = {};
 
-                    // Map measure fields
-                    if (dataBinding.metadata.mainStructureMembers) {
-                        dataBinding.metadata.mainStructureMembers.forEach((m, i) => {
-                            const measId = `measures_${i}`;
-                            if (row[measId]) {
-                                // Use formattedValue or raw, whichever you prefer
-                                transformed[measId] =
-                                    row[measId].formattedValue ||
-                                    row[measId].raw ||
-                                    "";
-                            }
-                        });
-                    }
+                    // For each column discovered, store label, formattedValue, etc.
+                    columns.forEach(col => {
+                        // The row might have row["dimensions_0"] or row["measures_1"]
+                        const cellObj = row[col.name];
+                        if (!cellObj) {
+                            transformedRow[col.name] = "";
+                            return;
+                        }
+                        
+                        // If dimension object => label or id
+                        // If measure object => formattedValue or raw
+                        if (cellObj.label) {
+                            transformedRow[col.name] = cellObj.label;
+                        } else if (cellObj.formattedValue) {
+                            transformedRow[col.name] = cellObj.formattedValue;
+                        } else if (cellObj.formatted) {
+                            transformedRow[col.name] = cellObj.formatted;
+                        } else if (cellObj.raw !== undefined) {
+                            transformedRow[col.name] = cellObj.raw;
+                        } else {
+                            transformedRow[col.name] = "";
+                        }
+                    });
 
-                    return transformed;
+                    return transformedRow;
                 });
                 
                 // Assign to our widget's internal data
@@ -627,7 +621,7 @@
                 }
             }
 
-            // 2) If tableData property changed (overwritten manually), parse & re-render
+            // 2) If tableData property changed, parse & re-render
             if ('tableData' in changedProperties) {
                 try {
                     this._tableData = JSON.parse(changedProperties.tableData);
@@ -805,6 +799,6 @@
         }
     }
 
-    // Register the custom element in the browser
+    // Register the custom element
     customElements.define('planifyit-tab-widget', PlanifyITTable);
 })();
