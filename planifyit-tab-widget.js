@@ -369,27 +369,24 @@ _handleEdit() {
          *  Visual Updates for Selection
          * ------------------------------------------------------------------ */
         
-   _updateRowSelection() {
-    const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
-    rows.forEach((row, index) => {
-        const isSelected = this._selectedRows.includes(index);
-        if (isSelected) {
-            row.classList.add('selected');
-        } else {
-            row.classList.remove('selected');
+        _updateRowSelection() {
+            const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
+            rows.forEach((row, index) => {
+                const isSelected = this._selectedRows.includes(index);
+                if (isSelected) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
+                if (this._isMultiSelectMode) {
+                    const checkbox = row.querySelector('.select-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = isSelected;
+                    }
+                }
+            });
+            this._updateSelectAllCheckbox();
         }
-        if (this._isMultiSelectMode) {
-            const checkbox = row.querySelector('.select-checkbox');
-            if (checkbox) {
-                checkbox.checked = isSelected;
-            }
-        }
-    });
-    // Update the selected row data based on indices
-    this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
-    this._updateSelectAllCheckbox();
-}
-
 
         _updateSelectAllCheckbox() {
             if (this._tableData.length === 0) {
@@ -668,8 +665,11 @@ _handleEdit() {
         }
 
 
-getSelectedRowData() {
-    return JSON.stringify(this._selectedRowsData || []);
+_getSelectedRowData() {
+    const tableData = JSON.parse(this.getTableData());
+    const selectedIndices = JSON.parse(this.getSelectedRows());
+    const selectedData = selectedIndices.map(index => tableData[index]);
+    return JSON.stringify(selectedData);
 }
 
 
