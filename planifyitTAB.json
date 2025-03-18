@@ -22,13 +22,6 @@
             "url": "https://planifyit.github.io/PlanifyitTAB/style-panel.js",
             "integrity": "",
             "ignoreIntegrity": true
-        },
-        {
-            "kind": "builder",
-            "tag": "com-planifyit-tab-builder",
-            "url": "https://planifyit.github.io/PlanifyitTAB/builder-panel.js",
-            "integrity": "",
-            "ignoreIntegrity": true
         }
     ],
     "properties": {
