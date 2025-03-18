@@ -199,7 +199,9 @@
                 <table id="dataTable">
                     <thead class="column-headers">
                         <tr id="headerRow">
-                            <th class="checkbox-column"><input type="checkbox" id="selectAllCheckbox" class="select-checkbox"></th>
+                            <th class="checkbox-column">
+                                <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
+                            </th>
                             <!-- Table headers will be inserted here dynamically -->
                         </tr>
                     </thead>
@@ -212,7 +214,9 @@
                 </table>
             </div>
             
-            <a href="https://www.linkedin.com/company/planifyit" target="_blank" class="follow-link">Follow us on LinkedIn - Planifyit</a>
+            <a href="https://www.linkedin.com/company/planifyit" target="_blank" class="follow-link">
+                Follow us on LinkedIn - Planifyit
+            </a>
         </div>
     `;
 
@@ -222,9 +226,8 @@
             this._shadowRoot = this.attachShadow({ mode: 'open' });
             this._shadowRoot.appendChild(tmpl.content.cloneNode(true));
 
-            this._props = {}; // properties
-            
-            // Initialize instance variables
+            // Internal tracking
+            this._props = {}; 
             this._tableData = [];
             this._tableColumns = [];
             this._selectedRows = [];
@@ -245,8 +248,12 @@
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
         }
         
-        // Toggle between single and multi-select modes
+        /* ------------------------------------------------------------------
+         *  Multi-Select Mode / Buttons
+         * ------------------------------------------------------------------ */
+        
         _toggleMultiSelectMode() {
+            // Switch to multi-select
             this._isMultiSelectMode = true;
             this._multiSelectButton.style.display = 'none';
             this._cancelButton.style.display = 'inline-block';
@@ -256,7 +263,7 @@
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.add('show'));
             
-            // Clear any previous selection in single-select mode
+            // Clear any single-selection
             this._selectedRows = [];
             this._updateRowSelection();
             
@@ -271,8 +278,8 @@
             }));
         }
         
-        // Cancel multi-select mode
         _cancelMultiSelect() {
+            // Return to single-select
             this._isMultiSelectMode = false;
             this._multiSelectButton.style.display = 'inline-block';
             this._cancelButton.style.display = 'none';
@@ -300,31 +307,34 @@
             }));
         }
         
-        // Handle edit button click
         _handleEdit() {
-            // Dispatch edit event with selected row data
+            // If you want to pass the selected row info, do so here
             this.dispatchEvent(new Event("onEditSelected"));
         }
         
-        // Handle "select all" checkbox
+        /* ------------------------------------------------------------------
+         *  Select All / Row Selection
+         * ------------------------------------------------------------------ */
+        
         _handleSelectAll(e) {
             const isChecked = e.target.checked;
             
             if (isChecked) {
-                // Select all rows (excluding header)
-                this._selectedRows = Array.from({ length: this._tableData.length }, (_, index) => index);
+                // Select all rows
+                this._selectedRows = Array.from(
+                    { length: this._tableData.length },
+                    (_, index) => index
+                );
             } else {
-                // Deselect all rows
+                // Deselect all
                 this._selectedRows = [];
             }
             
             this._updateRowSelection();
             this._updateEditButtonVisibility();
             
-            // Dispatch selection changed event
+            // Fire selection-changed event
             this.dispatchEvent(new Event("onSelectionChanged"));
-            
-            // Update selectedRows property
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -334,21 +344,18 @@
             }));
         }
         
-        // Handle row selection in single-select mode
+        // Single-select row click
         _handleRowClick(index, e) {
-            // Ignore if clicking on a checkbox
+            // If clicked directly on a checkbox, don't override
             if (e.target.type === 'checkbox') return;
             
             if (!this._isMultiSelectMode) {
-                // Single select mode
+                // Single select
                 this._selectedRows = [index];
                 this._updateRowSelection();
                 this._updateEditButtonVisibility();
                 
-                // Dispatch selection changed event
                 this.dispatchEvent(new Event("onSelectionChanged"));
-                
-                // Update selectedRows property
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
                     detail: {
                         properties: {
@@ -359,28 +366,20 @@
             }
         }
         
-        // Handle checkbox selection in multi-select mode
+        // Multi-select checkbox toggled
         _handleCheckboxChange(index, e) {
             const isChecked = e.target.checked;
-            
             if (isChecked) {
-                // Add to selection if not already selected
                 if (!this._selectedRows.includes(index)) {
                     this._selectedRows.push(index);
                 }
             } else {
-                // Remove from selection
                 this._selectedRows = this._selectedRows.filter(i => i !== index);
             }
-            
-            // Update "select all" checkbox state
             this._updateSelectAllCheckbox();
             this._updateEditButtonVisibility();
             
-            // Dispatch selection changed event
             this.dispatchEvent(new Event("onSelectionChanged"));
-            
-            // Update selectedRows property
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -390,21 +389,22 @@
             }));
         }
         
-        // Update row selection visual state
+        /* ------------------------------------------------------------------
+         *  Visual Updates for Selection
+         * ------------------------------------------------------------------ */
+        
         _updateRowSelection() {
             const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
-            
             rows.forEach((row, index) => {
                 const isSelected = this._selectedRows.includes(index);
                 
-                // Update row class
                 if (isSelected) {
                     row.classList.add('selected');
                 } else {
                     row.classList.remove('selected');
                 }
                 
-                // Update checkbox state if in multi-select mode
+                // If in multi-select, update checkbox
                 if (this._isMultiSelectMode) {
                     const checkbox = row.querySelector('.select-checkbox');
                     if (checkbox) {
@@ -412,72 +412,58 @@
                     }
                 }
             });
-            
-            // Update "select all" checkbox state
             this._updateSelectAllCheckbox();
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        // Update "select all" checkbox state based on selected rows
         _updateSelectAllCheckbox() {
             if (this._tableData.length === 0) {
                 this._selectAllCheckbox.checked = false;
+                this._selectAllCheckbox.indeterminate = false;
                 return;
             }
-            
             const allSelected = this._selectedRows.length === this._tableData.length;
-            const someSelected = this._selectedRows.length > 0 && this._selectedRows.length < this._tableData.length;
+            const someSelected = 
+                this._selectedRows.length > 0 &&
+                this._selectedRows.length < this._tableData.length;
             
             this._selectAllCheckbox.checked = allSelected;
-            this._selectAllCheckbox.indeterminate = someSelected;
+            // Show a partial check if only some rows selected
+            this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
         }
         
-        // Update edit button visibility based on selection
         _updateEditButtonVisibility() {
+            // Only in single-select mode & exactly one row selected
             if (this._isMultiSelectMode) {
                 this._editButton.style.display = 'none';
             } else {
-                // Show edit button only when exactly one row is selected in single-select mode
-                this._editButton.style.display = this._selectedRows.length === 1 ? 'inline-block' : 'none';
+                this._editButton.style.display =
+                    this._selectedRows.length === 1
+                        ? 'inline-block'
+                        : 'none';
             }
         }
         
-        // Render table columns and data
+        /* ------------------------------------------------------------------
+         *  Main Table Rendering
+         * ------------------------------------------------------------------ */
+        
         _renderTable() {
-            // Clear existing table
-            this._headerRow.innerHTML = `<th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}"><input type="checkbox" id="selectAllCheckbox" class="select-checkbox"></th>`;
+            // Clear existing header row & table body
+            this._headerRow.innerHTML = `
+                <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
+                    <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
+                </th>`;
             this._tableBody.innerHTML = '';
             
-            // Recreate select all checkbox since we replaced it
+            // Re-hook the "select all" checkbox after clearing
             this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
             
-            // Render column headers
-            this._tableColumns.forEach(column => {
+            // Create column headers
+            this._tableColumns.forEach(col => {
                 const th = document.createElement('th');
-                th.textContent = column.label || column.name;
+                // Use col.label or a fallback
+                th.textContent = col.label || col.name;
                 this._headerRow.appendChild(th);
             });
             
@@ -496,7 +482,7 @@
             this._tableData.forEach((rowData, rowIndex) => {
                 const row = document.createElement('tr');
                 
-                // Add checkbox column
+                // Checkbox column
                 const checkboxCell = document.createElement('td');
                 checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
                 const checkbox = document.createElement('input');
@@ -507,17 +493,17 @@
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
                 
-                // Add data cells
-                this._tableColumns.forEach(column => {
+                // Fill data cells
+                this._tableColumns.forEach(col => {
                     const cell = document.createElement('td');
-                    cell.textContent = rowData[column.name] || '';
+                    cell.textContent = rowData[col.name] || '';
                     row.appendChild(cell);
                 });
                 
-                // Add row click handler for single-select mode
+                // Single-click selection in single-select mode
                 row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
                 
-                // Apply selected state
+                // Mark if selected
                 if (this._selectedRows.includes(rowIndex)) {
                     row.classList.add('selected');
                 }
@@ -525,99 +511,123 @@
                 this._tableBody.appendChild(row);
             });
             
-            // Update "select all" checkbox state
+            // Final updates
             this._updateSelectAllCheckbox();
-            // Update edit button visibility
             this._updateEditButtonVisibility();
         }
         
-        // Lifecycle callbacks and property management
+        /* ------------------------------------------------------------------
+         *  SAC Lifecycle Hooks
+         * ------------------------------------------------------------------ */
+        
         connectedCallback() {
-            // Initialize with empty data if needed
+            // On load, if no data is set, just render empty
             if (!this._tableData.length && !this._tableColumns.length) {
                 this._renderTable();
             }
         }
         
         onCustomWidgetBeforeUpdate(changedProperties) {
+            // Merge new properties
             this._props = { ...this._props, ...changedProperties };
         }
 
+        /**
+         * Handle the Data Binding from SAC
+         * This method picks up dynamic dimensions/measures from the metadata
+         * and transforms them into columns & rows for the table.
+         */
+        _updateDataBinding(dataBinding) {
+            if (
+                dataBinding &&
+                dataBinding.state === 'success' &&
+                Array.isArray(dataBinding.data)
+            ) {
+                console.log('Data binding successful:', dataBinding);
+                
+                const columns = [];
 
-// Define the data binding method
-_updateDataBinding(dataBinding) {
-    if (dataBinding && dataBinding.state === 'success' && Array.isArray(dataBinding.data)) {
-        console.log('Data binding successful:', dataBinding);
-        
-        // Extract columns from the data structure
-        const columns = [];
-        
-        // Add dimension columns
-        if (dataBinding.metadata && dataBinding.metadata.dimensions) {
-            dataBinding.metadata.dimensions.forEach((dimension, index) => {
-                columns.push({
-                    name: `dimension_${index}`,
-                    label: dimension.label || dimension.id
-                });
-            });
-        }
-        
-        // Add measure columns
-        if (dataBinding.metadata && dataBinding.metadata.mainStructureMembers) {
-            dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
-                columns.push({
-                    name: `measure_${index}`,
-                    label: measure.label || measure.id
-                });
-            });
-        }
-        
-        // Transform the data into a format suitable for the table
-        const tableData = dataBinding.data.map(row => {
-            const transformedRow = {};
-            
-            // Add dimension values
-            if (dataBinding.metadata && dataBinding.metadata.dimensions) {
-                dataBinding.metadata.dimensions.forEach((dimension, index) => {
-                    const dimId = `dimensions_${index}`;
-                    if (row[dimId]) {
-                        transformedRow[`dimension_${index}`] = row[dimId].label || row[dimId].id;
-                    }
-                });
-            }
-            
-            // Add measure values
-            if (dataBinding.metadata && dataBinding.metadata.mainStructureMembers) {
-                dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
-                    const measureId = `measures_${index}`;
-                    if (row[measureId]) {
-                        transformedRow[`measure_${index}`] = row[measureId].formattedValue || row[measureId].raw;
-                    }
-                });
-            }
-            
-            return transformedRow;
-        });
-        
-        // Update the table with the extracted data
-        this._tableColumns = columns;
-        this._tableData = tableData;
-        
-        // Render the table with the new data
-        this._renderTable();
-    }
-}
+                // Dimensions in metadata
+                if (
+                    dataBinding.metadata &&
+                    Array.isArray(dataBinding.metadata.dimensions)
+                ) {
+                    dataBinding.metadata.dimensions.forEach((dimension, index) => {
+                        columns.push({
+                            name: `dimensions_${index}`,
+                            label: dimension.label || dimension.id
+                        });
+                    });
+                }
 
-        
+                // Measures in metadata
+                if (
+                    dataBinding.metadata &&
+                    Array.isArray(dataBinding.metadata.mainStructureMembers)
+                ) {
+                    dataBinding.metadata.mainStructureMembers.forEach((measure, index) => {
+                        columns.push({
+                            name: `measures_${index}`,
+                            label: measure.label || measure.id
+                        });
+                    });
+                }
+
+                // Transform the raw rows into a simpler structure:
+                // row["dimensions_0"].label => put in rowObj["dimensions_0"]
+                // row["measures_0"].formattedValue => put in rowObj["measures_0"], etc.
+                const tableData = dataBinding.data.map((row) => {
+                    const transformed = {};
+                    
+                    // Map dimension fields
+                    if (dataBinding.metadata.dimensions) {
+                        dataBinding.metadata.dimensions.forEach((dim, i) => {
+                            const dimId = `dimensions_${i}`;
+                            if (row[dimId]) {
+                                transformed[dimId] =
+                                    row[dimId].label ||
+                                    row[dimId].id ||
+                                    "";
+                            }
+                        });
+                    }
+
+                    // Map measure fields
+                    if (dataBinding.metadata.mainStructureMembers) {
+                        dataBinding.metadata.mainStructureMembers.forEach((m, i) => {
+                            const measId = `measures_${i}`;
+                            if (row[measId]) {
+                                // Use formattedValue or raw, whichever you prefer
+                                transformed[measId] =
+                                    row[measId].formattedValue ||
+                                    row[measId].raw ||
+                                    "";
+                            }
+                        });
+                    }
+
+                    return transformed;
+                });
+                
+                // Assign to our widget's internal data
+                this._tableColumns = columns;
+                this._tableData = tableData;
+                
+                // Render
+                this._renderTable();
+            }
+        }
+
         onCustomWidgetAfterUpdate(changedProperties) {
+            // 1) If the dataBinding changed, parse it
+            if ("tableDataBinding" in changedProperties) {
+                const dataBinding = changedProperties.tableDataBinding;
+                if (dataBinding && dataBinding.state === 'success') {
+                    this._updateDataBinding(dataBinding);
+                }
+            }
 
-                if ("tableDataBinding" in changedProperties) {
-        const dataBinding = changedProperties.tableDataBinding;
-        if (dataBinding.state === 'success') {
-            this._updateDataBinding(dataBinding);
-        }
-    }
-    
+            // 2) If tableData property changed (overwritten manually), parse & re-render
             if ('tableData' in changedProperties) {
                 try {
                     this._tableData = JSON.parse(changedProperties.tableData);
@@ -627,6 +637,7 @@ _updateDataBinding(dataBinding) {
                 }
             }
             
+            // 3) If tableColumns property changed, parse & re-render
             if ('tableColumns' in changedProperties) {
                 try {
                     this._tableColumns = JSON.parse(changedProperties.tableColumns);
@@ -636,6 +647,7 @@ _updateDataBinding(dataBinding) {
                 }
             }
             
+            // 4) If selectedRows property changed, parse & update selection
             if ('selectedRows' in changedProperties) {
                 try {
                     this._selectedRows = JSON.parse(changedProperties.selectedRows);
@@ -646,6 +658,7 @@ _updateDataBinding(dataBinding) {
                 }
             }
             
+            // 5) If isMultiSelectMode changed, update UI
             if ('isMultiSelectMode' in changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
                 
@@ -669,15 +682,18 @@ _updateDataBinding(dataBinding) {
                 }
             }
             
-            // Apply styling properties
+            // 6) Apply styling properties if provided
             if ('headerColor' in changedProperties) {
                 const headerEl = this._shadowRoot.querySelector('.table-header');
-                if (headerEl) headerEl.style.backgroundColor = changedProperties.headerColor;
+                if (headerEl) {
+                    headerEl.style.backgroundColor = changedProperties.headerColor;
+                }
             }
             
             if ('buttonColor' in changedProperties) {
                 const buttons = this._shadowRoot.querySelectorAll('.table-button');
                 buttons.forEach(btn => {
+                    // Avoid overriding "Edit" or "Cancel" colors, unless you prefer
                     if (!btn.classList.contains('edit-button') && !btn.classList.contains('cancel-button')) {
                         btn.style.color = changedProperties.buttonColor;
                     }
@@ -705,7 +721,10 @@ _updateDataBinding(dataBinding) {
             }
         }
         
-        // Getter and setter methods mapped to the JSON configuration
+        /* ------------------------------------------------------------------
+         *  Getters / Setters (Matching planifyitTAB.json definition)
+         * ------------------------------------------------------------------ */
+        
         get tableData() {
             return JSON.stringify(this._tableData);
         }
@@ -715,11 +734,7 @@ _updateDataBinding(dataBinding) {
                 this._tableData = JSON.parse(value);
                 this._renderTable();
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: {
-                        properties: {
-                            tableData: value
-                        }
-                    }
+                    detail: { properties: { tableData: value } }
                 }));
             } catch (e) {
                 console.error('Invalid table data:', e);
@@ -735,11 +750,7 @@ _updateDataBinding(dataBinding) {
                 this._tableColumns = JSON.parse(value);
                 this._renderTable();
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: {
-                        properties: {
-                            tableColumns: value
-                        }
-                    }
+                    detail: { properties: { tableColumns: value } }
                 }));
             } catch (e) {
                 console.error('Invalid table columns:', e);
@@ -756,11 +767,7 @@ _updateDataBinding(dataBinding) {
                 this._updateRowSelection();
                 this._updateEditButtonVisibility();
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: {
-                        properties: {
-                            selectedRows: value
-                        }
-                    }
+                    detail: { properties: { selectedRows: value } }
                 }));
             } catch (e) {
                 console.error('Invalid selected rows:', e);
@@ -773,7 +780,6 @@ _updateDataBinding(dataBinding) {
         
         set isMultiSelectMode(value) {
             this._isMultiSelectMode = value;
-            
             if (this._isMultiSelectMode) {
                 this._multiSelectButton.style.display = 'none';
                 this._cancelButton.style.display = 'inline-block';
@@ -794,14 +800,11 @@ _updateDataBinding(dataBinding) {
             }
             
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                detail: {
-                    properties: {
-                        isMultiSelectMode: value
-                    }
-                }
+                detail: { properties: { isMultiSelectMode: value } }
             }));
         }
     }
 
+    // Register the custom element in the browser
     customElements.define('planifyit-tab-widget', PlanifyITTable);
 })();
