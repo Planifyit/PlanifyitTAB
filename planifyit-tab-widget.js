@@ -663,7 +663,15 @@ _handleEdit() {
                 this._shadowRoot.appendChild(style);
             }
         }
-        
+
+
+        getSelectedRowData() {
+    const tableData = JSON.parse(this.getTableData());
+    const selectedIndices = JSON.parse(this.getSelectedRows());
+    const selectedData = selectedIndices.map(index => tableData[index]);
+    return JSON.stringify(selectedData);
+}
+
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
          * ------------------------------------------------------------------ */
