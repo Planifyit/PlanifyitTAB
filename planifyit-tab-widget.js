@@ -177,12 +177,14 @@
                 overflow-y: auto;
             }
 
-            .no-data-message {
-                padding: 20px;
-                text-align: center;
-                color: #666;
-                font-style: italic;
-            }
+     .no-data-message {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background-color: #ffffff;
+}
+
         </style>
 
         <div class="table-container">
