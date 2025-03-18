@@ -308,7 +308,7 @@
         }
         
         _handleEdit() {
-            // If you want to pass the selected row info, do so here
+            // Dispatch event with selected row info if needed
             this.dispatchEvent(new Event("onEditSelected"));
         }
         
@@ -346,11 +346,10 @@
         
         // Single-select row click
         _handleRowClick(index, e) {
-            // If clicked directly on a checkbox, don't override
+            // If clicking on a checkbox, do nothing here.
             if (e.target.type === 'checkbox') return;
             
             if (!this._isMultiSelectMode) {
-                // Single select
                 this._selectedRows = [index];
                 this._updateRowSelection();
                 this._updateEditButtonVisibility();
@@ -404,7 +403,7 @@
                     row.classList.remove('selected');
                 }
                 
-                // If in multi-select, update checkbox
+                // Update checkbox state if in multi-select mode
                 if (this._isMultiSelectMode) {
                     const checkbox = row.querySelector('.select-checkbox');
                     if (checkbox) {
@@ -427,19 +426,15 @@
                 this._selectedRows.length < this._tableData.length;
             
             this._selectAllCheckbox.checked = allSelected;
-            // Show a partial check if only some rows selected
             this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
         }
         
         _updateEditButtonVisibility() {
-            // Only in single-select mode & exactly one row selected
             if (this._isMultiSelectMode) {
                 this._editButton.style.display = 'none';
             } else {
                 this._editButton.style.display =
-                    this._selectedRows.length === 1
-                        ? 'inline-block'
-                        : 'none';
+                    this._selectedRows.length === 1 ? 'inline-block' : 'none';
             }
         }
         
@@ -448,30 +443,28 @@
          * ------------------------------------------------------------------ */
         
         _renderTable() {
-            // Clear existing header row & table body
             this._headerRow.innerHTML = `
                 <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
                     <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
                 </th>`;
             this._tableBody.innerHTML = '';
             
-            // Re-hook the "select all" checkbox after clearing
+            // Re-attach select-all checkbox listener
             this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
             
-            // Create column headers
+            // Create column headers dynamically
             this._tableColumns.forEach(col => {
                 const th = document.createElement('th');
-                // Use col.label or a fallback
                 th.textContent = col.label || col.name;
                 this._headerRow.appendChild(th);
             });
             
-            // Render table data
+            // Render table data rows
             if (this._tableData.length === 0) {
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
-                cell.colSpan = this._tableColumns.length + 1; // +1 for checkbox column
+                cell.colSpan = this._tableColumns.length + 1;
                 cell.className = 'no-data-message';
                 cell.textContent = 'No data available';
                 row.appendChild(cell);
@@ -482,7 +475,7 @@
             this._tableData.forEach((rowData, rowIndex) => {
                 const row = document.createElement('tr');
                 
-                // Checkbox column
+                // Create checkbox cell
                 const checkboxCell = document.createElement('td');
                 checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
                 const checkbox = document.createElement('input');
@@ -493,25 +486,20 @@
                 checkboxCell.appendChild(checkbox);
                 row.appendChild(checkboxCell);
                 
-                // Fill data cells
+                // Create data cells
                 this._tableColumns.forEach(col => {
                     const cell = document.createElement('td');
                     cell.textContent = rowData[col.name] || '';
                     row.appendChild(cell);
                 });
                 
-                // Single-click selection in single-select mode
                 row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
-                
-                // Mark if selected
                 if (this._selectedRows.includes(rowIndex)) {
                     row.classList.add('selected');
                 }
-                
                 this._tableBody.appendChild(row);
             });
             
-            // Final updates
             this._updateSelectAllCheckbox();
             this._updateEditButtonVisibility();
         }
@@ -521,8 +509,7 @@
          * ------------------------------------------------------------------ */
         
         connectedCallback() {
-            // On initial load, read the saved attributes (if any) so that the widget
-            // restores previously bound data and selections.
+            // On initial load, read any saved attributes.
             if (this.hasAttribute("tableData")) {
                 try {
                     this._tableData = JSON.parse(this.getAttribute("tableData"));
@@ -544,18 +531,20 @@
                     console.error("Invalid selectedRows attribute", e);
                 }
             }
+            // If a data binding object is already available, update the data.
+            if (this.tableDataBinding) {
+                this._updateDataBinding(this.tableDataBinding);
+            }
             this._renderTable();
         }
         
         onCustomWidgetBeforeUpdate(changedProperties) {
-            // Merge new properties
             this._props = { ...this._props, ...changedProperties };
         }
 
         /**
          * Handle the Data Binding from SAC.
-         * This method picks up dynamic dimensions/measures from the metadata
-         * and transforms them into columns & rows for the table.
+         * Transforms dynamic dimensions/measures from metadata into columns & rows.
          */
         _updateDataBinding(dataBinding) {
             if (
@@ -567,7 +556,7 @@
                 
                 const columns = [];
                 
-                // Handle dimensions
+                // Process dimensions
                 const dims = dataBinding.metadata && dataBinding.metadata.dimensions;
                 if (dims && typeof dims === "object" && !Array.isArray(dims)) {
                     Object.keys(dims).forEach(dimKey => {
@@ -586,7 +575,7 @@
                     });
                 }
                 
-                // Handle measures
+                // Process measures
                 const measures = dataBinding.metadata && dataBinding.metadata.mainStructureMembers;
                 if (measures && typeof measures === "object" && !Array.isArray(measures)) {
                     Object.keys(measures).forEach(measKey => {
@@ -605,7 +594,7 @@
                     });
                 }
                 
-                // Transform raw data rows into a simplified structure.
+                // Transform each row's data
                 const tableData = dataBinding.data.map((row) => {
                     const transformedRow = {};
                     columns.forEach(col => {
@@ -627,7 +616,6 @@
                     return transformedRow;
                 });
                 
-                // Update widget's internal data and render table.
                 this._tableColumns = columns;
                 this._tableData = tableData;
                 this._renderTable();
@@ -635,15 +623,16 @@
         }
 
         onCustomWidgetAfterUpdate(changedProperties) {
-            // 1) If the dataBinding changed, parse it.
+            // If data binding changed or table data is empty, update binding.
             if ("tableDataBinding" in changedProperties) {
                 const dataBinding = changedProperties.tableDataBinding;
                 if (dataBinding && dataBinding.state === 'success') {
                     this._updateDataBinding(dataBinding);
                 }
+            } else if (!this._tableData.length && this.tableDataBinding) {
+                this._updateDataBinding(this.tableDataBinding);
             }
-
-            // 2) If tableData property changed (overwritten manually), parse & re-render.
+            
             if ('tableData' in changedProperties) {
                 try {
                     this._tableData = JSON.parse(changedProperties.tableData);
@@ -653,7 +642,6 @@
                 }
             }
             
-            // 3) If tableColumns property changed, parse & re-render.
             if ('tableColumns' in changedProperties) {
                 try {
                     this._tableColumns = JSON.parse(changedProperties.tableColumns);
@@ -663,7 +651,6 @@
                 }
             }
             
-            // 4) If selectedRows property changed, parse & update selection.
             if ('selectedRows' in changedProperties) {
                 try {
                     this._selectedRows = JSON.parse(changedProperties.selectedRows);
@@ -674,7 +661,6 @@
                 }
             }
             
-            // 5) If isMultiSelectMode changed, update UI.
             if ('isMultiSelectMode' in changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
                 
@@ -683,14 +669,12 @@
                     this._cancelButton.style.display = 'inline-block';
                     this._editButton.style.display = 'none';
                     
-                    // Show checkboxes.
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
                 } else {
                     this._multiSelectButton.style.display = 'inline-block';
                     this._cancelButton.style.display = 'none';
                     
-                    // Hide checkboxes.
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.remove('show'));
                     
@@ -698,7 +682,6 @@
                 }
             }
             
-            // 6) Apply styling properties if provided.
             if ('headerColor' in changedProperties) {
                 const headerEl = this._shadowRoot.querySelector('.table-header');
                 if (headerEl) {
@@ -800,14 +783,12 @@
                 this._cancelButton.style.display = 'inline-block';
                 this._editButton.style.display = 'none';
                 
-                // Show checkboxes
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.add('show'));
             } else {
                 this._multiSelectButton.style.display = 'inline-block';
                 this._cancelButton.style.display = 'none';
                 
-                // Hide checkboxes
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.remove('show'));
                 
@@ -820,6 +801,5 @@
         }
     }
 
-    // Register the custom element in the browser
     customElements.define('planifyit-tab-widget', PlanifyITTable);
 })();
