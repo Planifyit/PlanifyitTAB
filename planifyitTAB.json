@@ -85,7 +85,7 @@
         }
     },
     "methods": {
-          "getSelectedRows": {
+        "getSelectedRows": {
             "returnType": "string",
             "description": "Get the selected row indices as a JSON string",
             "parameters": [],
