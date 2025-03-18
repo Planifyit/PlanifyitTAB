@@ -89,7 +89,7 @@
           "returnType": "string",
           "description": "Get the data for the selected rows as a JSON string",
           "parameters": [],
-          "body": "return this.getSelectedRowData() || '[]';"
+          "body": "return this.selectedRowsData || '[]';"
         },
         "getSelectedRows": {
             "returnType": "string",
