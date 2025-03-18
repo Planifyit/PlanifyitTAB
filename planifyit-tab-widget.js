@@ -521,10 +521,30 @@
          * ------------------------------------------------------------------ */
         
         connectedCallback() {
-            // On load, if no data is set, just render empty
-            if (!this._tableData.length && !this._tableColumns.length) {
-                this._renderTable();
+            // On initial load, read the saved attributes (if any) so that the widget
+            // restores previously bound data and selections.
+            if (this.hasAttribute("tableData")) {
+                try {
+                    this._tableData = JSON.parse(this.getAttribute("tableData"));
+                } catch (e) {
+                    console.error("Invalid tableData attribute", e);
+                }
             }
+            if (this.hasAttribute("tableColumns")) {
+                try {
+                    this._tableColumns = JSON.parse(this.getAttribute("tableColumns"));
+                } catch (e) {
+                    console.error("Invalid tableColumns attribute", e);
+                }
+            }
+            if (this.hasAttribute("selectedRows")) {
+                try {
+                    this._selectedRows = JSON.parse(this.getAttribute("selectedRows"));
+                } catch (e) {
+                    console.error("Invalid selectedRows attribute", e);
+                }
+            }
+            this._renderTable();
         }
         
         onCustomWidgetBeforeUpdate(changedProperties) {
@@ -547,7 +567,7 @@
                 
                 const columns = [];
                 
-                // Handle dimensions: if metadata.dimensions is an object, iterate its keys.
+                // Handle dimensions
                 const dims = dataBinding.metadata && dataBinding.metadata.dimensions;
                 if (dims && typeof dims === "object" && !Array.isArray(dims)) {
                     Object.keys(dims).forEach(dimKey => {
@@ -566,7 +586,7 @@
                     });
                 }
                 
-                // Handle measures: if metadata.mainStructureMembers is an object, iterate its keys.
+                // Handle measures
                 const measures = dataBinding.metadata && dataBinding.metadata.mainStructureMembers;
                 if (measures && typeof measures === "object" && !Array.isArray(measures)) {
                     Object.keys(measures).forEach(measKey => {
@@ -586,7 +606,6 @@
                 }
                 
                 // Transform raw data rows into a simplified structure.
-                // For each column (by name), pick the appropriate value.
                 const tableData = dataBinding.data.map((row) => {
                     const transformedRow = {};
                     columns.forEach(col => {
