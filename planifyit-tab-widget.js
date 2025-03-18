@@ -386,6 +386,8 @@ _handleEdit() {
                 }
             });
             this._updateSelectAllCheckbox();
+             this.selectedRowsData = JSON.stringify(this._selectedRows.map(index => this._tableData[index]));
+
         }
 
         _updateSelectAllCheckbox() {
@@ -400,7 +402,7 @@ _handleEdit() {
                 this._selectedRows.length < this._tableData.length;
             this._selectAllCheckbox.checked = allSelected;
             this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
-            this.selectedRowsData = JSON.stringify(this._selectedRows.map(index => this._tableData[index]));
+         
 
         }
         
