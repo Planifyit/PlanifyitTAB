@@ -85,12 +85,12 @@
         }
     },
     "methods": {
-           "getsSelectedRows": {
-            "returnType": "string",
-            "description": "Get the selected row indices as a JSON string",
-            "parameters": [],
-            "body": "return this.selectedRows || '[]';"
-        },
+          "getSelectedRowData": {
+  "returnType": "string",
+  "description": "Get the data for the selected rows as a JSON string",
+  "parameters": [],
+  "body": "return this.getSelectedRowData();"
+},
         "getSelectedRows": {
             "returnType": "string",
             "description": "Get the selected row indices as a JSON string",
