@@ -102,10 +102,7 @@
                 background-color: rgba(255, 255, 255, 0.4);
             }
 
-            .table-button.edit-button {
-                display: none;
-                background-color: #4CAF50;
-            }
+       
 
             .table-button.cancel-button {
                 display: none;
@@ -196,7 +193,7 @@
                 <div class="action-buttons">
                     <button id="multiSelectButton" class="table-button">Select Multiple</button>
                     <button id="cancelButton" class="table-button cancel-button">Cancel</button>
-                    <button id="editButton" class="table-button edit-button">Edit</button>
+                  
                 </div>
             </div>
             
@@ -242,7 +239,6 @@
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
-            this._editButton = this._shadowRoot.getElementById('editButton');
             this._selectAllCheckbox = this._shadowRoot.getElementById('selectAllCheckbox');
             this._tableBody = this._shadowRoot.getElementById('tableBody');
             this._headerRow = this._shadowRoot.getElementById('headerRow');
@@ -250,7 +246,6 @@
             // Attach event listeners
             this._multiSelectButton.addEventListener('click', this._toggleMultiSelectMode.bind(this));
             this._cancelButton.addEventListener('click', this._cancelMultiSelect.bind(this));
-            this._editButton.addEventListener('click', this._handleEdit.bind(this));
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
         }
         
@@ -262,7 +257,6 @@
             this._isMultiSelectMode = true;
             this._multiSelectButton.style.display = 'none';
             this._cancelButton.style.display = 'inline-block';
-            this._editButton.style.display = 'none';
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.add('show'));
             this._selectedRows = [];
@@ -281,7 +275,7 @@
             this._isMultiSelectMode = false;
             this._multiSelectButton.style.display = 'inline-block';
             this._cancelButton.style.display = 'none';
-            this._editButton.style.display = 'none';
+      
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.remove('show'));
             this._selectedRows = [];
@@ -297,10 +291,7 @@
             }));
         }
         
-_handleEdit() {
-    const detail = { selectedRows: this._selectedRows };
-    this.dispatchEvent(new CustomEvent("onEditSelected", { detail }));
-}
+
         
         /* ------------------------------------------------------------------
          *  Select All / Row Selection
@@ -317,7 +308,6 @@ _handleSelectAll(e) {
         this._selectedRows = [];
     }
     this._updateRowSelection();
-    this._updateEditButtonVisibility();
     this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
     this.dispatchEvent(new Event("onSelectionChanged"));
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
@@ -336,7 +326,7 @@ _handleRowClick(index, e) {
     if (!this._isMultiSelectMode) {
         this._selectedRows = [index];
         this._updateRowSelection();
-        this._updateEditButtonVisibility();
+
         this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
         this.dispatchEvent(new Event("onSelectionChanged"));
         this.dispatchEvent(new CustomEvent("propertiesChanged", {
@@ -361,7 +351,7 @@ _handleCheckboxChange(index, e) {
         this._selectedRows = this._selectedRows.filter(i => i !== index);
     }
     this._updateSelectAllCheckbox();
-    this._updateEditButtonVisibility();
+
     this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
     this.dispatchEvent(new Event("onSelectionChanged"));
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
@@ -416,13 +406,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
 
         }
         
- _updateEditButtonVisibility() {
-    if (this._isMultiSelectMode) {
-        this._editButton.style.display = this._selectedRows.length > 0 ? 'inline-block' : 'none';
-    } else {
-        this._editButton.style.display = this._selectedRows.length === 1 ? 'inline-block' : 'none';
-    }
-}
+
 
         
         /* ------------------------------------------------------------------
@@ -475,7 +459,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 this._tableBody.appendChild(row);
             });
             this._updateSelectAllCheckbox();
-            this._updateEditButtonVisibility();
+
         }
         
         /* ------------------------------------------------------------------
@@ -618,7 +602,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 try {
                     this._selectedRows = JSON.parse(changedProperties.selectedRows);
                     this._updateRowSelection();
-                    this._updateEditButtonVisibility();
+    
                 } catch (e) {
                     console.error('Invalid selected rows:', e);
                 }
@@ -629,7 +613,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 if (this._isMultiSelectMode) {
                     this._multiSelectButton.style.display = 'none';
                     this._cancelButton.style.display = 'inline-block';
-                    this._editButton.style.display = 'none';
+          
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
                 } else {
@@ -637,7 +621,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                     this._cancelButton.style.display = 'none';
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.remove('show'));
-                    this._updateEditButtonVisibility();
+             
                 }
             }
             
@@ -651,7 +635,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
             if ('buttonColor' in changedProperties) {
                 const buttons = this._shadowRoot.querySelectorAll('.table-button');
                 buttons.forEach(btn => {
-                    if (!btn.classList.contains('edit-button') && !btn.classList.contains('cancel-button')) {
+                    if ( !btn.classList.contains('cancel-button')) {
                         btn.style.color = changedProperties.buttonColor;
                     }
                 });
@@ -730,7 +714,7 @@ get selectedRowsData() {
             try {
                 this._selectedRows = JSON.parse(value);
                 this._updateRowSelection();
-                this._updateEditButtonVisibility();
+             
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
                     detail: { properties: { selectedRows: value } }
                 }));
@@ -748,7 +732,7 @@ get selectedRowsData() {
             if (this._isMultiSelectMode) {
                 this._multiSelectButton.style.display = 'none';
                 this._cancelButton.style.display = 'inline-block';
-                this._editButton.style.display = 'none';
+              
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.add('show'));
             } else {
@@ -756,7 +740,7 @@ get selectedRowsData() {
                 this._cancelButton.style.display = 'none';
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.remove('show'));
-                this._updateEditButtonVisibility();
+               
             }
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: { properties: { isMultiSelectMode: value } }
