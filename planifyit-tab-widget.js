@@ -187,26 +187,7 @@
                 margin-right: 5px;
             }
             
-            .symbol-circle {
-                color: currentColor;
-            }
-            
-            .symbol-square {
-                color: currentColor;
-            }
-            
-            .symbol-triangle {
-                color: currentColor;
-            }
-            
-            .symbol-diamond {
-                color: currentColor;
-            }
-            
-            .symbol-star {
-                color: currentColor;
-            }
-            
+                 
             .symbol-check {
                 color: #4CAF50;
             }
@@ -333,11 +314,6 @@
         'warning': '⚠',
         'info': 'ℹ',
         'flag': '⚑',
-        'circle': '●',
-        'square': '■',
-        'triangle': '▲',
-        'diamond': '◆',
-        'star': '★',
         'x': '✕',
         'arrow-up': '↑',
         'arrow-down': '↓',
