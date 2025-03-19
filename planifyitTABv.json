@@ -90,7 +90,7 @@
         },
         "symbolMappings": {
         "type": "string",
-        "defaultValue": "[]"
+        "default": "[]"
      }
     },
     "methods": {
