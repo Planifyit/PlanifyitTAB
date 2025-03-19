@@ -764,7 +764,16 @@ onCustomWidgetAfterUpdate(changedProperties) {
              
                 }
             }
+
+
+  if ('headerTextColorInput' in changedProperties) {
+                const headerT = this._shadowRoot.querySelector('.table-header-title');
+                if (headerT) {
+                    headerT.style.backgroundColor = changedProperties.headerTextColorInput;
+                }
+            }
             
+    
             if ('headerColor' in changedProperties) {
                 const headerEl = this._shadowRoot.querySelector('.table-header');
                 if (headerEl) {
