@@ -256,10 +256,7 @@
                     </thead>
                     <tbody id="tableBody">
                         <!-- Table data will be inserted here dynamically -->
-                        <tr>
-                            <td colspan="100%" class="no-data-message">No data available</td>
-                        </tr>
-                    </tbody>
+                                    </tbody>
                 </table>
             </div>
             
