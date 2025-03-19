@@ -40,6 +40,11 @@
             "description": "JSON string of selected row indices",
             "default": "[]"
         },
+         "selectedRowsData": {
+            "type": "string",
+            "description": "JSON string of selected row Data indices",
+            "default": "[]"
+        },
         "isMultiSelectMode": {
             "type": "boolean",
             "description": "Whether multiple rows can be selected",
