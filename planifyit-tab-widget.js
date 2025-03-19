@@ -15,13 +15,6 @@
                 overflow: hidden;
             }
 
-            .image-container {
-                width: 100%;
-                height: 50px;
-                background-size: cover;
-                margin-bottom: 10px;
-            }
-
             .app-title {
                 font-size: 18px; 
                 font-weight: bold;
@@ -185,7 +178,7 @@
         </style>
 
         <div class="table-container">
-            <div class="image-container"></div>
+   
             <div class="app-title">PlanifyIT Table</div>
             
             <div class="table-header">
