@@ -78,7 +78,7 @@
             }
 
             .table-button {
-               
+                display: flex !important; 
                 border: none;
                 border-radius: 4px;
                 color: white;
@@ -87,7 +87,7 @@
                 font-size: 16px;
                 width: 36px;
                 height: 36px;
-                display: flex;
+             
                 align-items: center;
                 justify-content: center;
                  background-color: #008509;
