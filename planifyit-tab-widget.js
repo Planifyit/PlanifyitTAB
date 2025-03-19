@@ -176,6 +176,8 @@
 }
 
        /* Symbol styles */
+         
+            /* Symbol styles */
             .symbol {
                 display: inline-block;
                 width: 16px;
@@ -185,11 +187,64 @@
                 margin-right: 5px;
             }
             
+            .symbol-circle {
+                color: currentColor;
+            }
+            
+            .symbol-square {
+                color: currentColor;
+            }
+            
+            .symbol-triangle {
+                color: currentColor;
+            }
+            
+            .symbol-diamond {
+                color: currentColor;
+            }
+            
+            .symbol-star {
+                color: currentColor;
+            }
+            
             .symbol-check {
                 color: #4CAF50;
             }
-              .symbol-bell {
+            
+            .symbol-x {
+                color: #F44336;
+            }
+            
+            .symbol-arrow-up {
+                color: #4CAF50;
+            }
+            
+            .symbol-arrow-down {
+                color: #F44336;
+            }
+            
+            .symbol-minus {
                 color: #FF9800;
+            }
+            
+            .symbol-plus {
+                color: #2196F3;
+            }
+            
+            .symbol-bell {
+                color: #FF9800;
+            }
+            
+            .symbol-warning {
+                color: #FF9800;
+            }
+            
+            .symbol-info {
+                color: #2196F3;
+            }
+            
+            .symbol-flag {
+                color: #F44336;
             }
             
             
