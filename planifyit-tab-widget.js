@@ -305,66 +305,74 @@ _handleEdit() {
         /* ------------------------------------------------------------------
          *  Select All / Row Selection
          * ------------------------------------------------------------------ */
-        
-        _handleSelectAll(e) {
-            const isChecked = e.target.checked;
-            if (isChecked) {
-                this._selectedRows = Array.from(
-                    { length: this._tableData.length },
-                    (_, index) => index
-                );
-            } else {
-                this._selectedRows = [];
-            }
-            this._updateRowSelection();
-            this._updateEditButtonVisibility();
-            this.dispatchEvent(new Event("onSelectionChanged"));
-            this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                detail: {
-                    properties: {
-                        selectedRows: JSON.stringify(this._selectedRows)
-                    }
-                }
-            }));
-        }
-        
-        _handleRowClick(index, e) {
-            if (e.target.type === 'checkbox') return;
-            if (!this._isMultiSelectMode) {
-                this._selectedRows = [index];
-                this._updateRowSelection();
-                this._updateEditButtonVisibility();
-                this.dispatchEvent(new Event("onSelectionChanged"));
-                this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: {
-                        properties: {
-                            selectedRows: JSON.stringify(this._selectedRows)
-                        }
-                    }
-                }));
+       // Update in _handleSelectAll
+_handleSelectAll(e) {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+        this._selectedRows = Array.from(
+            { length: this._tableData.length },
+            (_, index) => index
+        );
+    } else {
+        this._selectedRows = [];
+    }
+    this._updateRowSelection();
+    this._updateEditButtonVisibility();
+    this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+    this.dispatchEvent(new Event("onSelectionChanged"));
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: {
+            properties: {
+                selectedRows: JSON.stringify(this._selectedRows),
+                selectedRowsData: JSON.stringify(this._selectedRowsData)
             }
         }
-        
-        _handleCheckboxChange(index, e) {
-            const isChecked = e.target.checked;
-            if (isChecked) {
-                if (!this._selectedRows.includes(index)) {
-                    this._selectedRows.push(index);
+    }));
+}
+
+// Update in _handleRowClick
+_handleRowClick(index, e) {
+    if (e.target.type === 'checkbox') return;
+    if (!this._isMultiSelectMode) {
+        this._selectedRows = [index];
+        this._updateRowSelection();
+        this._updateEditButtonVisibility();
+        this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+        this.dispatchEvent(new Event("onSelectionChanged"));
+        this.dispatchEvent(new CustomEvent("propertiesChanged", {
+            detail: {
+                properties: {
+                    selectedRows: JSON.stringify(this._selectedRows),
+                    selectedRowsData: JSON.stringify(this._selectedRowsData)
                 }
-            } else {
-                this._selectedRows = this._selectedRows.filter(i => i !== index);
             }
-            this._updateSelectAllCheckbox();
-            this._updateEditButtonVisibility();
-            this.dispatchEvent(new Event("onSelectionChanged"));
-            this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                detail: {
-                    properties: {
-                        selectedRows: JSON.stringify(this._selectedRows)
-                    }
-                }
-            }));
+        }));
+    }
+}
+
+// Update in _handleCheckboxChange
+_handleCheckboxChange(index, e) {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+        if (!this._selectedRows.includes(index)) {
+            this._selectedRows.push(index);
         }
+    } else {
+        this._selectedRows = this._selectedRows.filter(i => i !== index);
+    }
+    this._updateSelectAllCheckbox();
+    this._updateEditButtonVisibility();
+    this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+    this.dispatchEvent(new Event("onSelectionChanged"));
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: {
+            properties: {
+                selectedRows: JSON.stringify(this._selectedRows),
+                selectedRowsData: JSON.stringify(this._selectedRowsData)
+            }
+        }
+    }));
+}
         
         /* ------------------------------------------------------------------
          *  Visual Updates for Selection
@@ -712,9 +720,9 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
             return JSON.stringify(this._selectedRows);
         }
     
-   get selectedRowsData() {
-       return JSON.stringify(this._selectedRowsData);
-   }
+get selectedRowsData() {
+    return JSON.stringify(this._selectedRowsData);
+}
 
 
         
