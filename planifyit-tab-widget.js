@@ -649,6 +649,17 @@ this._tableColumns.forEach((col, colIndex) => {
         }
 
         onCustomWidgetAfterUpdate(changedProperties) {
+
+if ('symbolMappings' in changedProperties) {
+    try {
+        this._symbolMappings = JSON.parse(changedProperties.symbolMappings);
+        this._renderTable();
+    } catch (e) {
+        console.error('Invalid symbol mappings:', e);
+    }
+}
+
+            
             if ("tableDataBinding" in changedProperties) {
                 const dataBinding = changedProperties.tableDataBinding;
                 if (dataBinding && dataBinding.state === 'success') {
