@@ -470,75 +470,78 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
         /* ------------------------------------------------------------------
          *  Main Table Rendering
          * ------------------------------------------------------------------ */
-        
         _renderTable() {
-            this._headerRow.innerHTML = `
-                <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
-                    <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
-                </th>`;
-            this._tableBody.innerHTML = '';
-            this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
-            this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
-            this._tableColumns.forEach(col => {
-                const th = document.createElement('th');
-                th.textContent = col.label || col.name;
-                this._headerRow.appendChild(th);
-            });
-            if (this._tableData.length === 0) {
-                const row = document.createElement('tr');
-                const cell = document.createElement('td');
-                cell.colSpan = this._tableColumns.length + 1;
-                cell.className = 'no-data-message';
-                cell.textContent = 'No data available';
-                row.appendChild(cell);
-                this._tableBody.appendChild(row);
-                return;
-            }
-            this._tableData.forEach((rowData, rowIndex) => {
-                const row = document.createElement('tr');
-                const checkboxCell = document.createElement('td');
-                checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'select-checkbox';
-                checkbox.checked = this._selectedRows.includes(rowIndex);
-                checkbox.addEventListener('change', (e) => this._handleCheckboxChange(rowIndex, e));
-                checkboxCell.appendChild(checkbox);
-                row.appendChild(checkboxCell);
-                this._tableColumns.forEach(col => {
-                    const cell = document.createElement('td');
-                    cell.textContent = rowData[col.name] || '';
-                    row.appendChild(cell);
-                });
-                row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
-                if (this._selectedRows.includes(rowIndex)) {
-                    row.classList.add('selected');
-                }
-                this._tableBody.appendChild(row);
-            });
-
-this._tableColumns.forEach((col, colIndex) => {
-    const cell = document.createElement('td');
-    const value = rowData[col.name] || '';
-    cell.textContent = value;
+    this._headerRow.innerHTML = `
+        <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
+            <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
+        </th>`;
+    this._tableBody.innerHTML = '';
+    this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
+    this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
     
-    // Check if this cell has a symbol mapping
-    const symbolInfo = this._getSymbolForValue(colIndex + 1, value);
-    if (symbolInfo) {
-        cell.textContent = '';
-        const symbolElement = this._createSymbolElement(symbolInfo);
-        cell.appendChild(symbolElement);
-        cell.appendChild(document.createTextNode(' ' + value));
+    // Render column headers
+    this._tableColumns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col.label || col.name;
+        this._headerRow.appendChild(th);
+    });
+    
+    // Show "No data" message if no data
+    if (this._tableData.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = this._tableColumns.length + 1;
+        cell.className = 'no-data-message';
+        cell.textContent = 'No data available';
+        row.appendChild(cell);
+        this._tableBody.appendChild(row);
+        return;
     }
     
-    row.appendChild(cell);
-});
-
-
+    // Render each row
+    this._tableData.forEach((rowData, rowIndex) => {
+        const row = document.createElement('tr');
+        
+        // Add checkbox cell for selection
+        const checkboxCell = document.createElement('td');
+        checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'select-checkbox';
+        checkbox.checked = this._selectedRows.includes(rowIndex);
+        checkbox.addEventListener('change', (e) => this._handleCheckboxChange(rowIndex, e));
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+        
+        // Add data cells with symbol mapping
+        this._tableColumns.forEach((col, colIndex) => {
+            const cell = document.createElement('td');
+            const value = rowData[col.name] || '';
             
-            this._updateSelectAllCheckbox();
-
+            // Check if this cell has a symbol mapping
+            const symbolInfo = this._getSymbolForValue(colIndex + 1, value);
+            if (symbolInfo) {
+                cell.textContent = '';
+                const symbolElement = this._createSymbolElement(symbolInfo);
+                cell.appendChild(symbolElement);
+                cell.appendChild(document.createTextNode(' ' + value));
+            } else {
+                cell.textContent = value;
+            }
+            
+            row.appendChild(cell);
+        });
+        
+        // Add row click handler
+        row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
+        if (this._selectedRows.includes(rowIndex)) {
+            row.classList.add('selected');
         }
+        this._tableBody.appendChild(row);
+    });
+    
+    this._updateSelectAllCheckbox();
+}
         
         /* ------------------------------------------------------------------
          *  SAC Lifecycle Hooks
@@ -648,16 +651,16 @@ this._tableColumns.forEach((col, colIndex) => {
             }
         }
 
-        onCustomWidgetAfterUpdate(changedProperties) {
-
-if ('symbolMappings' in changedProperties) {
-    try {
-        this._symbolMappings = JSON.parse(changedProperties.symbolMappings);
-        this._renderTable();
-    } catch (e) {
-        console.error('Invalid symbol mappings:', e);
+        
+onCustomWidgetAfterUpdate(changedProperties) {
+    if ('symbolMappings' in changedProperties) {
+        try {
+            this._symbolMappings = JSON.parse(changedProperties.symbolMappings);
+            this._renderTable();
+        } catch (e) {
+            console.error('Invalid symbol mappings:', e);
+        }
     }
-}
 
             
             if ("tableDataBinding" in changedProperties) {
