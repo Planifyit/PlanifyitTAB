@@ -96,6 +96,24 @@
         </style>
         <form id="form">
             <fieldset>
+                <legend>Text Content</legend>
+                <table>
+                    <tr>
+                        <td>Table Header Title</td>
+                        <td>
+                            <input id="style_header_title" type="text" placeholder="Enter header title">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>App Title</td>
+                        <td>
+                            <input id="style_app_title" type="text" placeholder="Enter app title">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            
+            <fieldset>
                 <legend>Table Appearance</legend>
                 <table>
                     <tr>
@@ -164,6 +182,10 @@
             
             // Get form and elements
             this._form = this._shadowRoot.getElementById("form");
+            
+            // Text inputs
+            this._headerTitleInput = this._shadowRoot.getElementById("style_header_title");
+            this._appTitleInput = this._shadowRoot.getElementById("style_app_title");
             
             // Color inputs
             this._headerColorInput = this._shadowRoot.getElementById("style_header_color");
@@ -347,6 +369,8 @@
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
+                        headerTitle: this.headerTitle,
+                        appTitle: this.appTitle,
                         headerColor: this.headerColor,
                         headerTextColor: this.headerTextColor,
                         buttonColor: this.buttonColor,
@@ -391,6 +415,23 @@
         
         get symbolMappings() {
             return JSON.stringify(this._updateMappingsState());
+        }
+        
+        // Getters and setters for title properties
+        get headerTitle() {
+            return this._headerTitleInput.value;
+        }
+        
+        set headerTitle(value) {
+            this._headerTitleInput.value = value || '';
+        }
+        
+        get appTitle() {
+            return this._appTitleInput.value;
+        }
+        
+        set appTitle(value) {
+            this._appTitleInput.value = value || '';
         }
         
         // Getters and setters for style properties (existing code)
