@@ -24,7 +24,7 @@
                 padding: 8px;
                 vertical-align: middle;
             }
-            input[type="text"], input[type="color"] {
+            input[type="text"], input[type="color"], select {
                 width: 100%;
                 padding: 5px;
                 border: 1px solid #ccc;
@@ -57,6 +57,7 @@
             }
         </style>
         <form id="form">
+            <!-- Existing Table Appearance Fieldset -->
             <fieldset>
                 <legend>Table Appearance</legend>
                 <table>
@@ -106,6 +107,45 @@
                 <button type="button" id="apply_styles" class="apply-button">Apply Styles</button>
                 <input type="submit" style="display:none;">
             </fieldset>
+            
+            <!-- New Fieldset for Column Symbol Replacement -->
+            <fieldset>
+                <legend>Column Symbol Replacement</legend>
+                <table>
+                    <tr>
+                        <td>Column</td>
+                        <td>
+                            <select id="replacement_column">
+                                <option value="">-- Select Column --</option>
+                                <!-- Option values can be populated dynamically if needed -->
+                                <option value="column1">Column 1</option>
+                                <option value="column2">Column 2</option>
+                                <option value="column3">Column 3</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Value to Match</td>
+                        <td>
+                            <input type="text" id="replacement_value" placeholder="Enter value">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Replacement Symbol</td>
+                        <td>
+                            <select id="replacement_symbol">
+                                <option value="">-- Select Symbol --</option>
+                                <option value="✔">✔</option>
+                                <option value="✖">✖</option>
+                                <option value="⚠">⚠</option>
+                                <option value="★">★</option>
+                                <option value="☆">☆</option>
+                                <option value="✓">✓</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
         </form>
     `;
 
@@ -115,32 +155,32 @@
             this._shadowRoot = this.attachShadow({mode: "open"});
             this._shadowRoot.appendChild(template.content.cloneNode(true));
             
-            // Get form elements
+            // Get form element
             this._form = this._shadowRoot.getElementById("form");
             
-            // Get color inputs
+            // Get color inputs and pickers
             this._headerColorInput = this._shadowRoot.getElementById("style_header_color");
             this._headerColorPicker = this._shadowRoot.getElementById("style_header_color_picker");
-            
             this._headerTextColorInput = this._shadowRoot.getElementById("style_header_text_color");
             this._headerTextColorPicker = this._shadowRoot.getElementById("style_header_text_color_picker");
-            
             this._buttonColorInput = this._shadowRoot.getElementById("style_button_color");
             this._buttonColorPicker = this._shadowRoot.getElementById("style_button_color_picker");
-            
             this._selectedRowColorInput = this._shadowRoot.getElementById("style_selected_row_color");
             this._selectedRowColorPicker = this._shadowRoot.getElementById("style_selected_row_color_picker");
-            
             this._hoverRowColorInput = this._shadowRoot.getElementById("style_hover_row_color");
             this._hoverRowColorPicker = this._shadowRoot.getElementById("style_hover_row_color_picker");
-            
             this._tableTextColorInput = this._shadowRoot.getElementById("style_table_text_color");
             this._tableTextColorPicker = this._shadowRoot.getElementById("style_table_text_color_picker");
             
             // Apply button
             this._applyButton = this._shadowRoot.getElementById("apply_styles");
             
-            // Connect color pickers to text inputs
+            // Get new replacement controls
+            this._replacementColumn = this._shadowRoot.getElementById("replacement_column");
+            this._replacementValue = this._shadowRoot.getElementById("replacement_value");
+            this._replacementSymbol = this._shadowRoot.getElementById("replacement_symbol");
+            
+            // Connect color pickers with their text inputs
             this._connectColorPickers();
             
             // Add event listeners
@@ -201,7 +241,7 @@
         _submit(e) {
             e.preventDefault();
             
-            // Dispatch event with updated style properties
+            // Dispatch event with updated style and replacement properties
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -210,17 +250,19 @@
                         buttonColor: this.buttonColor,
                         selectedRowColor: this.selectedRowColor,
                         hoverRowColor: this.hoverRowColor,
-                        tableTextColor: this.tableTextColor
+                        tableTextColor: this.tableTextColor,
+                        replacementColumn: this.replacementColumn,
+                        replacementValue: this.replacementValue,
+                        replacementSymbol: this.replacementSymbol
                     }
                 }
             }));
         }
 
-        // Getters and setters for style properties
+        // Getters and setters for color properties
         get headerColor() {
             return this._headerColorInput.value;
         }
-        
         set headerColor(value) {
             this._headerColorInput.value = value;
             this._headerColorPicker.value = value;
@@ -229,7 +271,6 @@
         get headerTextColor() {
             return this._headerTextColorInput.value;
         }
-        
         set headerTextColor(value) {
             this._headerTextColorInput.value = value;
             this._headerTextColorPicker.value = value;
@@ -238,7 +279,6 @@
         get buttonColor() {
             return this._buttonColorInput.value;
         }
-        
         set buttonColor(value) {
             this._buttonColorInput.value = value;
             this._buttonColorPicker.value = value;
@@ -247,7 +287,6 @@
         get selectedRowColor() {
             return this._selectedRowColorInput.value;
         }
-        
         set selectedRowColor(value) {
             this._selectedRowColorInput.value = value;
             this._selectedRowColorPicker.value = value;
@@ -256,7 +295,6 @@
         get hoverRowColor() {
             return this._hoverRowColorInput.value;
         }
-        
         set hoverRowColor(value) {
             this._hoverRowColorInput.value = value;
             this._hoverRowColorPicker.value = value;
@@ -265,10 +303,31 @@
         get tableTextColor() {
             return this._tableTextColorInput.value;
         }
-        
         set tableTextColor(value) {
             this._tableTextColorInput.value = value;
             this._tableTextColorPicker.value = value;
+        }
+
+        // Getters and setters for the new replacement properties
+        get replacementColumn() {
+            return this._replacementColumn.value;
+        }
+        set replacementColumn(value) {
+            this._replacementColumn.value = value;
+        }
+        
+        get replacementValue() {
+            return this._replacementValue.value;
+        }
+        set replacementValue(value) {
+            this._replacementValue.value = value;
+        }
+        
+        get replacementSymbol() {
+            return this._replacementSymbol.value;
+        }
+        set replacementSymbol(value) {
+            this._replacementSymbol.value = value;
         }
     }
 
