@@ -766,13 +766,21 @@ onCustomWidgetAfterUpdate(changedProperties) {
             }
 
 
-  if ('headerTextColorInput' in changedProperties) {
-                const headerT = this._shadowRoot.querySelector('.table-header-title');
-                if (headerT) {
-                    headerT.style.backgroundColor = changedProperties.headerTextColorInput;
-                }
-            }
-            
+        if ('headerTextColor' in changedProperties) {
+    const headerT = this._shadowRoot.querySelector('.table-header-title');
+    if (headerT) {
+           headerT.style.color = changedProperties.headerTextColor;
+    }
+}
+    if ('tableTextColor' in changedProperties) {
+
+    const tableCells = this._shadowRoot.querySelectorAll('table td');
+    tableCells.forEach(cell => {
+        cell.style.color = changedProperties.tableTextColor;
+    });
+}
+
+    
     
             if ('headerColor' in changedProperties) {
                 const headerEl = this._shadowRoot.querySelector('.table-header');
