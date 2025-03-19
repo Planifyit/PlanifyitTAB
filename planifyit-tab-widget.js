@@ -109,6 +109,7 @@
 
             .column-headers {
                 position: sticky;
+                 top: 1px;
                 z-index: 5;
                 background-color: #f0f0f0;
             }
