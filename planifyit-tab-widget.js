@@ -109,7 +109,6 @@
 
             .column-headers {
                 position: sticky;
-                top: 50px;
                 z-index: 5;
                 background-color: #f0f0f0;
             }
@@ -251,11 +250,15 @@
                             <th class="checkbox-column">
                                 <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
                             </th>
+    
                             <!-- Table headers will be inserted here dynamically -->
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- Table data will be inserted here dynamically -->
+                    <!-- Table data will be inserted here dynamically -->
+                        <tr>
+                            <td colspan="100%" class="no-data-message">No data available</td>
+                        </tr>
                                     </tbody>
                 </table>
             </div>
