@@ -685,6 +685,22 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
 
         
 onCustomWidgetAfterUpdate(changedProperties) {
+
+    //  headerTitle and appTitle
+    if ('headerTitle' in changedProperties) {
+        const headerTitleEl = this._shadowRoot.querySelector('.table-header-title');
+        if (headerTitleEl) {
+            headerTitleEl.textContent = changedProperties.headerTitle || 'Data Table';
+        }
+    }
+    
+    if ('appTitle' in changedProperties) {
+        const appTitleEl = this._shadowRoot.querySelector('.app-title');
+        if (appTitleEl) {
+            appTitleEl.textContent = changedProperties.appTitle || 'PlanifyIT Table';
+        }
+    }
+    
     if ('symbolMappings' in changedProperties) {
         try {
             this._symbolMappings = JSON.parse(changedProperties.symbolMappings);
