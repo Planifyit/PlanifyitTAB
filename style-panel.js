@@ -277,11 +277,6 @@
             symbolSelect.className = "symbol-select";
             
             const symbols = [
-                { value: 'circle', label: '● Circle' },
-                { value: 'square', label: '■ Square' },
-                { value: 'triangle', label: '▲ Triangle' },
-                { value: 'diamond', label: '◆ Diamond' },
-                { value: 'star', label: '★ Star' },
                 { value: 'check', label: '✓ Check' },
                 { value: 'x', label: '✕ X' },
                 { value: 'arrow-up', label: '↑ Arrow Up' },
