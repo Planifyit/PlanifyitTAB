@@ -233,10 +233,10 @@
 
         <div class="table-container">
    
-            <div class="app-title"></div>
+            <div class="app-title">T</div>
             
             <div class="table-header">
-                <div class="table-header-title"></div>
+                <div class="table-header-title">T</div>
                 <div class="action-buttons">
                     <button id="multiSelectButton" class="table-button">Select Multiple</button>
                     <button id="cancelButton" class="table-button cancel-button">Cancel</button>
