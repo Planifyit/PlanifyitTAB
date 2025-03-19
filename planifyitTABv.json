@@ -105,8 +105,8 @@
     },
     "methods": {
       "getSelectedRowData": {
-          "returnType": "array",
-           "description": "Get the data for the selected rows as an array",
+          "returnType": "string",
+           "description": "Get the data for the selected rows as a string",
           "parameters": [],
           "body": "return this.selectedRowsData || '[]';"
         },
