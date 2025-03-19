@@ -85,6 +85,12 @@
                 color: white;
                 cursor: pointer;
                 transition: background-color 0.3s;
+                font-size: 16px;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .table-button:hover {
@@ -238,8 +244,8 @@
             <div class="table-header">
                 <div class="table-header-title"></div>
                 <div class="action-buttons">
-                    <button id="multiSelectButton" class="table-button">Select Multiple</button>
-                    <button id="cancelButton" class="table-button cancel-button">Cancel</button>
+     <button id="multiSelectButton" class="table-button" title="Select Multiple">☐☑</button>
+<button id="cancelButton" class="table-button cancel-button" title="Cancel">✕</button>
                   
                 </div>
             </div>
