@@ -712,8 +712,8 @@ _handleEdit() {
         }
     
    get selectedRowsData() {
-    return this._selectedRowsData || '[]';
-}
+       return JSON.stringify(this._selectedRowsData);
+   }
 
 
         
