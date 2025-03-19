@@ -175,6 +175,24 @@
     background-color: #ffffff;
 }
 
+       /* Symbol styles */
+            .symbol {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                text-align: center;
+                line-height: 16px;
+                margin-right: 5px;
+            }
+            
+            .symbol-check {
+                color: #4CAF50;
+            }
+              .symbol-bell {
+                color: #FF9800;
+            }
+            
+            
         </style>
 
         <div class="table-container">
@@ -228,7 +246,7 @@
             this._selectedRows = [];
             this._selectedRowsData = [];
             this._isMultiSelectMode = false;
-            
+             this._symbolMappings = [];
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -241,6 +259,42 @@
             this._cancelButton.addEventListener('click', this._cancelMultiSelect.bind(this));
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
         }
+
+ /* ------------------------------------------------------------------
+         *  Symbol Mapping
+         * ------------------------------------------------------------------ */
+         
+        _getSymbolForValue(columnIndex, value) {
+            // Adjust for 1-based column indexing from style panel
+            const adjustedIndex = columnIndex - 1;
+            const mapping = this._symbolMappings.find(m => 
+                m.columnIndex === columnIndex && 
+                String(m.value).toLowerCase() === String(value).toLowerCase()
+            );
+            
+            if (!mapping) return null;
+            
+            const symbolMap = {
+                'check': '✓',
+                'bell': '🔔'               
+            };
+            
+            const symbol = symbolMap[mapping.symbol] || '●';
+            return {
+                symbol: symbol,
+                type: mapping.symbol
+            };
+        }
+        
+        _createSymbolElement(symbolInfo) {
+            const span = document.createElement('span');
+            span.className = `symbol symbol-${symbolInfo.type}`;
+            span.textContent = symbolInfo.symbol;
+            return span;
+        }
+        
+
+
         
         /* ------------------------------------------------------------------
          *  Multi-Select Mode / Buttons
