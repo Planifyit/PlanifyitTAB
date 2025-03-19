@@ -555,7 +555,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 cell.textContent = '';
                 const symbolElement = this._createSymbolElement(symbolInfo);
                 cell.appendChild(symbolElement);
-                cell.appendChild(document.createTextNode(' ' + value));
+      
             } else {
                 cell.textContent = value;
             }
