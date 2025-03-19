@@ -264,34 +264,45 @@
          *  Symbol Mapping
          * ------------------------------------------------------------------ */
          
-        _getSymbolForValue(columnIndex, value) {
-            // Adjust for 1-based column indexing from style panel
-            const adjustedIndex = columnIndex - 1;
-            const mapping = this._symbolMappings.find(m => 
-                m.columnIndex === columnIndex && 
-                String(m.value).toLowerCase() === String(value).toLowerCase()
-            );
-            
-            if (!mapping) return null;
-            
-            const symbolMap = {
-                'check': '✓',
-                'bell': '🔔'               
-            };
-            
-            const symbol = symbolMap[mapping.symbol] || '●';
-            return {
-                symbol: symbol,
-                type: mapping.symbol
-            };
-        }
-        
-        _createSymbolElement(symbolInfo) {
-            const span = document.createElement('span');
-            span.className = `symbol symbol-${symbolInfo.type}`;
-            span.textContent = symbolInfo.symbol;
-            return span;
-        }
+ _getSymbolForValue(columnIndex, value) {
+    const mapping = this._symbolMappings.find(m => 
+        m.columnIndex === columnIndex && 
+        String(m.value).toLowerCase() === String(value).toLowerCase()
+    );
+    
+    if (!mapping) return null;
+    
+    const symbolMap = {
+        'check': '✓',
+        'bell': '🔔',
+        'warning': '⚠',
+        'info': 'ℹ',
+        'flag': '⚑',
+        'circle': '●',
+        'square': '■',
+        'triangle': '▲',
+        'diamond': '◆',
+        'star': '★',
+        'x': '✕',
+        'arrow-up': '↑',
+        'arrow-down': '↓',
+        'minus': '-',
+        'plus': '+'
+    };
+    
+    const symbol = symbolMap[mapping.symbol] || '●';
+    return {
+        symbol: symbol,
+        type: mapping.symbol
+    };
+}
+
+_createSymbolElement(symbolInfo) {
+    const span = document.createElement('span');
+    span.className = `symbol symbol-${symbolInfo.type}`;
+    span.textContent = symbolInfo.symbol;
+    return span;
+}
         
 
 
@@ -505,6 +516,26 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 }
                 this._tableBody.appendChild(row);
             });
+
+this._tableColumns.forEach((col, colIndex) => {
+    const cell = document.createElement('td');
+    const value = rowData[col.name] || '';
+    cell.textContent = value;
+    
+    // Check if this cell has a symbol mapping
+    const symbolInfo = this._getSymbolForValue(colIndex + 1, value);
+    if (symbolInfo) {
+        cell.textContent = '';
+        const symbolElement = this._createSymbolElement(symbolInfo);
+        cell.appendChild(symbolElement);
+        cell.appendChild(document.createTextNode(' ' + value));
+    }
+    
+    row.appendChild(cell);
+});
+
+
+            
             this._updateSelectAllCheckbox();
 
         }
