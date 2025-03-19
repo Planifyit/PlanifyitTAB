@@ -236,7 +236,7 @@
             this._tableData = [];
             this._tableColumns = [];
             this._selectedRows = [];
-            this._selectedRowsData = '[]';
+            this._selectedRowsData = [];
             this._isMultiSelectMode = false;
             
             // Get DOM elements
