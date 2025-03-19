@@ -168,9 +168,6 @@
     "events": {
         "onSelectionChanged": {
             "description": "Called when the selection of rows changes."
-        },
-        "onEditSelected": {
-            "description": "Called when the edit button is clicked for a selected row."
         }
     },
     "dataBindings": {
