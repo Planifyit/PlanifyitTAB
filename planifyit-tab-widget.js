@@ -387,7 +387,8 @@ _handleEdit() {
                 }
             });
             this._updateSelectAllCheckbox();
-             this._selectedRowsData = JSON.stringify(this._selectedRows.map(index => this._tableData[index]));
+this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+
 
         }
 
