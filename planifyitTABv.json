@@ -3,8 +3,8 @@
     "description": "PlanifyIT Table Widget with Single and Multiple Selection",
     "newInstancePrefix": "planifyit_tab",
     "eula": "",
-    "vendor": "Planifyit",
-    "license": "",
+    "vendor": "Planifyit GmbH",
+    "license": "MIT",
     "id": "planifyit_tab",
     "version": "1.0.0",
     "icon": "https://planifyit.github.io/PlanifyitTAB/PlanifyIT_Logo2.png",
@@ -25,6 +25,16 @@
         }
     ],
     "properties": {
+         "headerTitle": {
+             "type": "string",
+             "description": "Title displayed in the table header",
+             "default": "Table Header"
+         },
+         "appTitle": {
+             "type": "string",
+             "description": "Title displayed for the application",
+             "default": "PlanifyIT Table"
+         },
         "tableData": {
             "type": "string",
             "description": "JSON string of table data",
