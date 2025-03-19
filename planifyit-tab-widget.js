@@ -78,9 +78,9 @@
             }
 
             .table-button {
+               
                 border: none;
                 border-radius: 4px;
-                background-color: rgba(255, 255, 255, 0.2);
                 color: white;
                 cursor: pointer;
                 transition: background-color 0.3s;
@@ -90,6 +90,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                 background-color: #008509;
             }
 
             .table-button:hover {
@@ -102,7 +103,7 @@
 
        
 
-            .table-button.cancel-button {
+           .cancel-button {
                 display: none;
                 background-color: #FF5370;
             }
