@@ -233,10 +233,10 @@
 
         <div class="table-container">
    
-            <div class="app-title">T</div>
+            <div class="app-title">PlanifyIT Table</div>
             
             <div class="table-header">
-                <div class="table-header-title">T</div>
+                <div class="table-header-title"></div>
                 <div class="action-buttons">
                     <button id="multiSelectButton" class="table-button">Select Multiple</button>
                     <button id="cancelButton" class="table-button cancel-button">Cancel</button>
@@ -690,7 +690,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
     if ('headerTitle' in changedProperties) {
         const headerTitleEl = this._shadowRoot.querySelector('.table-header-title');
         if (headerTitleEl) {
-            headerTitleEl.textContent = changedProperties.headerTitle || 'Data Table';
+            headerTitleEl.textContent = changedProperties.headerTitle || '';
         }
     }
     
