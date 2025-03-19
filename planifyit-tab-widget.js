@@ -710,6 +710,12 @@ _handleEdit() {
         get selectedRows() {
             return JSON.stringify(this._selectedRows);
         }
+    
+   get selectedRowsData() {
+    return this._selectedRowsData || '[]';
+}
+
+
         
         set selectedRows(value) {
             try {
