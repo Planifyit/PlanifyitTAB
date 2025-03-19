@@ -703,7 +703,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
     if ('appTitle' in changedProperties) {
         const appTitleEl = this._shadowRoot.querySelector('.app-title');
         if (appTitleEl) {
-            appTitleEl.textContent = changedProperties.appTitle || 'PlanifyIT Table';
+            appTitleEl.textContent = changedProperties.appTitle || '';
         }
     }
     
