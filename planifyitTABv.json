@@ -25,6 +25,16 @@
         }
     ],
     "properties": {
+          "headerTitle": {
+            "type": "string",
+            "description": "Title displayed in the table header",
+            "default": "Table Header"
+        },
+        "appTitle": {
+            "type": "string",
+            "description": "Title displayed for the application",
+            "default": "PlanifyIT Table"
+        },
         "tableData": {
             "type": "string",
             "description": "JSON string of table data",
