@@ -87,7 +87,11 @@
             "type": "string",
             "description": "Text color for table headers",
             "default": "#ffffff"
-        }
+        },
+        "symbolMappings": {
+        "type": "string",
+        "defaultValue": "[]"
+     }
     },
     "methods": {
       "getSelectedRowData": {
