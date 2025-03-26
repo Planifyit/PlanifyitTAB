@@ -53,7 +53,7 @@
  "selectedRowsData": {
   "type": "string[]",
   "description": "Array of selected row data indices",
-  "default": []
+  "default": []},
         "isMultiSelectMode": {
             "type": "boolean",
             "description": "Whether multiple rows can be selected",
