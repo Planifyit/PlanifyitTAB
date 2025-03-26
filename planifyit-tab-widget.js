@@ -410,6 +410,7 @@ _handleSelectAll(e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
+              
          selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
        
             }
@@ -430,6 +431,7 @@ _handleRowClick(index, e) {
         this.dispatchEvent(new CustomEvent("propertiesChanged", {
             detail: {
                 properties: {
+                      console.log(this._selectedRowsData);
                     selectedRows: JSON.stringify(this._selectedRows),
                    selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
 
