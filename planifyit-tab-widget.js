@@ -410,7 +410,8 @@ _handleSelectAll(e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-                selectedRowsData: this._selectedRowsData   .map(row => JSON.stringify(row))   .join(';')
+         selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+       
             }
         }
     }));
@@ -430,7 +431,9 @@ _handleRowClick(index, e) {
             detail: {
                 properties: {
                     selectedRows: JSON.stringify(this._selectedRows),
-                    selectedRowsData: this._selectedRowsData   .map(row => JSON.stringify(row))   .join(';')
+                   selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+
+                
                 }
             }
         }));
@@ -455,7 +458,8 @@ _handleCheckboxChange(index, e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-                selectedRowsData: this._selectedRowsData   .map(row => JSON.stringify(row))   .join(';')
+                selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+       
             }
         }
     }));
