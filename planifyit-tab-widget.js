@@ -411,7 +411,7 @@ _handleSelectAll(e) {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
               
-         selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+         selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -434,7 +434,7 @@ _handleRowClick(index, e) {
                 properties: {
                 
                     selectedRows: JSON.stringify(this._selectedRows),
-                   selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+                   selectedRowsData: this._selectedRowsData
 
                 
                 }
@@ -461,7 +461,7 @@ _handleCheckboxChange(index, e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-                selectedRowsData: this._selectedRowsData.map(row => JSON.stringify(row)).join(';')
+                selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -876,9 +876,9 @@ onCustomWidgetAfterUpdate(changedProperties) {
         }
     
 get selectedRowsData() {
-  const data = this._selectedRowsData.map(row => JSON.stringify(row));
-  // Append a semicolon if there is at least one element.
-  return data.length ? data.join(';') + ';' : '';
+
+      return this._selectedRowsData;
+    console.log(this._selectedRowsData):
 }
 
 
