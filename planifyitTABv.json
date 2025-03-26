@@ -50,11 +50,10 @@
             "description": "JSON string of selected row indices",
             "default": "[]"
         },
-         "selectedRowsData": {
-            "type": "string",
-            "description": "JSON string of selected row Data indices",
-            "default": "[]"
-        },
+ "selectedRowsData": {
+  "type": "string[]",
+  "description": "Array of selected row data indices",
+  "default": []
         "isMultiSelectMode": {
             "type": "boolean",
             "description": "Whether multiple rows can be selected",
@@ -104,12 +103,13 @@
      }
     },
     "methods": {
-      "getSelectedRowData": {
-          "returnType": "string",
-           "description": "Get the data for the selected rows as a string",
-          "parameters": [],
-          "body": "return this.selectedRowsData || '[]';"
-        },
+        "getSelectedRowData": {
+  "returnType": "string[]",
+  "description": "Get the data for the selected rows as an array",
+  "parameters": [],
+  "body": "return this.selectedRowsData || '[]';"
+
+},
         "getSelectedRows": {
             "returnType": "string",
             "description": "Get the selected row indices as a JSON string",
