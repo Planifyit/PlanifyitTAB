@@ -416,6 +416,7 @@ _handleSelectAll(e) {
     }));
 }
 
+        
 // Update in _handleRowClick
 _handleRowClick(index, e) {
     if (e.target.type === 'checkbox') return;
@@ -868,7 +869,8 @@ onCustomWidgetAfterUpdate(changedProperties) {
         }
     
 get selectedRowsData() {
-    return JSON.stringify(this._selectedRowsData);
+    
+return this._selectedRowsData.map(row => JSON.stringify(row)).join(';');
 }
 
 
