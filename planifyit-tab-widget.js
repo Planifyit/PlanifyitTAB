@@ -878,7 +878,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
 get selectedRowsData() {
 
       return this._selectedRowsData;
-    console.log(this._selectedRowsData):
+    console.log(this._selectedRowsData);
 }
 
 
