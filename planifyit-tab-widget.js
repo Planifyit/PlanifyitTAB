@@ -427,7 +427,7 @@ _handleRowClick(index, e) {
         this._updateRowSelection();
 
         this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
-          console.log(this._selectedRowsData);
+       
         this.dispatchEvent(new Event("onSelectionChanged"));
         this.dispatchEvent(new CustomEvent("propertiesChanged", {
             detail: {
