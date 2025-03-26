@@ -876,9 +876,11 @@ onCustomWidgetAfterUpdate(changedProperties) {
         }
     
 get selectedRowsData() {
-    
-return this._selectedRowsData.map(row => JSON.stringify(row)).join(';');
+  const data = this._selectedRowsData.map(row => JSON.stringify(row));
+  // Append a semicolon if there is at least one element.
+  return data.length ? data.join(';') + ';' : '';
 }
+
 
 
         
