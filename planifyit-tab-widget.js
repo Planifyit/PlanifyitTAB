@@ -411,7 +411,7 @@ _handleSelectAll(e) {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
               
-         selectedRowsData: JSON.parse(this._selectedRowsData)
+         selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -434,7 +434,7 @@ _handleRowClick(index, e) {
                 properties: {
                 
                     selectedRows: JSON.stringify(this._selectedRows),
-                   selectedRowsData: JSON.parse(this._selectedRowsData)
+                   selectedRowsData: this._selectedRowsData
 
                 
                 }
@@ -461,7 +461,7 @@ _handleCheckboxChange(index, e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-                selectedRowsData: JSON.parse(this._selectedRowsData)
+                selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -877,7 +877,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
     
 get selectedRowsData() {
 
-      return JSON.parse(this._selectedRowsData);
+      return this._selectedRowsData;
     console.log(this._selectedRowsData);
 }
 
