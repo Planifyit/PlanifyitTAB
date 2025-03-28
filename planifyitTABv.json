@@ -51,9 +51,9 @@
             "default": "[]"
         },
  "selectedRowsData": {
-  "type": "string[]",
+  "type": "string",
   "description": "Array of selected row data indices",
-  "default": []},
+  "default": "[]"},
         "isMultiSelectMode": {
             "type": "boolean",
             "description": "Whether multiple rows can be selected",
@@ -104,7 +104,7 @@
     },
     "methods": {
         "getSelectedRowData": {
-  "returnType": "string[]",
+  "returnType": "string",
   "description": "Get the data for the selected rows as an array",
   "parameters": [],
   "body": "return this.selectedRowsData || '[]';"
