@@ -46,14 +46,14 @@
       "default": "[]"
     },
     "selectedRows": {
-      "type": "string",
-      "description": "JSON string of selected row indices",
-      "default": "[]"
+      "type": "string[]",
+      "description": "string array  of selected row indices",
+      "default": []
     },
     "selectedRowsData": {
-      "type": "string",
+      "type": "string[]",
       "description": "Array of selected row data indices",
-      "default": "[]"
+      "default": []
     },
     "isMultiSelectMode": {
       "type": "boolean",
@@ -105,24 +105,24 @@
   },
   "methods": {
     "getSelectedRowData": {
-      "returnType": "string",
-      "description": "Get the data for the selected rows as an array",
+      "returnType": "string[]",
+      "description": "Get the data for the selected rows as an string array",
       "parameters": [],
       "body": "return this.selectedRowsData || '[]';"
     },
     "getSelectedRows": {
-      "returnType": "string",
-      "description": "Get the selected row indices as a JSON string",
+      "returnType": "string[]",
+      "description": "Get the selected row indices as a string array",
       "parameters": [],
       "body": "return this.selectedRows || '[]';"
     },
     "setSelectedRows": {
-      "description": "Set the selected row indices from a JSON string",
+      "description": "Set the selected row indices from a  string array",
       "parameters": [
         {
           "name": "rows",
-          "type": "string",
-          "description": "JSON string of row indices"
+          "type": "string[]",
+          "description": "string array  of row indices"
         }
       ],
       "body": "this.selectedRows = rows;"
