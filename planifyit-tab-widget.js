@@ -902,11 +902,11 @@ get selectedRowsData() {
         
         set selectedRows(value) {
             try {
-                this._selectedRows = JSON.parse(value);
+                this._selectedRows = value;
                 this._updateRowSelection();
              
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: { properties: { selectedRows: value } }
+                    detail: { properties: { selectedRows: this._selectedRows  } }
                 }));
             } catch (e) {
                 console.error('Invalid selected rows:', e);
