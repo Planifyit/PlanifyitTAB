@@ -361,7 +361,7 @@ _createSymbolElement(symbolInfo) {
                 detail: {
                     properties: {
                         isMultiSelectMode: true,
-                        selectedRows: JSON.stringify(this._selectedRows)
+                        selectedRows: this._selectedRows
                     }
                 }
             }));
@@ -381,7 +381,7 @@ _createSymbolElement(symbolInfo) {
                 detail: {
                     properties: {
                         isMultiSelectMode: false,
-                        selectedRows: JSON.stringify(this._selectedRows)
+                        selectedRows: this._selectedRows
                     }
                 }
             }));
@@ -409,9 +409,9 @@ _handleSelectAll(e) {
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
-                selectedRows: JSON.stringify(this._selectedRows),
+                selectedRows: this._selectedRows,
               
-         selectedRowsData: JSON.stringify(this._selectedRowsData)
+         selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -433,8 +433,8 @@ _handleRowClick(index, e) {
             detail: {
                 properties: {
                 
-                    selectedRows: JSON.stringify(this._selectedRows),
-                    selectedRowsData: JSON.stringify(this._selectedRowsData)
+                    selectedRows: this._selectedRows,
+                    selectedRowsData: this._selectedRowsData
 
                 
                 }
@@ -460,8 +460,8 @@ _handleCheckboxChange(index, e) {
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
-                selectedRows: JSON.stringify(this._selectedRows),
-    selectedRowsData: JSON.stringify(this._selectedRowsData)
+                selectedRows: this._selectedRows,
+    selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -888,13 +888,13 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
         }
         
         get selectedRows() {
-            return JSON.stringify(this._selectedRows);
+            return this._selectedRows;
         }
     
 get selectedRowsData() {
 
-      return JSON.stringify(this._selectedRowsData);
-    console.log(this._selectedRowsData);
+      return this._selectedRowsData;
+ 
 }
 
 
