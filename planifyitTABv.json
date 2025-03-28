@@ -178,23 +178,24 @@
       ],
       "body": "this.isMultiSelectMode = enable;"
     },
-    "getSelectedRowDataForSelection": {
-      "returnType": "string",
-      "description": "Retrieve the value of a specific dimension or measure from a selected row based on the provided key and row index.",
-      "parameters": [
-        {
-          "name": "key",
-          "type": "string",
-          "description": "The key of the dimension or measure (e.g., 'dimensions_0' or 'measures_0')."
-        },
-        {
-          "name": "rowIndex",
-          "type": "integer",
-          "description": "The index of the selected row in the selectedRowsData array."
-        }
-      ],
-      "body": "if (this._selectedRowsData && this._selectedRowsData.length > rowIndex) { return this._selectedRowsData[rowIndex][key] || null; } return null;"
+"getSelectedRowDataForSelection": {
+  "returnType": "string",
+  "description": "Retrieve the value of a specific dimension or measure from a selected row based on the provided key and row index.",
+  "parameters": [
+    {
+      "name": "key",
+      "type": "string",
+      "description": "The key of the dimension or measure (e.g., 'dimensions_0' or 'measures_0')."
+    },
+    {
+      "name": "rowIndex",
+      "type": "integer",
+      "description": "The index of the selected row in the selectedRowsData array."
     }
+  ],
+  "body": "return this.getSelectedRowDataForSelectionImpl(key, rowIndex);"
+}
+
   },
   "events": {
     "onSelectionChanged": {
