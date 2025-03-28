@@ -843,7 +843,7 @@ getSelectedRowDataForSelection(key, rowIndex) {
 getSelectedRowDataForSelectionImpl(key, rowIndex) {
   if (
     this._selectedRowsData &&
-    this._selectedRowsData.length > rowIndex &&
+    this._selectedRowsData.length > 0 &&
     this._selectedRowsData[rowIndex][key] != null
   ) {
     return String(this._selectedRowsData[rowIndex][key]);
