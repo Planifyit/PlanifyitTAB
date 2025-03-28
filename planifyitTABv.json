@@ -50,11 +50,6 @@
       "description": "JSON string of selected row indices",
       "default": "[]"
     },
-	   "selectedRowsArray": {
-      "type": "string[]",
-      "description": "JSON string of selected row indices",
-      "default": []
-    },
     "selectedRowsData": {
       "type": "string",
       "description": "Array of selected row data indices",
@@ -120,12 +115,6 @@
       "description": "Get the selected row indices as a JSON string",
       "parameters": [],
       "body": "return this.selectedRows || '[]';"
-    },
-	    "getSelectedRowsArray": {
-      "returnType": "string[]",
-      "description": "Get the selected row indices as a JSON string",
-      "parameters": [],
-      "body": "return this.selectedRowsArray || '[]';"
     },
     "setSelectedRows": {
       "description": "Set the selected row indices from a JSON string",
