@@ -192,9 +192,9 @@
       "type": "integer",
       "description": "The index of the selected row in the selectedRowsData array."
     }
-  ],
-  "body": "return this.getSelectedRowDataForSelectionImpl(key, rowIndex);"
+  ]
 }
+
 
   },
   "events": {
