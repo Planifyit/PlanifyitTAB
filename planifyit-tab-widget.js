@@ -361,7 +361,7 @@ _createSymbolElement(symbolInfo) {
                 detail: {
                     properties: {
                         isMultiSelectMode: true,
-                        selectedRows: this._selectedRows
+                        selectedRows: JSON.stringify(this._selectedRows)
                     }
                 }
             }));
@@ -381,7 +381,7 @@ _createSymbolElement(symbolInfo) {
                 detail: {
                     properties: {
                         isMultiSelectMode: false,
-                        selectedRows: this._selectedRows
+                        selectedRows: JSON.stringify(this._selectedRows)
                     }
                 }
             }));
@@ -409,9 +409,9 @@ _handleSelectAll(e) {
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
-                selectedRows: this._selectedRows,
+                selectedRows: JSON.stringify(this._selectedRows),
               
-         selectedRowsData: this._selectedRowsData
+         selectedRowsData: JSON.stringify(this._selectedRowsData)
        
             }
         }
@@ -433,8 +433,8 @@ _handleRowClick(index, e) {
             detail: {
                 properties: {
                 
-                    selectedRows: this._selectedRows,
-                    selectedRowsData: this._selectedRowsData
+                    selectedRows: JSON.stringify(this._selectedRows),
+                    selectedRowsData: JSON.stringify(this._selectedRowsData)
 
                 
                 }
@@ -460,8 +460,8 @@ _handleCheckboxChange(index, e) {
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
-                selectedRows: this._selectedRows,
-    selectedRowsData: this._selectedRowsData
+                selectedRows: JSON.stringify(this._selectedRows),
+    selectedRowsData: JSON.stringify(this._selectedRowsData)
        
             }
         }
@@ -754,7 +754,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
             
             if ('selectedRows' in changedProperties) {
                 try {
-                    this._selectedRows = changedProperties.selectedRows;
+                    this._selectedRows = JSON.parse(changedProperties.selectedRows);
                     this._updateRowSelection();
     
                 } catch (e) {
@@ -888,13 +888,13 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
         }
         
         get selectedRows() {
-            return this._selectedRows;
+            return JSON.stringify(this._selectedRows);
         }
     
 get selectedRowsData() {
 
-      return this._selectedRowsData;
- 
+      return JSON.stringify(this._selectedRowsData);
+    console.log(this._selectedRowsData);
 }
 
 
@@ -902,11 +902,11 @@ get selectedRowsData() {
         
         set selectedRows(value) {
             try {
-                this._selectedRows = value;
+                this._selectedRows = JSON.parse(value);
                 this._updateRowSelection();
              
                 this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: { properties: { selectedRows: this._selectedRows  } }
+                    detail: { properties: { selectedRows: value } }
                 }));
             } catch (e) {
                 console.error('Invalid selected rows:', e);
