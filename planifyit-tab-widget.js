@@ -754,7 +754,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
             
             if ('selectedRows' in changedProperties) {
                 try {
-                    this._selectedRows = JSON.parse(changedProperties.selectedRows);
+                    this._selectedRows = changedProperties.selectedRows;
                     this._updateRowSelection();
     
                 } catch (e) {
