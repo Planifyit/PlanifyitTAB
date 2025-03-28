@@ -833,7 +833,16 @@ onCustomWidgetAfterUpdate(changedProperties) {
             }
         }
 
-
+   getSelectedRowDataForSelectionImpl(key, rowIndex) {
+            if (
+                this._selectedRowsData &&
+                this._selectedRowsData.length > rowIndex &&
+                this._selectedRowsData[rowIndex][key] != null
+            ) {
+                return String(this._selectedRowsData[rowIndex][key]);
+            }
+            return "";
+        }
 
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
