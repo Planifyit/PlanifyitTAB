@@ -200,7 +200,7 @@
     },
     {
       "name": "rowIndex",
-      "type": "string",
+      "type": "integer",
       "description": "The index of the selected row in the selectedRowsData array."
     }
   ]
