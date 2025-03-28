@@ -411,7 +411,7 @@ _handleSelectAll(e) {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
               
-         selectedRowsData: JSON.stringify(this._selectedRowsData)
+         selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -434,7 +434,7 @@ _handleRowClick(index, e) {
                 properties: {
                 
                     selectedRows: JSON.stringify(this._selectedRows),
-                    selectedRowsData: JSON.stringify(this._selectedRowsData)
+                   selectedRowsData: this._selectedRowsData
 
                 
                 }
@@ -461,7 +461,7 @@ _handleCheckboxChange(index, e) {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-    selectedRowsData: JSON.stringify(this._selectedRowsData)
+                selectedRowsData: this._selectedRowsData
        
             }
         }
@@ -833,23 +833,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
             }
         }
 
-// Native function called by SAC
-getSelectedRowDataForSelection(key, rowIndex) {
-  // Optionally call your helper function:
-  return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
-}
 
-// Helper function that contains your logic
-getSelectedRowDataForSelectionImpl(key, rowIndex) {
-  if (
-    this._selectedRowsData &&
-    this._selectedRowsData.length > 0 &&
-    this._selectedRowsData[rowIndex][key] != null
-  ) {
-    return String(this._selectedRowsData[rowIndex][key]);
-  }
-  return "";
-}
 
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
@@ -893,7 +877,7 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
     
 get selectedRowsData() {
 
-      return JSON.stringify(this._selectedRowsData);
+      return this._selectedRowsData;
     console.log(this._selectedRowsData);
 }
 
