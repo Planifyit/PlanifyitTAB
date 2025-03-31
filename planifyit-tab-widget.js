@@ -596,12 +596,19 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
          * ------------------------------------------------------------------ */
         
         connectedCallback() {
-   // Set initial button states
+
+              // First check if isMultiSelectMode is set in attributes
+    if (this.hasAttribute("isMultiSelectMode")) {
+        this._isMultiSelectMode = this.getAttribute("isMultiSelectMode") === "true";
+    } else {
+        // Default to false if not specified
+        this._isMultiSelectMode = false;
+    }
+    
+    // Now set button states based on the initialized value
     this._multiSelectButton.style.display = this._isMultiSelectMode ? 'none' : 'flex';
     this._cancelButton.style.display = this._isMultiSelectMode ? 'flex' : 'none';
     
-
-
             
             if (this.hasAttribute("tableData")) {
                 try {
