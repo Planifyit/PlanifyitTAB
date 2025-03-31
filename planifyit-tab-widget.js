@@ -837,22 +837,31 @@ onCustomWidgetAfterUpdate(changedProperties) {
 
 // Native function called by SAC
 getSelectedRowDataForSelection(key, rowIndex) {
-  // Optionally call your helper function:
   return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
 }
 
-// Helper function that contains your logic
+// Updated helper function
 getSelectedRowDataForSelectionImpl(key, rowIndex) {
-  if (
-    this._selectedRowsData &&
-    this._selectedRowsData.length > 0 &&
-    this._selectedRowsData[rowIndex][key] != null
-  ) {
-    return String(this._selectedRowsData[rowIndex][key]);
+  if (!this._selectedRowsData || this._selectedRowsData.length === 0) {
+    return "";
   }
+
+  // Find the position of the rowIndex in the selectedRows array
+  const positionInSelectedRows = this._selectedRows.indexOf(rowIndex);
+  
+  // If the rowIndex is not in selectedRows, return empty string
+  if (positionInSelectedRows === -1) {
+    return "";
+  }
+  
+  // Use the position in selectedRows to access the correct data in selectedRowsData
+  if (this._selectedRowsData[positionInSelectedRows] && 
+      this._selectedRowsData[positionInSelectedRows][key] != null) {
+    return String(this._selectedRowsData[positionInSelectedRows][key]);
+  }
+  
   return "";
 }
-
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
          * ------------------------------------------------------------------ */
