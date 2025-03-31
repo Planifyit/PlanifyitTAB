@@ -78,7 +78,7 @@
             }
 
             .table-button {
-                display: flex !important; 
+                display: flex; 
                 border: none;
                 border-radius: 4px;
                 color: white;
