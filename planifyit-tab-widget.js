@@ -352,7 +352,7 @@ _createSymbolElement(symbolInfo) {
         _toggleMultiSelectMode() {
             this._isMultiSelectMode = true;
             this._multiSelectButton.style.display = 'none';
-            this._cancelButton.style.display = 'inline-block';
+             this._cancelButton.style.display = 'flex';
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
             checkboxColumns.forEach(col => col.classList.add('show'));
             this._selectedRows = [];
@@ -369,7 +369,7 @@ _createSymbolElement(symbolInfo) {
         
         _cancelMultiSelect() {
             this._isMultiSelectMode = false;
-            this._multiSelectButton.style.display = 'inline-block';
+            this._multiSelectButton.style.display = 'flex'
             this._cancelButton.style.display = 'none';
       
             const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
@@ -596,6 +596,13 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
          * ------------------------------------------------------------------ */
         
         connectedCallback() {
+   // Set initial button states
+    this._multiSelectButton.style.display = this._isMultiSelectMode ? 'none' : 'flex';
+    this._cancelButton.style.display = this._isMultiSelectMode ? 'flex' : 'none';
+    
+
+
+            
             if (this.hasAttribute("tableData")) {
                 try {
                     this._tableData = JSON.parse(this.getAttribute("tableData"));
@@ -768,12 +775,12 @@ onCustomWidgetAfterUpdate(changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
                 if (this._isMultiSelectMode) {
                     this._multiSelectButton.style.display = 'none';
-                    this._cancelButton.style.display = 'inline-block';
+                    his._cancelButton.style.display = 'flex';
           
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
                 } else {
-                    this._multiSelectButton.style.display = 'inline-block';
+                    this._multiSelectButton.style.display = 'flex';
                     this._cancelButton.style.display = 'none';
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.remove('show'));
@@ -932,12 +939,12 @@ get selectedRowsData() {
             this._isMultiSelectMode = value;
             if (this._isMultiSelectMode) {
                 this._multiSelectButton.style.display = 'none';
-                this._cancelButton.style.display = 'inline-block';
+                 this._cancelButton.style.display = 'flex';
               
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.add('show'));
             } else {
-                this._multiSelectButton.style.display = 'inline-block';
+                this._multiSelectButton.style.display = 'flex';
                 this._cancelButton.style.display = 'none';
                 const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                 checkboxColumns.forEach(col => col.classList.remove('show'));
