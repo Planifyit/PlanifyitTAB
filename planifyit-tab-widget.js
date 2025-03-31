@@ -775,7 +775,7 @@ onCustomWidgetAfterUpdate(changedProperties) {
                 this._isMultiSelectMode = changedProperties.isMultiSelectMode;
                 if (this._isMultiSelectMode) {
                     this._multiSelectButton.style.display = 'none';
-                    his._cancelButton.style.display = 'flex';
+                    this._cancelButton.style.display = 'flex';
           
                     const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
                     checkboxColumns.forEach(col => col.classList.add('show'));
