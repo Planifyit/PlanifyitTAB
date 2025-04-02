@@ -233,6 +233,92 @@
             .symbol-flag {
                 color: #F44336;
             }
+
+/* Column Search Styling */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.header-content:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+.search-icon {
+    opacity: 0.5;
+    font-size: 12px;
+    margin-left: 5px;
+    visibility: hidden;
+}
+
+.header-content:hover .search-icon {
+    visibility: visible;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.search-container.active {
+    background-color: #f0f8ff;
+    border-radius: 4px;
+}
+
+.header-search {
+    width: calc(100% - 20px);
+    padding: 4px 20px 4px 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    background-color: white;
+}
+
+.clear-search {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    color: #999;
+}
+
+.clear-search:hover {
+    color: #333;
+}
+
+.highlight {
+    background-color: rgba(255, 255, 0, 0.4);
+    font-weight: bold;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+th {
+    position: relative;
+}
+
+/* Add visual indicator for columns with active search */
+th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: transparent;
+}
+
+th:has(.search-container.active)::after {
+    background-color: #1a73e8;
+}
             
             
         </style>
@@ -281,6 +367,7 @@
             super();
             this._shadowRoot = this.attachShadow({ mode: 'open' });
             this._shadowRoot.appendChild(tmpl.content.cloneNode(true));
+            this._activeSearches = {};  // Store active column searches
 
             // Internal tracking
             this._props = {}; 
@@ -518,7 +605,8 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
         /* ------------------------------------------------------------------
          *  Main Table Rendering
          * ------------------------------------------------------------------ */
-        _renderTable() {
+// Update _renderTable method to add click handlers to column headers
+_renderTable() {
     this._headerRow.innerHTML = `
         <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
             <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
@@ -527,27 +615,91 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
     this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
     this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
     
-    // Render column headers
-    this._tableColumns.forEach(col => {
+    // Render column headers with search capability
+    this._tableColumns.forEach((col, colIndex) => {
         const th = document.createElement('th');
-        th.textContent = col.label || col.name;
+        
+        if (this._activeSearches[colIndex]) {
+            // Show search input if there's an active search
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'search-container active';
+            
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.className = 'header-search';
+            searchInput.value = this._activeSearches[colIndex];
+            searchInput.placeholder = `Search ${col.label || col.name}...`;
+            searchInput.addEventListener('input', (e) => this._handleColumnSearch(colIndex, e.target.value));
+            
+            const clearButton = document.createElement('span');
+            clearButton.className = 'clear-search';
+            clearButton.innerHTML = '✕';
+            clearButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._clearColumnSearch(colIndex);
+            });
+            
+            searchContainer.appendChild(searchInput);
+            searchContainer.appendChild(clearButton);
+            th.appendChild(searchContainer);
+            
+            // Focus the input after rendering
+            setTimeout(() => searchInput.focus(), 0);
+        } else {
+            // Show regular header
+            const headerContainer = document.createElement('div');
+            headerContainer.className = 'header-content';
+            headerContainer.textContent = col.label || col.name;
+            
+            const searchIcon = document.createElement('span');
+            searchIcon.className = 'search-icon';
+            searchIcon.innerHTML = '🔍';
+            headerContainer.appendChild(searchIcon);
+            
+            th.appendChild(headerContainer);
+            th.addEventListener('click', () => this._activateColumnSearch(colIndex, col));
+        }
+        
         this._headerRow.appendChild(th);
     });
     
-    // Show "No data" message if no data
-    if (this._tableData.length === 0) {
+    // Filter data based on active searches
+    let filteredData = this._tableData;
+    if (Object.keys(this._activeSearches).length > 0) {
+        filteredData = this._tableData.filter(rowData => {
+            return Object.entries(this._activeSearches).every(([colIndex, searchTerm]) => {
+                if (!searchTerm) return true;
+                
+                const columnName = this._tableColumns[colIndex].name;
+                const cellValue = String(rowData[columnName] || '');
+                
+                // Convert wildcard pattern to regex
+                const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regexPattern = escapedSearchTerm
+                    .replace(/\\\*/g, '.*')
+                    .replace(/\\\?/g, '.');
+                
+                const regex = new RegExp(regexPattern, 'i');
+                return regex.test(cellValue);
+            });
+        });
+    }
+    
+    // Show "No data" message if no data or all filtered out
+    if (filteredData.length === 0) {
         const row = document.createElement('tr');
         const cell = document.createElement('td');
         cell.colSpan = this._tableColumns.length + 1;
         cell.className = 'no-data-message';
-        cell.textContent = 'No data available';
+        cell.textContent = this._tableData.length > 0 ? 'No matching data found' : 'No data available';
         row.appendChild(cell);
         this._tableBody.appendChild(row);
         return;
     }
     
-    // Render each row
-    this._tableData.forEach((rowData, rowIndex) => {
+    // Render each row of filtered data
+    filteredData.forEach((rowData, rowIndex) => {
+        const originalIndex = this._tableData.indexOf(rowData);
         const row = document.createElement('tr');
         
         // Add checkbox cell for selection
@@ -556,8 +708,8 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'select-checkbox';
-        checkbox.checked = this._selectedRows.includes(rowIndex);
-        checkbox.addEventListener('change', (e) => this._handleCheckboxChange(rowIndex, e));
+        checkbox.checked = this._selectedRows.includes(originalIndex);
+        checkbox.addEventListener('change', (e) => this._handleCheckboxChange(originalIndex, e));
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
         
@@ -572,17 +724,27 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
                 cell.textContent = '';
                 const symbolElement = this._createSymbolElement(symbolInfo);
                 cell.appendChild(symbolElement);
-      
             } else {
-                cell.textContent = value;
+                // Highlight search term if there's an active search for this column
+                if (this._activeSearches[colIndex]) {
+                    const searchTerm = this._activeSearches[colIndex];
+                    if (searchTerm) {
+                        const highlightedText = this._highlightSearchTerm(value, searchTerm);
+                        cell.innerHTML = highlightedText;
+                    } else {
+                        cell.textContent = value;
+                    }
+                } else {
+                    cell.textContent = value;
+                }
             }
             
             row.appendChild(cell);
         });
         
         // Add row click handler
-        row.addEventListener('click', (e) => this._handleRowClick(rowIndex, e));
-        if (this._selectedRows.includes(rowIndex)) {
+        row.addEventListener('click', (e) => this._handleRowClick(originalIndex, e));
+        if (this._selectedRows.includes(originalIndex)) {
             row.classList.add('selected');
         }
         this._tableBody.appendChild(row);
@@ -590,6 +752,43 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
     
     this._updateSelectAllCheckbox();
 }
+
+// Highlight search terms in cell text
+_highlightSearchTerm(text, searchTerm) {
+    if (!searchTerm || !text) return text;
+    
+    // Convert wildcard pattern to regex
+    const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexPattern = escapedSearchTerm
+        .replace(/\\\*/g, '.*')
+        .replace(/\\\?/g, '.');
+    
+    try {
+        const regex = new RegExp(`(${regexPattern})`, 'gi');
+        return String(text).replace(regex, '<span class="highlight">$1</span>');
+    } catch (e) {
+        return text;
+    }
+}
+
+// Activate search for a column
+_activateColumnSearch(colIndex, column) {
+    this._activeSearches[colIndex] = '';
+    this._renderTable();
+}
+
+// Handle search input change
+_handleColumnSearch(colIndex, value) {
+    this._activeSearches[colIndex] = value;
+    this._renderTable();
+}
+
+// Clear search for a column
+_clearColumnSearch(colIndex) {
+    delete this._activeSearches[colIndex];
+    this._renderTable();
+}
+
         
         /* ------------------------------------------------------------------
          *  SAC Lifecycle Hooks
@@ -597,6 +796,10 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
         
         connectedCallback() {
 
+            
+   // Initialize empty search state
+    this._activeSearches = {};
+            
               // First check if isMultiSelectMode is set in attributes
     if (this.hasAttribute("isMultiSelectMode")) {
         this._isMultiSelectMode = this.getAttribute("isMultiSelectMode") === "true";
