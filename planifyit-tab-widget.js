@@ -395,6 +395,8 @@ th.has-active-search::after {
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
+
+                this._initialized = false;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -830,51 +832,61 @@ _clearColumnSearch(colIndex) {
          *  SAC Lifecycle Hooks
          * ------------------------------------------------------------------ */
         
-        connectedCallback() {
+connectedCallback() {
+    // Only run initialization once
+    if (!this._initialized) {
+        // Initialize empty search state only once
+        this._activeSearches = {};
 
-            
-   // Initialize empty search state
-    this._activeSearches = {};
-            
-              // First check if isMultiSelectMode is set in attributes
-    if (this.hasAttribute("isMultiSelectMode")) {
-        this._isMultiSelectMode = this.getAttribute("isMultiSelectMode") === "true";
-    } else {
-        // Default to false if not specified
-        this._isMultiSelectMode = false;
+        // Initialize multi-select mode flag from attributes (if provided)
+        if (this.hasAttribute("isMultiSelectMode")) {
+            this._isMultiSelectMode = this.getAttribute("isMultiSelectMode") === "true";
+        } else {
+            this._isMultiSelectMode = false;
+        }
+
+        // Set button states based on initial value
+        this._multiSelectButton.style.display = this._isMultiSelectMode ? 'none' : 'flex';
+        this._cancelButton.style.display = this._isMultiSelectMode ? 'flex' : 'none';
+
+        // Read initial tableData, tableColumns, and selectedRows from attributes
+        if (this.hasAttribute("tableData")) {
+            try {
+                this._tableData = JSON.parse(this.getAttribute("tableData"));
+            } catch (e) {
+                console.error("Invalid tableData attribute", e);
+            }
+        }
+        if (this.hasAttribute("tableColumns")) {
+            try {
+                this._tableColumns = JSON.parse(this.getAttribute("tableColumns"));
+            } catch (e) {
+                console.error("Invalid tableColumns attribute", e);
+            }
+        }
+        if (this.hasAttribute("selectedRows")) {
+            try {
+                this._selectedRows = JSON.parse(this.getAttribute("selectedRows"));
+            } catch (e) {
+                console.error("Invalid selectedRows attribute", e);
+            }
+        }
+
+        // If data binding exists, update data binding
+        if (this.tableDataBinding) {
+            this._updateDataBinding(this.tableDataBinding);
+        }
+        
+        // Mark initialization complete
+        this._initialized = true;
     }
     
-    // Now set button states based on the initialized value
-    this._multiSelectButton.style.display = this._isMultiSelectMode ? 'none' : 'flex';
-    this._cancelButton.style.display = this._isMultiSelectMode ? 'flex' : 'none';
-    
-            
-            if (this.hasAttribute("tableData")) {
-                try {
-                    this._tableData = JSON.parse(this.getAttribute("tableData"));
-                } catch (e) {
-                    console.error("Invalid tableData attribute", e);
-                }
-            }
-            if (this.hasAttribute("tableColumns")) {
-                try {
-                    this._tableColumns = JSON.parse(this.getAttribute("tableColumns"));
-                } catch (e) {
-                    console.error("Invalid tableColumns attribute", e);
-                }
-            }
-            if (this.hasAttribute("selectedRows")) {
-                try {
-                    this._selectedRows = JSON.parse(this.getAttribute("selectedRows"));
-                } catch (e) {
-                    console.error("Invalid selectedRows attribute", e);
-                }
-            }
-            if (this.tableDataBinding) {
-                this._updateDataBinding(this.tableDataBinding);
-            }
-            this._renderTable();
-        }
+    // Always re-render the table (or selectively update UI) without reinitializing state
+    this._renderTable();
+}
+
+
+        
         
         onCustomWidgetBeforeUpdate(changedProperties) {
             this._props = { ...this._props, ...changedProperties };
