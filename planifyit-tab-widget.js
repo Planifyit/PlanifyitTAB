@@ -671,7 +671,7 @@ _renderTable() {
             th.appendChild(searchContainer);
             
             // Focus the input after rendering
-            setTimeout(() => searchInput.focus(), 0);
+           // setTimeout(() => searchInput.focus(), 0);
         } else {
             // Show regular header with click handler for search
             const headerContainer = document.createElement('div');
@@ -812,7 +812,21 @@ _activateColumnSearch(colIndex, column) {
     console.log('Activating search for column:', column.name);
     this._activeSearches[colIndex] = '';
     this._renderTable();
+
+    // After re-rendering, find the input and focus it
+    setTimeout(() => {
+        const headerCells = this._shadowRoot.querySelectorAll('th');
+        // Assuming header cells order matches your _tableColumns order + the initial checkbox column:
+        const targetCell = headerCells[colIndex + 1]; 
+        if (targetCell) {
+            const searchInput = targetCell.querySelector('.header-search');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+    }, 0);
 }
+
 
 _handleColumnSearch(colIndex, value) {
     console.log('Search value changed for column', colIndex, ':', value);
