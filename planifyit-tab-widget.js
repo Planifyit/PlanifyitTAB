@@ -395,6 +395,7 @@ th.has-active-search::after {
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
+            this._currentActiveSearch = null;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -623,7 +624,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
         /* ------------------------------------------------------------------
          *  Main Table Rendering
          * ------------------------------------------------------------------ */
-// Replace your existing _renderTable method with this one
+
 _renderTable() {
     // Clear header row first
     this._headerRow.innerHTML = `
@@ -670,8 +671,10 @@ _renderTable() {
             searchContainer.appendChild(clearButton);
             th.appendChild(searchContainer);
             
-            // Focus the input after rendering
-            setTimeout(() => searchInput.focus(), 0);
+            // Focus the input after rendering if it's the current active search column
+            if (this._currentActiveSearch === colIndex) {
+                setTimeout(() => searchInput.focus(), 0);
+            }
         } else {
             // Show regular header with click handler for search
             const headerContainer = document.createElement('div');
@@ -807,12 +810,25 @@ _renderTable() {
     this._updateSelectAllCheckbox();
 }
 
+
+
+
+
+
+
+
+
+
+
+        
 // Add these methods for search functionality
 _activateColumnSearch(colIndex, column) {
     console.log('Activating search for column:', column.name);
     this._activeSearches[colIndex] = '';
+    this._currentActiveSearch = colIndex;  // Set the current active search column
     this._renderTable();
 }
+
 
 _handleColumnSearch(colIndex, value) {
     console.log('Search value changed for column', colIndex, ':', value);
