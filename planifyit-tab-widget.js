@@ -395,6 +395,7 @@ th.has-active-search::after {
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
+            this._currentlyEditingColumn = null;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -808,21 +809,37 @@ _renderTable() {
 }
 
 // Add these methods for search functionality
+
 _activateColumnSearch(colIndex, column) {
     console.log('Activating search for column:', column.name);
     this._activeSearches[colIndex] = '';
+    
+    this._currentlyEditingColumn = colIndex;
+    
     this._renderTable();
 }
+
 
 _handleColumnSearch(colIndex, value) {
     console.log('Search value changed for column', colIndex, ':', value);
     this._activeSearches[colIndex] = value;
+    
+
+    this._currentlyEditingColumn = colIndex;
+    
     this._renderTable();
 }
 
-_clearColumnSearch(colIndex) {
+
+        _clearColumnSearch(colIndex) {
     console.log('Clearing search for column:', colIndex);
     delete this._activeSearches[colIndex];
+    
+    // If we're clearing the currently editing column, reset the tracking
+    if (this._currentlyEditingColumn === colIndex) {
+        this._currentlyEditingColumn = null;
+    }
+    
     this._renderTable();
 }
         
