@@ -395,7 +395,6 @@ th.has-active-search::after {
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
-            this._currentlyEditingColumn = null;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -638,7 +637,7 @@ _renderTable() {
     this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
     
     // Render column headers with search capability
-  this._tableColumns.forEach((col, colIndex) => {
+    this._tableColumns.forEach((col, colIndex) => {
         const th = document.createElement('th');
         
         if (this._activeSearches[colIndex] !== undefined) {
@@ -652,31 +651,18 @@ _renderTable() {
             searchInput.value = this._activeSearches[colIndex];
             searchInput.placeholder = `Search ${col.label || col.name}...`;
             
-            // Give each input a unique ID
-            searchInput.id = `column-search-${colIndex}`;
-            
-            // Capture the focus event to update our tracking
-            searchInput.addEventListener('focus', () => {
-                this._currentlyEditingColumn = colIndex;
-            });
-            
-            // Prevent input event bubbling
+            // Use arrow function to maintain correct context
             searchInput.addEventListener('input', (e) => {
-                e.stopPropagation();
+                console.log('Search input changed:', e.target.value);
                 this._handleColumnSearch(colIndex, e.target.value);
             });
             
-            // Prevent clicks from bubbling
-            searchInput.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-            
-            // Create clear button
             const clearButton = document.createElement('span');
             clearButton.className = 'clear-search';
             clearButton.innerHTML = '✕';
             clearButton.addEventListener('click', (e) => {
                 e.stopPropagation();
+                console.log('Clear search clicked for column:', colIndex);
                 this._clearColumnSearch(colIndex);
             });
             
@@ -684,10 +670,8 @@ _renderTable() {
             searchContainer.appendChild(clearButton);
             th.appendChild(searchContainer);
             
-            // Mark this header for styling
-            th.classList.add('has-active-search');
-
-
+            // Focus the input after rendering
+            setTimeout(() => searchInput.focus(), 0);
         } else {
             // Show regular header with click handler for search
             const headerContainer = document.createElement('div');
@@ -824,37 +808,21 @@ _renderTable() {
 }
 
 // Add these methods for search functionality
-
 _activateColumnSearch(colIndex, column) {
     console.log('Activating search for column:', column.name);
     this._activeSearches[colIndex] = '';
-    
-    this._currentlyEditingColumn = colIndex;
-    
     this._renderTable();
 }
-
 
 _handleColumnSearch(colIndex, value) {
     console.log('Search value changed for column', colIndex, ':', value);
     this._activeSearches[colIndex] = value;
-    
-
-    this._currentlyEditingColumn = colIndex;
-    
     this._renderTable();
 }
 
-
-        _clearColumnSearch(colIndex) {
+_clearColumnSearch(colIndex) {
     console.log('Clearing search for column:', colIndex);
     delete this._activeSearches[colIndex];
-    
-    // If we're clearing the currently editing column, reset the tracking
-    if (this._currentlyEditingColumn === colIndex) {
-        this._currentlyEditingColumn = null;
-    }
-    
     this._renderTable();
 }
         
