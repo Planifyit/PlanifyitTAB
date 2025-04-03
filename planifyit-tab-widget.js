@@ -626,6 +626,7 @@ this._selectedRowsData = this._selectedRows.map(index => this._tableData[index])
          *  Main Table Rendering
          * ------------------------------------------------------------------ */
 // Replace your existing _renderTable method with this one
+
 _renderTable() {
     // Clear header row first
     this._headerRow.innerHTML = `
@@ -697,35 +698,40 @@ _renderTable() {
         this._headerRow.appendChild(th);
     });
     
-    // Apply filtering based on active searches
-    let filteredData = [...this._tableData]; // Make a copy of the original data
-    
-    if (Object.keys(this._activeSearches).length > 0) {
-        filteredData = filteredData.filter(rowData => {
-            return Object.entries(this._activeSearches).every(([colIndex, searchTerm]) => {
-                if (!searchTerm) return true;
+    // Compute filteredData and a mapping of filteredIndices
+    let filteredData = [];
+    let filteredIndices = [];
+    // Iterate over all tableData rows to build filtered arrays
+    this._tableData.forEach((rowData, originalIndex) => {
+        // Check if the row matches all active searches
+        const matches = Object.entries(this._activeSearches).every(([colIndex, searchTerm]) => {
+            if (!searchTerm) return true;
+            
+            const columnName = this._tableColumns[colIndex].name;
+            const cellValue = String(rowData[columnName] || '').toLowerCase();
+            const searchLower = searchTerm.toLowerCase();
+            
+            // Simple wildcard matching
+            if (searchLower.includes('*') || searchLower.includes('?')) {
+                // Convert wildcard pattern to regex
+                const escapedSearchTerm = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regexPattern = escapedSearchTerm
+                    .replace(/\\\*/g, '.*')
+                    .replace(/\\\?/g, '.');
                 
-                const columnName = this._tableColumns[colIndex].name;
-                const cellValue = String(rowData[columnName] || '').toLowerCase();
-                const searchLower = searchTerm.toLowerCase();
-                
-                // Simple wildcard matching
-                if (searchLower.includes('*') || searchLower.includes('?')) {
-                    // Convert wildcard pattern to regex
-                    const escapedSearchTerm = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regexPattern = escapedSearchTerm
-                        .replace(/\\\*/g, '.*')
-                        .replace(/\\\?/g, '.');
-                    
-                    const regex = new RegExp(`^${regexPattern}$`, 'i');
-                    return regex.test(cellValue);
-                } else {
-                    // Simple substring match if no wildcards
-                    return cellValue.includes(searchLower);
-                }
-            });
+                const regex = new RegExp(`^${regexPattern}$`, 'i');
+                return regex.test(cellValue);
+            } else {
+                // Simple substring match if no wildcards
+                return cellValue.includes(searchLower);
+            }
         });
-    }
+        
+        if (matches) {
+            filteredData.push(rowData);
+            filteredIndices.push(originalIndex);
+        }
+    });
     
     // Show "No data" message if no data or all filtered out
     if (filteredData.length === 0) {
@@ -739,9 +745,9 @@ _renderTable() {
         return;
     }
     
-    // Render each row of filtered data
+    // Render each row of filtered data using the mapping for original index
     filteredData.forEach((rowData, filteredIndex) => {
-        const originalIndex = this._tableData.indexOf(rowData);
+        const originalIndex = filteredIndices[filteredIndex];
         const row = document.createElement('tr');
         
         // Add checkbox cell for selection
@@ -798,7 +804,7 @@ _renderTable() {
             row.appendChild(cell);
         });
         
-        // Add row click handler
+        // Add row click handler using the mapped original index
         row.addEventListener('click', (e) => this._handleRowClick(originalIndex, e));
         if (this._selectedRows.includes(originalIndex)) {
             row.classList.add('selected');
