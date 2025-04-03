@@ -638,7 +638,7 @@ _renderTable() {
     this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
     
     // Render column headers with search capability
-    this._tableColumns.forEach((col, colIndex) => {
+  this._tableColumns.forEach((col, colIndex) => {
         const th = document.createElement('th');
         
         if (this._activeSearches[colIndex] !== undefined) {
@@ -652,18 +652,31 @@ _renderTable() {
             searchInput.value = this._activeSearches[colIndex];
             searchInput.placeholder = `Search ${col.label || col.name}...`;
             
-            // Use arrow function to maintain correct context
+            // Give each input a unique ID
+            searchInput.id = `column-search-${colIndex}`;
+            
+            // Capture the focus event to update our tracking
+            searchInput.addEventListener('focus', () => {
+                this._currentlyEditingColumn = colIndex;
+            });
+            
+            // Prevent input event bubbling
             searchInput.addEventListener('input', (e) => {
-                console.log('Search input changed:', e.target.value);
+                e.stopPropagation();
                 this._handleColumnSearch(colIndex, e.target.value);
             });
             
+            // Prevent clicks from bubbling
+            searchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Create clear button
             const clearButton = document.createElement('span');
             clearButton.className = 'clear-search';
             clearButton.innerHTML = '✕';
             clearButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                console.log('Clear search clicked for column:', colIndex);
                 this._clearColumnSearch(colIndex);
             });
             
@@ -671,8 +684,10 @@ _renderTable() {
             searchContainer.appendChild(clearButton);
             th.appendChild(searchContainer);
             
-            // Focus the input after rendering
-            setTimeout(() => searchInput.focus(), 0);
+            // Mark this header for styling
+            th.classList.add('has-active-search');
+
+
         } else {
             // Show regular header with click handler for search
             const headerContainer = document.createElement('div');
