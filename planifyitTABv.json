@@ -115,7 +115,7 @@
  "lastClickedButtonId": {
     "type": "string",
     "description": "ID of the last clicked button",
-    "defaultValue": ""
+    "default": ""
 }
   },
   "methods": {
