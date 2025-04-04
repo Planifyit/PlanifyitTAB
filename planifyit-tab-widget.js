@@ -439,7 +439,9 @@ th.has-active-search::after {
 
 
 
-     _getSymbols() {
+
+// Method that returns symbol definitions
+_getSymbols() {
     return [
         { value: 'check', label: '✓ Check' },
         { value: 'x', label: '✕ X' },
@@ -452,12 +454,21 @@ th.has-active-search::after {
         { value: 'info', label: 'ℹ Info' },
         { value: 'flag', label: '⚑ Flag' }
     ];
-}  
+}
+        // New method to build the symbol map once
+_buildSymbolMap() {
+    const symbolMap = {};
+    this._getSymbols().forEach(symbol => {
+        // Extract just the symbol character from the label (before the space)
+        const symbolChar = symbol.label.split(' ')[0];
+        symbolMap[symbol.value] = symbolChar;
+    });
+    return symbolMap;
+}
 
-        
 
  // create dynamic buttons
-    _renderDynamicButtons() {
+  _renderDynamicButtons() {
     // Get all existing dynamic buttons
     const existingButtons = this._shadowRoot.querySelectorAll('.dynamic-button');
     existingButtons.forEach(button => button.remove());
@@ -474,31 +485,18 @@ th.has-active-search::after {
                     button.className = 'dynamic-button';
                     button.title = buttonConfig.tooltip || buttonConfig.id;
                     
-                    // Get symbol for the button
-                    const symbolMap = {
-                        'check': '✓',
-                        'bell': '🔔',
-                        'warning': '⚠',
-                        'info': 'ℹ',
-                        'flag': '⚑',
-                        'x': '✕',
-                        'arrow-up': '↑',
-                        'arrow-down': '↓',
-                        'minus': '-',
-                        'plus': '+'
-                    };
-                    
-                    button.textContent = symbolMap[buttonConfig.symbol] || '●';
+                    // Use the symbol map
+                    button.textContent = this._symbolMap[buttonConfig.symbol] || '●';
                     
                     // Add click handler
-             button.addEventListener('click', () => {
-    this._lastClickedButtonId = buttonConfig.id;
-    this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
-        detail: {
-            buttonId: buttonConfig.id
-        }
-    }));
-});
+                    button.addEventListener('click', () => {
+                        this._lastClickedButtonId = buttonConfig.id;
+                        this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
+                            detail: {
+                                buttonId: buttonConfig.id
+                            }
+                        }));
+                    });
                     
                     // Insert the button before the multiSelectButton
                     this._actionButtons.insertBefore(button, this._multiSelectButton);
@@ -510,6 +508,8 @@ th.has-active-search::after {
     }
 }
 
+
+        
 updateButtonsState() {
     this._dynamicButtons = [];
     const entries = this._buttonContainer.querySelectorAll(".button-entry");
@@ -539,7 +539,8 @@ updateButtonsState() {
          *  Symbol Mapping
          * ------------------------------------------------------------------ */
          
- _getSymbolForValue(columnIndex, value) {
+// Update _getSymbolForValue to use the central symbol map
+_getSymbolForValue(columnIndex, value) {
     const mapping = this._symbolMappings.find(m => 
         m.columnIndex === columnIndex && 
         String(m.value).toLowerCase() === String(value).toLowerCase()
@@ -547,20 +548,7 @@ updateButtonsState() {
     
     if (!mapping) return null;
     
-    const symbolMap = {
-        'check': '✓',
-        'bell': '🔔',
-        'warning': '⚠',
-        'info': 'ℹ',
-        'flag': '⚑',
-        'x': '✕',
-        'arrow-up': '↑',
-        'arrow-down': '↓',
-        'minus': '-',
-        'plus': '+'
-    };
-    
-    const symbol = symbolMap[mapping.symbol] || '●';
+    const symbol = this._symbolMap[mapping.symbol] || '●';
     return {
         symbol: symbol,
         type: mapping.symbol
