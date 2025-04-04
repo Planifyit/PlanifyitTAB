@@ -168,7 +168,15 @@
                 </div>
                 <button type="button" id="add_mapping" class="add-button">+ Add Symbol Mapping</button>
             </fieldset>
-            
+
+                    <fieldset>
+            <legend>Create Button</legend>
+            <div class="button-container" id="button_container">
+                <!-- Button entries will be added here dynamically -->
+            </div>
+            <button type="button" id="add_button" class="add-button">+ Add Button</button>
+        </fieldset>
+
             <button type="button" id="apply_styles" class="apply-button">Apply Styles</button>
             <input type="submit" style="display:none;">
         </form>
@@ -209,6 +217,11 @@
             // Symbol mapping
             this._symbolMappingContainer = this._shadowRoot.getElementById("symbol_mapping_container");
             this._addMappingButton = this._shadowRoot.getElementById("add_mapping");
+
+           this._buttonContainer = this._shadowRoot.getElementById("button_container");
+this._addButton = this._shadowRoot.getElementById("add_button");
+this._addButton.addEventListener("click", () => this._addButtonEntry());
+
             
             // Apply button
             this._applyButton = this._shadowRoot.getElementById("apply_styles");
@@ -278,6 +291,53 @@
             });
         }
 
+
+_addButtonEntry(label = "", action = "") {
+    const entry = document.createElement("div");
+    entry.className = "mapping-entry"; // you may create a dedicated CSS class if needed
+
+    const labelInput = document.createElement("input");
+    labelInput.type = "text";
+    labelInput.className = "value-input";
+    labelInput.placeholder = "Button Label";
+    labelInput.value = label;
+
+    const actionInput = document.createElement("input");
+    actionInput.type = "text";
+    actionInput.className = "value-input";
+    actionInput.placeholder = "Button Action (optional)";
+    actionInput.value = action;
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-button";
+    removeButton.textContent = "✕";
+    removeButton.addEventListener("click", () => {
+        this._buttonContainer.removeChild(entry);
+    });
+
+    entry.appendChild(labelInput);
+    entry.appendChild(actionInput);
+    entry.appendChild(removeButton);
+    this._buttonContainer.appendChild(entry);
+}
+
+_updateButtonsState() {
+    const buttons = [];
+    const entries = this._buttonContainer.querySelectorAll(".mapping-entry");
+    entries.forEach(entry => {
+        const inputs = entry.querySelectorAll("input");
+        if (inputs[0].value) { // require at least a label
+            buttons.push({
+                label: inputs[0].value,
+                action: inputs[1] ? inputs[1].value : ""
+            });
+        }
+    });
+    return buttons;
+}
+
+        
         _addMappingEntry(columnIndex = '', value = '', symbolType = 'circle') {
             const entry = document.createElement("div");
             entry.className = "mapping-entry";
@@ -365,6 +425,9 @@
             // Update symbol mappings state
             const symbolMappings = this._updateMappingsState();
             
+                // Update dynamic buttons state
+    const dynamicButtons = this._updateButtonsState();
+            
             // Dispatch event with updated style properties
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
@@ -377,7 +440,8 @@
                         selectedRowColor: this.selectedRowColor,
                         hoverRowColor: this.hoverRowColor,
                         tableTextColor: this.tableTextColor,
-                        symbolMappings: JSON.stringify(symbolMappings)
+                        symbolMappings: JSON.stringify(symbolMappings),
+                         dynamicButtons: JSON.stringify(dynamicButtons)
                     }
                 }
             }));
