@@ -395,6 +395,7 @@ th.has-active-search::after {
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
+            this._currentSearchColumn = null;
 
                 this._initialized = false;
             // Get DOM elements
@@ -674,7 +675,10 @@ _renderTable() {
             th.appendChild(searchContainer);
             
             // Focus the input after rendering
-            setTimeout(() => searchInput.focus(), 0);
+         if (this._currentSearchColumn === colIndex) {
+    setTimeout(() => searchInput.focus(), 0);
+}
+
         } else {
             // Show regular header with click handler for search
             const headerContainer = document.createElement('div');
@@ -817,9 +821,11 @@ _renderTable() {
 
 // Add these methods for search functionality
 _activateColumnSearch(colIndex, column) {
-    console.log('Activating search for column:', column.name);
-    this._activeSearches[colIndex] = '';
-    this._renderTable();
+ console.log('Activating search for column:', column.name);
+this._activeSearches[colIndex] = '';
+this._currentSearchColumn = colIndex;
+this._renderTable();
+
 }
 
 _handleColumnSearch(colIndex, value) {
@@ -829,9 +835,13 @@ _handleColumnSearch(colIndex, value) {
 }
 
 _clearColumnSearch(colIndex) {
-    console.log('Clearing search for column:', colIndex);
-    delete this._activeSearches[colIndex];
-    this._renderTable();
+ console.log('Clearing search for column:', colIndex);
+delete this._activeSearches[colIndex];
+if (this._currentSearchColumn === colIndex) {
+    this._currentSearchColumn = null;
+}
+this._renderTable();
+
 }
         
         /* ------------------------------------------------------------------
