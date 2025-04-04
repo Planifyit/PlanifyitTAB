@@ -61,7 +61,7 @@
             .apply-button:hover {
                 background-color: #1557b0;
             }
-            .symbol-mapping {
+           .symbol-mapping, .button-container {
                 margin-top: 15px;
             }
             .mapping-entry {
