@@ -581,29 +581,37 @@ _handleCheckboxChange(index, e) {
         /* ------------------------------------------------------------------
          *  Visual Updates for Selection
          * ------------------------------------------------------------------ */
-        
-        _updateRowSelection() {
-            const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
-            rows.forEach((row, index) => {
-                const isSelected = this._selectedRows.includes(index);
-                if (isSelected) {
-                    row.classList.add('selected');
-                } else {
-                    row.classList.remove('selected');
-                }
-                if (this._isMultiSelectMode) {
-                    const checkbox = row.querySelector('.select-checkbox');
-                    if (checkbox) {
-                        checkbox.checked = isSelected;
-                    }
-                }
-            });
-            this._updateSelectAllCheckbox();
-this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
 
 
+_updateRowSelection() {
+    const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
+    rows.forEach((row, filteredIndex) => {
+        // Get the corresponding original index from the mapping;
+        // if no mapping exists, default to the filteredIndex itself.
+        const originalIndex = (this._lastFilteredIndices && this._lastFilteredIndices[filteredIndex] !== undefined)
+            ? this._lastFilteredIndices[filteredIndex]
+            : filteredIndex;
+        const isSelected = this._selectedRows.includes(originalIndex);
+        if (isSelected) {
+            row.classList.add('selected');
+        } else {
+            row.classList.remove('selected');
         }
+        if (this._isMultiSelectMode) {
+            const checkbox = row.querySelector('.select-checkbox');
+            if (checkbox) {
+                checkbox.checked = isSelected;
+            }
+        }
+    });
+    this._updateSelectAllCheckbox();
+    this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+}
 
+
+
+
+        
         _updateSelectAllCheckbox() {
             if (this._tableData.length === 0) {
                 this._selectAllCheckbox.checked = false;
@@ -736,6 +744,7 @@ _renderTable() {
             filteredIndices.push(originalIndex);
         }
     });
+    this._lastFilteredIndices = filteredIndices;
     
     // Show "No data" message if no data or all filtered out
     if (filteredData.length === 0) {
