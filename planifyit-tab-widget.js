@@ -422,6 +422,7 @@ th.has-active-search::after {
             this._currentSearchColumn = null;
             this._dynamicButtons = []; 
                 this._initialized = false;
+            this._lastClickedButtonId = null;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -474,13 +475,14 @@ th.has-active-search::after {
                     button.textContent = symbolMap[buttonConfig.symbol] || '●';
                     
                     // Add click handler
-                    button.addEventListener('click', () => {
-                        this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
-                            detail: {
-                                buttonId: buttonConfig.id
-                            }
-                        }));
-                    });
+             button.addEventListener('click', () => {
+    this._lastClickedButtonId = buttonConfig.id;
+    this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
+        detail: {
+            buttonId: buttonConfig.id
+        }
+    }));
+});
                     
                     // Insert the button before the multiSelectButton
                     this._actionButtons.insertBefore(button, this._multiSelectButton);
@@ -1277,7 +1279,10 @@ set dynamicButtons(value) {
         getDynamicButtons() {
             return this.dynamicButtons || '[]';
         }
-             
+
+        getLastClickedButtonId() {
+    return this._lastClickedButtonId || '';
+}
 // Native function called by SAC
 getSelectedRowDataForSelection(key, rowIndex) {
   return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
