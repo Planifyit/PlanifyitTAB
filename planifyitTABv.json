@@ -210,13 +210,22 @@
       "description": "The index of the selected row in the selectedRowsData array."
     }
   ]
-}
+},
+    "getDynamicButtons": {
+      "returnType": "string",
+      "description": "Get the dynamic buttons configuration as a JSON string",
+      "parameters": [],
+      "body": "return this.dynamicButtons || '[]';"
+    }
 
 
   },
   "events": {
     "onSelectionChanged": {
       "description": "Called when the selection of rows changes."
+    },
+    "onCustomButtonClicked": {
+      "description": "Called when a custom dynamic button is clicked."
     }
   },
   "dataBindings": {
