@@ -312,6 +312,9 @@ th {
     padding: 8px 10px;
 }
 
+
+
+
 /* Add visual indicator for columns with active search */
 th:has(.search-container.active) {
     background-color: #f0f8ff;
@@ -336,7 +339,27 @@ th:has(.search-container.active)::after,
 th.has-active-search::after {
     background-color: #1a73e8;
 }
+
+  /*  style for dynamic buttons */
+            .dynamic-button {
+                display: flex;
+                border: none;
+                border-radius: 4px;
+                color: white;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                font-size: 16px;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                background-color: #008509;
+                margin-right: 4px;
+            }
             
+            .dynamic-button:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }           
             
         </style>
 
@@ -347,6 +370,7 @@ th.has-active-search::after {
             <div class="table-header">
                 <div class="table-header-title"></div>
                 <div class="action-buttons">
+                     <!-- Dynamic buttons will be inserted here -->
      <button id="multiSelectButton" class="table-button" title="Select Multiple">☐☑</button>
 <button id="cancelButton" class="table-button cancel-button" title="Cancel">✕</button>
                   
@@ -396,7 +420,7 @@ th.has-active-search::after {
              this._symbolMappings = [];
             this._activeSearches = {};  // Store active column searches
             this._currentSearchColumn = null;
-
+            this._dynamicButtons = []; 
                 this._initialized = false;
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
@@ -404,6 +428,7 @@ th.has-active-search::after {
             this._selectAllCheckbox = this._shadowRoot.getElementById('selectAllCheckbox');
             this._tableBody = this._shadowRoot.getElementById('tableBody');
             this._headerRow = this._shadowRoot.getElementById('headerRow');
+            this._actionButtons = this._shadowRoot.querySelector('.action-buttons');
             
             // Attach event listeners
             this._multiSelectButton.addEventListener('click', this._toggleMultiSelectMode.bind(this));
@@ -411,6 +436,63 @@ th.has-active-search::after {
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
         }
 
+
+
+
+ // Add method to create dynamic buttons
+        _renderDynamicButtons() {
+            // Get all existing dynamic buttons
+            const existingButtons = this._shadowRoot.querySelectorAll('.dynamic-button');
+            existingButtons.forEach(button => button.remove());
+            
+            try {
+                // Parse dynamic buttons if it's a string
+                const buttons = typeof this._dynamicButtons === 'string' ? 
+                    JSON.parse(this._dynamicButtons) : this._dynamicButtons;
+                
+                if (Array.isArray(buttons) && buttons.length > 0) {
+                    buttons.forEach(buttonConfig => {
+                        if (buttonConfig.id) {
+                            const button = document.createElement('button');
+                            button.className = 'dynamic-button';
+                            button.title = buttonConfig.tooltip || buttonConfig.id;
+                            
+                            // Get symbol for the button
+                            const symbolMap = {
+                                'check': '✓',
+                                'bell': '🔔',
+                                'warning': '⚠',
+                                'info': 'ℹ',
+                                'flag': '⚑',
+                                'x': '✕',
+                                'arrow-up': '↑',
+                                'arrow-down': '↓',
+                                'minus': '-',
+                                'plus': '+'
+                            };
+                            
+                            button.textContent = symbolMap[buttonConfig.symbol] || '●';
+                            
+                            // Add click handler
+                            button.addEventListener('click', () => {
+                                this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
+                                    detail: {
+                                        buttonId: buttonConfig.id
+                                    }
+                                }));
+                            });
+                            
+                            // Insert the button before the multiSelectButton
+                            this._actionButtons.insertBefore(button, this._multiSelectButton);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error rendering dynamic buttons:', e);
+            }
+        }
+
+        
  /* ------------------------------------------------------------------
          *  Symbol Mapping
          * ------------------------------------------------------------------ */
@@ -897,6 +979,17 @@ connectedCallback() {
             }
         }
 
+  // Add reading of dynamic buttons
+                if (this.hasAttribute("dynamicButtons")) {
+                    try {
+                        this._dynamicButtons = JSON.parse(this.getAttribute("dynamicButtons"));
+                    } catch (e) {
+                        console.error("Invalid dynamicButtons attribute", e);
+                    }
+                }
+
+
+        
         // If data binding exists, update data binding
         if (this.tableDataBinding) {
             this._updateDataBinding(this.tableDataBinding);
@@ -907,6 +1000,7 @@ connectedCallback() {
     }
     
     // Always re-render the table (or selectively update UI) without reinitializing state
+    this._renderDynamicButtons();
     this._renderTable();
 }
 
@@ -992,6 +1086,19 @@ connectedCallback() {
         
 onCustomWidgetAfterUpdate(changedProperties) {
 
+
+           // Add handling for dynamic buttons
+            if ('dynamicButtons' in changedProperties) {
+                try {
+                    this._dynamicButtons = typeof changedProperties.dynamicButtons === 'string' ? 
+                        JSON.parse(changedProperties.dynamicButtons) : changedProperties.dynamicButtons;
+                    this._renderDynamicButtons();
+                } catch (e) {
+                    console.error('Invalid dynamic buttons:', e);
+                }
+            }
+
+    
     //  headerTitle and appTitle
     if ('headerTitle' in changedProperties) {
         const headerTitleEl = this._shadowRoot.querySelector('.table-header-title');
@@ -1125,6 +1232,29 @@ onCustomWidgetAfterUpdate(changedProperties) {
             }
         }
 
+  // Add getter and setter for dynamic buttons
+        get dynamicButtons() {
+            return typeof this._dynamicButtons === 'string' ? 
+                this._dynamicButtons : JSON.stringify(this._dynamicButtons);
+        }
+        
+        set dynamicButtons(value) {
+            try {
+                this._dynamicButtons = typeof value === 'string' ? JSON.parse(value) : value;
+                this._renderDynamicButtons();
+                this.dispatchEvent(new CustomEvent("propertiesChanged", {
+                    detail: { properties: { dynamicButtons: typeof value === 'string' ? value : JSON.stringify(value) } }
+                }));
+            } catch (e) {
+                console.error('Invalid dynamic buttons:', e);
+            }
+        }
+        
+       // Implement getDynamicButtons method
+        getDynamicButtons() {
+            return this.dynamicButtons || '[]';
+        }
+             
 // Native function called by SAC
 getSelectedRowDataForSelection(key, rowIndex) {
   return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
