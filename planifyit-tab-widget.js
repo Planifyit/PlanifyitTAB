@@ -439,6 +439,22 @@ th.has-active-search::after {
 
 
 
+     _getSymbols() {
+    return [
+        { value: 'check', label: '✓ Check' },
+        { value: 'x', label: '✕ X' },
+        { value: 'arrow-up', label: '↑ Arrow Up' },
+        { value: 'arrow-down', label: '↓ Arrow Down' },
+        { value: 'minus', label: '- Minus' },
+        { value: 'plus', label: '+ Plus' },
+        { value: 'bell', label: '🔔 Bell' },
+        { value: 'warning', label: '⚠ Warning' },
+        { value: 'info', label: 'ℹ Info' },
+        { value: 'flag', label: '⚑ Flag' }
+    ];
+}  
+
+        
 
  // create dynamic buttons
     _renderDynamicButtons() {
