@@ -106,7 +106,13 @@
     "symbolMappings": {
       "type": "string",
       "default": "[]"
-    }
+    },
+  "dynamicButtons": {
+    "type": "string",
+    "description": "JSON string of dynamically created buttons",
+    "default": "[]"
+}
+
   },
   "methods": {
     "getSelectedRowData": {
