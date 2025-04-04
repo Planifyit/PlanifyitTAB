@@ -439,58 +439,82 @@ th.has-active-search::after {
 
 
 
- // Add method to create dynamic buttons
-        _renderDynamicButtons() {
-            // Get all existing dynamic buttons
-            const existingButtons = this._shadowRoot.querySelectorAll('.dynamic-button');
-            existingButtons.forEach(button => button.remove());
-            
-            try {
-                // Parse dynamic buttons if it's a string
-                const buttons = typeof this._dynamicButtons === 'string' ? 
-                    JSON.parse(this._dynamicButtons) : this._dynamicButtons;
-                
-                if (Array.isArray(buttons) && buttons.length > 0) {
-                    buttons.forEach(buttonConfig => {
-                        if (buttonConfig.id) {
-                            const button = document.createElement('button');
-                            button.className = 'dynamic-button';
-                            button.title = buttonConfig.tooltip || buttonConfig.id;
-                            
-                            // Get symbol for the button
-                            const symbolMap = {
-                                'check': '✓',
-                                'bell': '🔔',
-                                'warning': '⚠',
-                                'info': 'ℹ',
-                                'flag': '⚑',
-                                'x': '✕',
-                                'arrow-up': '↑',
-                                'arrow-down': '↓',
-                                'minus': '-',
-                                'plus': '+'
-                            };
-                            
-                            button.textContent = symbolMap[buttonConfig.symbol] || '●';
-                            
-                            // Add click handler
-                            button.addEventListener('click', () => {
-                                this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
-                                    detail: {
-                                        buttonId: buttonConfig.id
-                                    }
-                                }));
-                            });
-                            
-                            // Insert the button before the multiSelectButton
-                            this._actionButtons.insertBefore(button, this._multiSelectButton);
-                        }
+ // create dynamic buttons
+    _renderDynamicButtons() {
+    // Get all existing dynamic buttons
+    const existingButtons = this._shadowRoot.querySelectorAll('.dynamic-button');
+    existingButtons.forEach(button => button.remove());
+    
+    try {
+        // Parse dynamic buttons if it's a string
+        const buttons = typeof this._dynamicButtons === 'string' ? 
+            JSON.parse(this._dynamicButtons) : this._dynamicButtons;
+        
+        if (Array.isArray(buttons) && buttons.length > 0) {
+            buttons.forEach(buttonConfig => {
+                if (buttonConfig.id && buttonConfig.visibility !== 'hidden') {
+                    const button = document.createElement('button');
+                    button.className = 'dynamic-button';
+                    button.title = buttonConfig.tooltip || buttonConfig.id;
+                    
+                    // Get symbol for the button
+                    const symbolMap = {
+                        'check': '✓',
+                        'bell': '🔔',
+                        'warning': '⚠',
+                        'info': 'ℹ',
+                        'flag': '⚑',
+                        'x': '✕',
+                        'arrow-up': '↑',
+                        'arrow-down': '↓',
+                        'minus': '-',
+                        'plus': '+'
+                    };
+                    
+                    button.textContent = symbolMap[buttonConfig.symbol] || '●';
+                    
+                    // Add click handler
+                    button.addEventListener('click', () => {
+                        this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
+                            detail: {
+                                buttonId: buttonConfig.id
+                            }
+                        }));
                     });
+                    
+                    // Insert the button before the multiSelectButton
+                    this._actionButtons.insertBefore(button, this._multiSelectButton);
                 }
-            } catch (e) {
-                console.error('Error rendering dynamic buttons:', e);
-            }
+            });
         }
+    } catch (e) {
+        console.error('Error rendering dynamic buttons:', e);
+    }
+}
+
+updateButtonsState() {
+    this._dynamicButtons = [];
+    const entries = this._buttonContainer.querySelectorAll(".button-entry");
+    
+    entries.forEach(entry => {
+        const buttonIdInput = entry.querySelector(".button-id-input");
+        const tooltipInput = entry.querySelector(".button-tooltip-input");
+        const symbolSelect = entry.querySelector(".button-symbol-select");
+        const visibilitySelect = entry.querySelector(".button-visibility-select");
+        
+        if (buttonIdInput.value) {
+            this._dynamicButtons.push({
+                id: buttonIdInput.value,
+                tooltip: tooltipInput.value || '',
+                symbol: symbolSelect.value,
+                visibility: visibilitySelect.value
+            });
+        }
+    });
+    
+    this._renderDynamicButtons();
+    return this._dynamicButtons;
+}
 
         
  /* ------------------------------------------------------------------
@@ -1088,16 +1112,15 @@ onCustomWidgetAfterUpdate(changedProperties) {
 
 
            // Add handling for dynamic buttons
-            if ('dynamicButtons' in changedProperties) {
-                try {
-                    this._dynamicButtons = typeof changedProperties.dynamicButtons === 'string' ? 
-                        JSON.parse(changedProperties.dynamicButtons) : changedProperties.dynamicButtons;
-                    this._renderDynamicButtons();
-                } catch (e) {
-                    console.error('Invalid dynamic buttons:', e);
-                }
-            }
-
+  if ('dynamicButtons' in changedProperties) {
+    try {
+        this._dynamicButtons = typeof changedProperties.dynamicButtons === 'string' ? 
+            JSON.parse(changedProperties.dynamicButtons) : changedProperties.dynamicButtons;
+        this._renderDynamicButtons();
+    } catch (e) {
+        console.error('Invalid dynamic buttons:', e);
+    }
+}
     
     //  headerTitle and appTitle
     if ('headerTitle' in changedProperties) {
@@ -1233,22 +1256,22 @@ onCustomWidgetAfterUpdate(changedProperties) {
         }
 
   // Add getter and setter for dynamic buttons
-        get dynamicButtons() {
-            return typeof this._dynamicButtons === 'string' ? 
-                this._dynamicButtons : JSON.stringify(this._dynamicButtons);
-        }
-        
-        set dynamicButtons(value) {
-            try {
-                this._dynamicButtons = typeof value === 'string' ? JSON.parse(value) : value;
-                this._renderDynamicButtons();
-                this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                    detail: { properties: { dynamicButtons: typeof value === 'string' ? value : JSON.stringify(value) } }
-                }));
-            } catch (e) {
-                console.error('Invalid dynamic buttons:', e);
-            }
-        }
+  get dynamicButtons() {
+    return typeof this._dynamicButtons === 'string' ? 
+        this._dynamicButtons : JSON.stringify(this._dynamicButtons);
+}
+
+set dynamicButtons(value) {
+    try {
+        this._dynamicButtons = typeof value === 'string' ? JSON.parse(value) : value;
+        this._renderDynamicButtons();
+        this.dispatchEvent(new CustomEvent("propertiesChanged", {
+            detail: { properties: { dynamicButtons: typeof value === 'string' ? value : JSON.stringify(value) } }
+        }));
+    } catch (e) {
+        console.error('Invalid dynamic buttons:', e);
+    }
+}
         
        // Implement getDynamicButtons method
         getDynamicButtons() {
