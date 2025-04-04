@@ -111,8 +111,12 @@
     "type": "string",
     "description": "JSON string of dynamically created buttons",
     "default": "[]"
+},
+ "lastClickedButtonId": {
+    "type": "string",
+    "description": "ID of the last clicked button",
+    "defaultValue": ""
 }
-
   },
   "methods": {
     "getSelectedRowData": {
@@ -216,7 +220,13 @@
       "description": "Get the dynamic buttons configuration as a JSON string",
       "parameters": [],
       "body": "return this.dynamicButtons || '[]';"
-    }
+    },
+	  "getLastClickedButtonId": {
+    "returnType": "string",
+    "description": "Get the ID of the last clicked button",
+    "parameters": [],
+    "body": "return this.lastClickedButtonId || '';"
+}
 
 
   },
