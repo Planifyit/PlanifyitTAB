@@ -424,8 +424,9 @@ visibilityOptions.forEach(option => {
             entry.appendChild(buttonIdInput);
             entry.appendChild(tooltipInput);
             entry.appendChild(symbolSelect);
-            entry.appendChild(removeButton);
             entry.appendChild(visibilitySelect);
+            entry.appendChild(removeButton);
+           
             
             this._buttonContainer.appendChild(entry);
         }
