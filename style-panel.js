@@ -293,6 +293,21 @@
             });
         }
 
+      _getSymbols() {
+    return [
+        { value: 'check', label: '✓ Check' },
+        { value: 'x', label: '✕ X' },
+        { value: 'arrow-up', label: '↑ Arrow Up' },
+        { value: 'arrow-down', label: '↓ Arrow Down' },
+        { value: 'minus', label: '- Minus' },
+        { value: 'plus', label: '+ Plus' },
+        { value: 'bell', label: '🔔 Bell' },
+        { value: 'warning', label: '⚠ Warning' },
+        { value: 'info', label: 'ℹ Info' },
+        { value: 'flag', label: '⚑ Flag' }
+    ];
+}  
+
         _addMappingEntry(columnIndex = '', value = '', symbolType = 'circle') {
             const entry = document.createElement("div");
             entry.className = "mapping-entry";
@@ -310,21 +325,12 @@
             valueInput.placeholder = "Value to match";
             valueInput.value = value;
             
-            const symbolSelect = document.createElement("select");
-            symbolSelect.className = "symbol-select";
+
+  const symbolSelect = document.createElement("select");
+    symbolSelect.className = "symbol-select";
+    
+    const symbols = this._getSymbols();
             
-            const symbols = [
-                { value: 'check', label: '✓ Check' },
-                { value: 'x', label: '✕ X' },
-                { value: 'arrow-up', label: '↑ Arrow Up' },
-                { value: 'arrow-down', label: '↓ Arrow Down' },
-                { value: 'minus', label: '- Minus' },
-                { value: 'plus', label: '+ Plus' },
-                { value: 'bell', label: '🔔 Bell' },
-                { value: 'warning', label: '⚠ Warning' },
-                { value: 'info', label: 'ℹ Info' },
-                { value: 'flag', label: '⚑ Flag' }
-            ];
             
             symbols.forEach(symbol => {
                 const option = document.createElement("option");
@@ -371,21 +377,10 @@
             tooltipInput.placeholder = "Tooltip description";
             tooltipInput.value = tooltip;
             
-            const symbolSelect = document.createElement("select");
-            symbolSelect.className = "button-symbol-select";
-            
-            const symbols = [
-                { value: 'check', label: '✓ Check' },
-                { value: 'x', label: '✕ X' },
-                { value: 'arrow-up', label: '↑ Arrow Up' },
-                { value: 'arrow-down', label: '↓ Arrow Down' },
-                { value: 'minus', label: '- Minus' },
-                { value: 'plus', label: '+ Plus' },
-                { value: 'bell', label: '🔔 Bell' },
-                { value: 'warning', label: '⚠ Warning' },
-                { value: 'info', label: 'ℹ Info' },
-                { value: 'flag', label: '⚑ Flag' }
-            ];
+   const symbolSelect = document.createElement("select");
+    symbolSelect.className = "button-symbol-select";
+    
+    const symbols = this._getSymbols();
             
             symbols.forEach(symbol => {
                 const option = document.createElement("option");
