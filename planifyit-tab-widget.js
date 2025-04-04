@@ -476,7 +476,7 @@ th.has-active-search::after {
                     
                     // Add click handler
              button.addEventListener('click', () => {
-    this.lastClickedButtonId = buttonConfig.id;
+    this._lastClickedButtonId = buttonConfig.id;
     this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
         detail: {
             buttonId: buttonConfig.id
@@ -1274,15 +1274,23 @@ set dynamicButtons(value) {
         console.error('Invalid dynamic buttons:', e);
     }
 }
-        
-       // Implement getDynamicButtons method
-        getDynamicButtons() {
-            return this.dynamicButtons || '[]';
-        }
 
-        getLastClickedButtonId() {
-    return this.lastClickedButtonId || '';
+get lastClickedButtonId() {
+    return this._lastClickedButtonId || '';
 }
+
+set lastClickedButtonId(value) {
+    this._lastClickedButtonId = value;
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: { 
+            properties: { 
+                lastClickedButtonId: value 
+            } 
+        }
+    }));
+}
+        
+
 // Native function called by SAC
 getSelectedRowDataForSelection(key, rowIndex) {
   return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
