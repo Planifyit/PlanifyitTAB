@@ -376,7 +376,27 @@
             tooltipInput.className = "button-tooltip-input";
             tooltipInput.placeholder = "Tooltip description";
             tooltipInput.value = tooltip;
-            
+
+const visibilitySelect = document.createElement("select");
+visibilitySelect.className = "button-visibility-select";
+
+const visibilityOptions = [
+    { value: 'visible', label: 'Visible' },
+    { value: 'hidden', label: 'Hidden' }
+];
+
+visibilityOptions.forEach(option => {
+    const optionElement = document.createElement("option");
+    optionElement.value = option.value;
+    optionElement.textContent = option.label;
+    if (option.value === 'visible') {
+        optionElement.selected = true;
+    }
+    visibilitySelect.appendChild(optionElement);
+});
+
+
+     
    const symbolSelect = document.createElement("select");
     symbolSelect.className = "button-symbol-select";
     
@@ -405,33 +425,34 @@
             entry.appendChild(tooltipInput);
             entry.appendChild(symbolSelect);
             entry.appendChild(removeButton);
+            entry.appendChild(visibilitySelect);
             
             this._buttonContainer.appendChild(entry);
         }
 
 
-   _updateButtonsState() {
-            this._dynamicButtons = [];
-            const entries = this._buttonContainer.querySelectorAll(".button-entry");
-            
-            entries.forEach(entry => {
-                const buttonIdInput = entry.querySelector(".button-id-input");
-                const tooltipInput = entry.querySelector(".button-tooltip-input");
-                const symbolSelect = entry.querySelector(".button-symbol-select");
-                
-                if (buttonIdInput.value) {
-                    this._dynamicButtons.push({
-                        id: buttonIdInput.value,
-                        tooltip: tooltipInput.value || '',
-                        symbol: symbolSelect.value
-                    });
-                }
+_updateButtonsState() {
+    this._dynamicButtons = [];
+    const entries = this._buttonContainer.querySelectorAll(".button-entry");
+    
+    entries.forEach(entry => {
+        const buttonIdInput = entry.querySelector(".button-id-input");
+        const tooltipInput = entry.querySelector(".button-tooltip-input");
+        const symbolSelect = entry.querySelector(".button-symbol-select");
+        const visibilitySelect = entry.querySelector(".button-visibility-select");
+        
+        if (buttonIdInput.value) {
+            this._dynamicButtons.push({
+                id: buttonIdInput.value,
+                tooltip: tooltipInput.value || '',
+                symbol: symbolSelect.value,
+                visibility: visibilitySelect.value
             });
-            
-            return this._dynamicButtons;
         }
-
-
+    });
+    
+    return this._dynamicButtons;
+}
 
 
 
