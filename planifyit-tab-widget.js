@@ -423,6 +423,7 @@ th.has-active-search::after {
             this._dynamicButtons = []; 
                 this._initialized = false;
             this._lastClickedButtonId = null;
+            this._symbolMap = this._buildSymbolMap(); // Create symbol map once
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
