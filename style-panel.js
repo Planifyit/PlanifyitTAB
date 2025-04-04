@@ -64,7 +64,7 @@
            .symbol-mapping, .button-container {
                 margin-top: 15px;
             }
-            .mapping-entry {
+            .mapping-entry, .button-entry {
                 display: flex;
                 align-items: center;
                 margin-bottom: 8px;
@@ -73,10 +73,10 @@
             .column-input {
                 width: 60px;
             }
-            .symbol-select {
+            .symbol-select, .button-symbol-select  {
                 flex-grow: 1;
             }
-            .value-input {
+            .value-input, .button-id-input, .button-tooltip-input {
                 flex-grow: 1;
             }
             .add-button, .remove-button {
