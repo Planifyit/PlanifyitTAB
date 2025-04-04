@@ -476,7 +476,7 @@ th.has-active-search::after {
                     
                     // Add click handler
              button.addEventListener('click', () => {
-    this._lastClickedButtonId = buttonConfig.id;
+    this.lastClickedButtonId = buttonConfig.id;
     this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
         detail: {
             buttonId: buttonConfig.id
@@ -1281,7 +1281,7 @@ set dynamicButtons(value) {
         }
 
         getLastClickedButtonId() {
-    return this._lastClickedButtonId || '';
+    return this.lastClickedButtonId || '';
 }
 // Native function called by SAC
 getSelectedRowDataForSelection(key, rowIndex) {
