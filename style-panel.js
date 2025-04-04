@@ -168,6 +168,14 @@
                 </div>
                 <button type="button" id="add_mapping" class="add-button">+ Add Symbol Mapping</button>
             </fieldset>
+
+             <fieldset>
+                <legend>Create Buttons</legend>
+                <div class="button-container" id="button_container">
+                    <!-- Button entries will be added here dynamically -->
+                </div>
+                <button type="button" id="add_button" class="add-button">+ Add Custom Button</button>
+            </fieldset>
             
             <button type="button" id="apply_styles" class="apply-button">Apply Styles</button>
             <input type="submit" style="display:none;">
@@ -209,13 +217,17 @@
             // Symbol mapping
             this._symbolMappingContainer = this._shadowRoot.getElementById("symbol_mapping_container");
             this._addMappingButton = this._shadowRoot.getElementById("add_mapping");
+
+               // Dynamic buttons
+            this._buttonContainer = this._shadowRoot.getElementById("button_container");
+            this._addButtonButton = this._shadowRoot.getElementById("add_button");
             
             // Apply button
             this._applyButton = this._shadowRoot.getElementById("apply_styles");
             
             // Internal state
             this._symbolMappings = [];
-            
+            this._dynamicButtons = [];
             // Connect color pickers to text inputs
             this._connectColorPickers();
             
@@ -223,9 +235,12 @@
             this._form.addEventListener("submit", this._submit.bind(this));
             this._applyButton.addEventListener("click", this._submit.bind(this));
             this._addMappingButton.addEventListener("click", () => this._addMappingEntry());
-            
+            this._addButtonButton.addEventListener("click", () => this._addButtonEntry());
             // Add initial mapping entry
             this._addMappingEntry();
+            
+       // Add initial button entry
+            this._addButtonEntry();
         }
         
         _connectColorPickers() {
@@ -337,6 +352,95 @@
             
             this._symbolMappingContainer.appendChild(entry);
         }
+
+
+
+ _addButtonEntry(buttonId = '', tooltip = '', symbolType = 'info') {
+            const entry = document.createElement("div");
+            entry.className = "button-entry";
+            
+            const buttonIdInput = document.createElement("input");
+            buttonIdInput.type = "text";
+            buttonIdInput.className = "button-id-input";
+            buttonIdInput.placeholder = "Button ID";
+            buttonIdInput.value = buttonId;
+            
+            const tooltipInput = document.createElement("input");
+            tooltipInput.type = "text";
+            tooltipInput.className = "button-tooltip-input";
+            tooltipInput.placeholder = "Tooltip description";
+            tooltipInput.value = tooltip;
+            
+            const symbolSelect = document.createElement("select");
+            symbolSelect.className = "button-symbol-select";
+            
+            const symbols = [
+                { value: 'check', label: '✓ Check' },
+                { value: 'x', label: '✕ X' },
+                { value: 'arrow-up', label: '↑ Arrow Up' },
+                { value: 'arrow-down', label: '↓ Arrow Down' },
+                { value: 'minus', label: '- Minus' },
+                { value: 'plus', label: '+ Plus' },
+                { value: 'bell', label: '🔔 Bell' },
+                { value: 'warning', label: '⚠ Warning' },
+                { value: 'info', label: 'ℹ Info' },
+                { value: 'flag', label: '⚑ Flag' }
+            ];
+            
+            symbols.forEach(symbol => {
+                const option = document.createElement("option");
+                option.value = symbol.value;
+                option.textContent = symbol.label;
+                if (symbol.value === symbolType) {
+                    option.selected = true;
+                }
+                symbolSelect.appendChild(option);
+            });
+            
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-button";
+            removeButton.textContent = "✕";
+            removeButton.addEventListener("click", () => {
+                this._buttonContainer.removeChild(entry);
+                this._updateButtonsState();
+            });
+            
+            entry.appendChild(buttonIdInput);
+            entry.appendChild(tooltipInput);
+            entry.appendChild(symbolSelect);
+            entry.appendChild(removeButton);
+            
+            this._buttonContainer.appendChild(entry);
+        }
+
+
+   _updateButtonsState() {
+            this._dynamicButtons = [];
+            const entries = this._buttonContainer.querySelectorAll(".button-entry");
+            
+            entries.forEach(entry => {
+                const buttonIdInput = entry.querySelector(".button-id-input");
+                const tooltipInput = entry.querySelector(".button-tooltip-input");
+                const symbolSelect = entry.querySelector(".button-symbol-select");
+                
+                if (buttonIdInput.value) {
+                    this._dynamicButtons.push({
+                        id: buttonIdInput.value,
+                        tooltip: tooltipInput.value || '',
+                        symbol: symbolSelect.value
+                    });
+                }
+            });
+            
+            return this._dynamicButtons;
+        }
+
+
+
+
+
+
         
         _updateMappingsState() {
             this._symbolMappings = [];
@@ -364,6 +468,8 @@
             
             // Update symbol mappings state
             const symbolMappings = this._updateMappingsState();
+                  // Update dynamic buttons state
+            const dynamicButtons = this._updateButtonsState();
             
             // Dispatch event with updated style properties
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
@@ -377,7 +483,8 @@
                         selectedRowColor: this.selectedRowColor,
                         hoverRowColor: this.hoverRowColor,
                         tableTextColor: this.tableTextColor,
-                        symbolMappings: JSON.stringify(symbolMappings)
+                        symbolMappings: JSON.stringify(symbolMappings),
+                         dynamicButtons: JSON.stringify(dynamicButtons)
                     }
                 }
             }));
@@ -416,6 +523,43 @@
         get symbolMappings() {
             return JSON.stringify(this._updateMappingsState());
         }
+
+
+ set dynamicButtons(value) {
+            try {
+                // Clear existing buttons
+                this._buttonContainer.innerHTML = '';
+                
+                // Parse incoming value
+                const buttons = JSON.parse(value);
+                
+                if (Array.isArray(buttons) && buttons.length > 0) {
+                    // Add each button entry
+                    buttons.forEach(button => {
+                        this._addButtonEntry(
+                            button.id || '',
+                            button.tooltip || '',
+                            button.symbol || 'info'
+                        );
+                    });
+                } else {
+                    // Add default empty button
+                    this._addButtonEntry();
+                }
+                
+                this._dynamicButtons = buttons;
+            } catch (e) {
+                console.error("Error setting dynamic buttons:", e);
+                // Add default empty button
+                this._addButtonEntry();
+            }
+        }
+
+        
+     get dynamicButtons() {
+            return JSON.stringify(this._updateButtonsState());
+        }
+              
         
         // Getters and setters for title properties
         get headerTitle() {
