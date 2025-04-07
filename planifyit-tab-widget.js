@@ -488,7 +488,11 @@ _buildSymbolMap() {
                     
                     // Use the symbol map
                     button.textContent = this._symbolMap[buttonConfig.symbol] || '●';
-                    
+
+                     // Apply background color if specified
+                    if (buttonConfig.backgroundColor && buttonConfig.backgroundColor.trim() !== '') {
+                        button.style.backgroundColor = buttonConfig.backgroundColor;
+                    }
       // Add click handler
 
                     button.addEventListener('click', () => {
