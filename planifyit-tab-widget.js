@@ -1312,6 +1312,19 @@ set lastClickedButtonId(value) {
         }
     }));
 }
+
+// Method to get button visibility by ID
+getButtonVisibility(buttonId) {
+  if (!this._dynamicButtons || !Array.isArray(this._dynamicButtons)) {
+    return "";
+  }
+  
+  // Find the button with the matching ID
+  const button = this._dynamicButtons.find(btn => btn.id === buttonId);
+  
+  // Return the visibility if found, otherwise empty string
+  return button ? button.visibility : "";
+}
         
 
 // Native function called by SAC
