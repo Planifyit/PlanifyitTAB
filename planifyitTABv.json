@@ -13,13 +13,13 @@
       "kind": "main",
       "tag": "planifyit-tab-widget",
       "url": "https://planifyit.github.io/PlanifyitTAB/planifyit-tab-widget.js",
-      "integrity": ""
+      "integrity": "sha256-NEXG+mlhzeM1Bp+7ePBg7DxccDZLLSN8rMqLrR+eGeM="
     },
     {
       "kind": "styling",
       "tag": "com-planifyit-tab-styling",
       "url": "https://planifyit.github.io/PlanifyitTAB/style-panel.js",
-      "integrity": ""
+      "integrity": "sha256-VumUhtgQxk2eLMNpiyV6uh0OrRxvMYcEk6TaHON1+Zs="
     }
   ],
   "properties": {
