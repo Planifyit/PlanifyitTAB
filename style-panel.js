@@ -130,13 +130,7 @@
                             <input id="style_header_text_color_picker" type="color">
                         </td>
                     </tr>
-                    <tr>
-                        <td>Button Text Color</td>
-                        <td class="color-row">
-                            <input id="style_button_color" type="text" class="color-input">
-                            <input id="style_button_color_picker" type="color">
-                        </td>
-                    </tr>
+              
                     <tr>
                         <td>Selected Row Color</td>
                         <td class="color-row">
@@ -202,9 +196,7 @@
             this._headerTextColorInput = this._shadowRoot.getElementById("style_header_text_color");
             this._headerTextColorPicker = this._shadowRoot.getElementById("style_header_text_color_picker");
             
-            this._buttonColorInput = this._shadowRoot.getElementById("style_button_color");
-            this._buttonColorPicker = this._shadowRoot.getElementById("style_button_color_picker");
-            
+    
             this._selectedRowColorInput = this._shadowRoot.getElementById("style_selected_row_color");
             this._selectedRowColorPicker = this._shadowRoot.getElementById("style_selected_row_color_picker");
             
@@ -260,13 +252,7 @@
                 this._headerTextColorPicker.value = this._headerTextColorInput.value;
             });
             
-            // Button color
-            this._buttonColorPicker.addEventListener("input", () => {
-                this._buttonColorInput.value = this._buttonColorPicker.value;
-            });
-            this._buttonColorInput.addEventListener("change", () => {
-                this._buttonColorPicker.value = this._buttonColorInput.value;
-            });
+  
             
             // Selected row color
             this._selectedRowColorPicker.addEventListener("input", () => {
@@ -651,14 +637,8 @@ _updateButtonsState() {
             this._headerTextColorPicker.value = value;
         }
         
-        get buttonColor() {
-            return this._buttonColorInput.value;
-        }
-        
-        set buttonColor(value) {
-            this._buttonColorInput.value = value;
-            this._buttonColorPicker.value = value;
-        }
+ 
+
         
         get selectedRowColor() {
             return this._selectedRowColorInput.value;
