@@ -215,6 +215,17 @@
     }
   ]
 },
+"getButtonVisibility": {
+  "returnType": "string",
+  "description": "Retrieve the visibility state of a button based on its ID.",
+  "parameters": [
+    {
+      "name": "buttonId",
+      "type": "string",
+      "description": "The ID of the button to check visibility for."
+    }
+  ]
+},	  
     "getDynamicButtons": {
       "returnType": "string",
       "description": "Get the dynamic buttons configuration as a JSON string",
