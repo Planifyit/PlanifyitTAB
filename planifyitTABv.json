@@ -237,6 +237,22 @@
     "description": "Get the ID of the last clicked button",
     "parameters": [],
     "body": "return this.lastClickedButtonId || '';"
+},
+  "setButtonVisibility": {
+  "returnType": "void",
+  "description": "Set the visibility state of a button based on its ID.",
+  "parameters": [
+    {
+      "name": "buttonId",
+      "type": "string",
+      "description": "The ID of the button to update the visibility for."
+    },
+    {
+      "name": "visibility",
+      "type": "string",
+      "description": "The visibility state to set ('visible' or 'hidden')."
+    }
+  ]
 }
 
 
