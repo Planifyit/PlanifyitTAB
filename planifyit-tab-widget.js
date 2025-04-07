@@ -634,29 +634,38 @@ _createSymbolElement(symbolInfo) {
        // Update in _handleSelectAll
 _handleSelectAll(e) {
     const isChecked = e.target.checked;
+    
     if (isChecked) {
-        this._selectedRows = Array.from(
-            { length: this._tableData.length },
-            (_, index) => index
-        );
+        // If filtering is active, only select filtered rows
+        if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
+            // Use the indices from the filtered view
+            this._selectedRows = [...this._lastFilteredIndices];
+        } else {
+            // No filtering active, select all rows
+            this._selectedRows = Array.from(
+                { length: this._tableData.length },
+                (_, index) => index
+            );
+        }
     } else {
+        // Unselect all
         this._selectedRows = [];
     }
+    
     this._updateRowSelection();
     this._selectedRowsData = this._selectedRows.map(index => this._tableData[index]);
+    
     this.dispatchEvent(new Event("onSelectionChanged"));
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
                 selectedRows: JSON.stringify(this._selectedRows),
-          selectedRowsArray: this._selectedRows,     
-         selectedRowsData: JSON.stringify(this._selectedRowsData)
-       
+                selectedRowsArray: this._selectedRows,     
+                selectedRowsData: JSON.stringify(this._selectedRowsData)
             }
         }
     }));
 }
-
         
 // Update in _handleRowClick
 _handleRowClick(index, e) {
