@@ -489,15 +489,33 @@ _buildSymbolMap() {
                     // Use the symbol map
                     button.textContent = this._symbolMap[buttonConfig.symbol] || '●';
                     
-                    // Add click handler
+      // Add click handler
+
                     button.addEventListener('click', () => {
-                        this._lastClickedButtonId = buttonConfig.id;
-                        this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
-                            detail: {
-                                buttonId: buttonConfig.id
-                            }
-                        }));
-                    });
+    this._lastClickedButtonId = buttonConfig.id;
+    
+    // Store the clicked ID as a property to make it accessible
+    this.lastClickedButtonId = buttonConfig.id;
+    
+    // Dispatch a more detailed event with the button information
+    this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
+        detail: {
+            buttonId: buttonConfig.id,
+            buttonConfig: buttonConfig
+        }
+    }));
+    
+    // Also dispatch a properties changed event for SAC integration
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: {
+            properties: {
+                lastClickedButtonId: buttonConfig.id
+            }
+        }
+    }));
+});
+                    
+              
                     
                     // Insert the button before the multiSelectButton
                     this._actionButtons.insertBefore(button, this._multiSelectButton);
