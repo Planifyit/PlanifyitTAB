@@ -361,7 +361,7 @@
 
 
 
- _addButtonEntry(buttonId = '', tooltip = '', symbolType = 'info') {
+ _addButtonEntry(buttonId = '', tooltip = '', symbolType = 'info', visibility = 'visible') {
             const entry = document.createElement("div");
             entry.className = "button-entry";
             
@@ -385,15 +385,15 @@ const visibilityOptions = [
     { value: 'hidden', label: 'Hidden' }
 ];
 
-visibilityOptions.forEach(option => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option.value;
-    optionElement.textContent = option.label;
-    if (option.value === 'visible') {
-        optionElement.selected = true;
-    }
-    visibilitySelect.appendChild(optionElement);
-});
+  visibilityOptions.forEach(option => {
+        const optionElement = document.createElement("option");
+        optionElement.value = option.value;
+        optionElement.textContent = option.label;
+        if (option.value === visibility) {
+            optionElement.selected = true;
+        }
+        visibilitySelect.appendChild(optionElement);
+    });
 
 
      
@@ -556,7 +556,8 @@ _updateButtonsState() {
                         this._addButtonEntry(
                             button.id || '',
                             button.tooltip || '',
-                            button.symbol || 'info'
+                            button.symbol || 'info',
+                            button.visibility || 'visible'
                         );
                     });
                 } else {
