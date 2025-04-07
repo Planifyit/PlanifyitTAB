@@ -84,7 +84,7 @@
                 color: white;
                 cursor: pointer;
                 transition: background-color 0.3s;
-                font-size: 16px;
+                font-size: 14px;
                 width: 36px;
                 height: 36px;
                 background-color: transparent;
@@ -371,9 +371,7 @@ th.has-active-search::after {
                 <div class="table-header-title"></div>
                 <div class="action-buttons">
                      <!-- Dynamic buttons will be inserted here -->
-<button id="multiSelectButton" class="table-button" title="Select Multiple">
-  <span style="display: flex; align-items: center; justify-content: center;">⬜✅</span>
-</button>
+<button id="multiSelectButton" class="table-button" title="Select Multiple">⬜✅</button>
 <button id="cancelButton" class="table-button cancel-button" title="Cancel">✕</button>
                   
                 </div>
