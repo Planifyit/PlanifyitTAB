@@ -456,8 +456,9 @@ colorRow.appendChild(colorPicker);
             entry.appendChild(tooltipInput);
             entry.appendChild(symbolSelect);
             entry.appendChild(visibilitySelect);
+            entry.appendChild(colorRow);
             entry.appendChild(removeButton);
-             entry.appendChild(colorRow);
+    
            
             
             this._buttonContainer.appendChild(entry);
