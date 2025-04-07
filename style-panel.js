@@ -361,7 +361,7 @@
 
 
 
- _addButtonEntry(buttonId = '', tooltip = '', symbolType = 'info', visibility = 'visible') {
+ _addButtonEntry(buttonId = '', tooltip = '', symbolType = 'info', visibility = 'visible',  backgroundColor = '') {
             const entry = document.createElement("div");
             entry.className = "button-entry";
             
@@ -377,24 +377,24 @@
             tooltipInput.placeholder = "Tooltip description";
             tooltipInput.value = tooltip;
 
-const visibilitySelect = document.createElement("select");
-visibilitySelect.className = "button-visibility-select";
-
-const visibilityOptions = [
-    { value: 'visible', label: 'Visible' },
-    { value: 'hidden', label: 'Hidden' }
-];
-
-  visibilityOptions.forEach(option => {
-        const optionElement = document.createElement("option");
-        optionElement.value = option.value;
-        optionElement.textContent = option.label;
-        if (option.value === visibility) {
-            optionElement.selected = true;
-        }
-        visibilitySelect.appendChild(optionElement);
-    });
-
+            const visibilitySelect = document.createElement("select");
+            visibilitySelect.className = "button-visibility-select";
+            
+            const visibilityOptions = [
+                { value: 'visible', label: 'Visible' },
+                { value: 'hidden', label: 'Hidden' }
+            ];
+            
+              visibilityOptions.forEach(option => {
+                    const optionElement = document.createElement("option");
+                    optionElement.value = option.value;
+                    optionElement.textContent = option.label;
+                    if (option.value === visibility) {
+                        optionElement.selected = true;
+                    }
+                    visibilitySelect.appendChild(optionElement);
+                });
+            
 
      
    const symbolSelect = document.createElement("select");
@@ -420,12 +420,44 @@ const visibilityOptions = [
                 this._buttonContainer.removeChild(entry);
                 this._updateButtonsState();
             });
-            
+
+
+
+
+const colorRow = document.createElement("div");
+colorRow.className = "color-row";
+
+const colorInput = document.createElement("input");
+colorInput.type = "text";
+colorInput.className = "button-color-input color-input";
+colorInput.placeholder = "#RRGGBB";
+colorInput.value = backgroundColor || '';
+
+const colorPicker = document.createElement("input");
+colorPicker.type = "color";
+colorPicker.className = "button-color-picker";
+colorPicker.value = backgroundColor || '#FFFFFF';
+
+// Connect the color picker to the text input
+colorPicker.addEventListener("input", () => {
+    colorInput.value = colorPicker.value;
+});
+colorInput.addEventListener("change", () => {
+    colorPicker.value = colorInput.value;
+});
+
+colorRow.appendChild(colorInput);
+colorRow.appendChild(colorPicker);
+
+
+
+     
             entry.appendChild(buttonIdInput);
             entry.appendChild(tooltipInput);
             entry.appendChild(symbolSelect);
             entry.appendChild(visibilitySelect);
             entry.appendChild(removeButton);
+             entry.appendChild(colorRow);
            
             
             this._buttonContainer.appendChild(entry);
@@ -441,13 +473,15 @@ _updateButtonsState() {
         const tooltipInput = entry.querySelector(".button-tooltip-input");
         const symbolSelect = entry.querySelector(".button-symbol-select");
         const visibilitySelect = entry.querySelector(".button-visibility-select");
+        const colorInput = entry.querySelector(".button-color-input");
         
         if (buttonIdInput.value) {
             this._dynamicButtons.push({
                 id: buttonIdInput.value,
                 tooltip: tooltipInput.value || '',
                 symbol: symbolSelect.value,
-                visibility: visibilitySelect.value
+                visibility: visibilitySelect.value,
+                  backgroundColor: colorInput.value || ''
             });
         }
     });
@@ -557,7 +591,8 @@ _updateButtonsState() {
                             button.id || '',
                             button.tooltip || '',
                             button.symbol || 'info',
-                            button.visibility || 'visible'
+                            button.visibility || 'visible',
+                               button.backgroundColor || ''
                         );
                     });
                 } else {
