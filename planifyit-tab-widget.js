@@ -87,7 +87,7 @@
                 font-size: 16px;
                 width: 36px;
                 height: 36px;
-             
+                background-color: transparent;
                 align-items: center;
                 justify-content: center;
 
