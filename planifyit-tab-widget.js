@@ -1325,6 +1325,52 @@ getButtonVisibility(buttonId) {
   // Return the visibility if found, otherwise empty string
   return button ? button.visibility : "";
 }
+
+ setButtonVisibility(buttonId, visibility) {
+    // Validate visibility parameter
+    if (visibility !== 'visible' && visibility !== 'hidden') {
+        console.error("Invalid visibility value. Must be 'visible' or 'hidden'.");
+        return;
+    }
+    
+    // Get current buttons
+    let buttons = [];
+    try {
+        buttons = JSON.parse(this.dynamicButtons);
+    } catch (e) {
+        console.error("Error parsing dynamic buttons:", e);
+        return;
+    }
+    
+    // Find and update the button with matching ID
+    let buttonFound = false;
+    for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].id === buttonId) {
+            buttons[i].visibility = visibility;
+            buttonFound = true;
+            break;
+        }
+    }
+    
+    if (!buttonFound) {
+        console.warn(`Button with ID '${buttonId}' not found.`);
+        return;
+    }
+    
+    // Update the UI
+    this.dynamicButtons = JSON.stringify(buttons);
+    
+    // Dispatch event to notify of the change
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: {
+            properties: {
+                dynamicButtons: JSON.stringify(buttons)
+            }
+        }
+    }));
+}
+
+        
         
 
 // Native function called by SAC
