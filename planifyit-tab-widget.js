@@ -90,7 +90,7 @@
              
                 align-items: center;
                 justify-content: center;
-                 background-color: #008509;
+
             }
 
             .table-button:hover {
