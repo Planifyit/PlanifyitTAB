@@ -453,7 +453,13 @@ _getSymbols() {
         { value: 'bell', label: '🔔 Bell' },
         { value: 'warning', label: '⚠ Warning' },
         { value: 'info', label: 'ℹ Info' },
-        { value: 'flag', label: '⚑ Flag' }
+        { value: 'flag', label: '⚑ Flag' },
+         { value: 'lock', label: '🔒 Lock' },
+         { value: 'calendar', label: '📅 Calendar' },
+        { value: 'search', label: '🔍 Search' },
+       { value: 'edit-pencil', label: '✏️ Edit' },
+        { value: 'change', label: '🔄 Change' }
+        
     ];
 }
         // New method to build the symbol map once
