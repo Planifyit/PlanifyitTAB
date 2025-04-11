@@ -217,7 +217,8 @@
     }
   ]
 }, 
-	  "setSelectedDimensionFilter": {
+	 "setSelectedDimensionFilter": {
+  "returnType": "string",
   "description": "Filter table data based on a specific dimension value",
   "parameters": [
     {
@@ -233,10 +234,12 @@
   ]
 },
 "clearAllFilters": {
+  "returnType": "string",
   "description": "Clear all active filters from the table",
   "parameters": []
 },
 "clearDimensionFilter": {
+  "returnType": "string",
   "description": "Clear filter for a specific dimension",
   "parameters": [
     {
@@ -246,10 +249,16 @@
     }
   ]
 },
-"getActiveFilters": {
-  "returnType": "object",
-  "description": "Get all currently active filters as a key-value object",
-  "parameters": []
+"getActiveDimensionFilter": {
+  "returnType": "string",
+  "description": "Get the active filter for a specific dimension",
+  "parameters": [
+    {
+      "name": "dimensionKey",
+      "type": "string",
+      "description": "The key of the dimension to get the filter for"
+    }
+  ]
 },
 "getButtonVisibility": {
   "returnType": "string",
