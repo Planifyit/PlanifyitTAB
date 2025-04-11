@@ -676,27 +676,39 @@ _createSymbolElement(symbolInfo) {
 _handleSelectAll(e) {
     const isChecked = e.target.checked;
     
-    if (isChecked) {
-        // If filtering is active, only select filtered rows
-        if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
-            // Use the indices from the filtered view
-            this._selectedRows = [...this._lastFilteredIndices];
+    // Check if filtering is active
+    const isFiltered = this._lastFilteredIndices && this._lastFilteredIndices.length > 0;
+    
+    if (isFiltered) {
+        // For filtered view, we need to determine if we should select or deselect
+        const filteredIndices = [...this._lastFilteredIndices];
+        
+        // Count how many filtered rows are currently selected
+        const selectedFilteredCount = filteredIndices.filter(index => 
+            this._selectedRows.includes(index)).length;
+        
+        // If some or none are selected, select all filtered rows
+        // If all are selected, deselect all filtered rows
+        if (selectedFilteredCount < filteredIndices.length) {
+            // Add all filtered indices to selection (that aren't already selected)
+            filteredIndices.forEach(index => {
+                if (!this._selectedRows.includes(index)) {
+                    this._selectedRows.push(index);
+                }
+            });
         } else {
-            // No filtering active, select all rows
+            // Remove all filtered indices from selection
+            this._selectedRows = this._selectedRows.filter(index => 
+                !filteredIndices.includes(index));
+        }
+    } else {
+        // No filtering - use original behavior
+        if (isChecked) {
             this._selectedRows = Array.from(
                 { length: this._tableData.length },
                 (_, index) => index
             );
-        }
-    } else {
-        // Unselect all - if filtering is active, only unselect filtered rows
-        if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
-            // Remove filtered indices from selection
-            this._selectedRows = this._selectedRows.filter(
-                index => !this._lastFilteredIndices.includes(index)
-            );
         } else {
-            // No filtering active, unselect all rows
             this._selectedRows = [];
         }
     }
@@ -830,22 +842,35 @@ _updateRowSelection() {
 
 
         
-        _updateSelectAllCheckbox() {
-            if (this._tableData.length === 0) {
-                this._selectAllCheckbox.checked = false;
-                this._selectAllCheckbox.indeterminate = false;
-                return;
-            }
-            const allSelected = this._selectedRows.length === this._tableData.length;
-            const someSelected = 
-                this._selectedRows.length > 0 &&
-                this._selectedRows.length < this._tableData.length;
-            this._selectAllCheckbox.checked = allSelected;
-            this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
-         
-
-        }
+_updateSelectAllCheckbox() {
+    if (this._tableData.length === 0) {
+        this._selectAllCheckbox.checked = false;
+        this._selectAllCheckbox.indeterminate = false;
+        return;
+    }
+    
+    // If filtering is active, only consider filtered rows
+    if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
+        const filteredIndices = this._lastFilteredIndices;
+        const selectedFilteredCount = filteredIndices.filter(index => 
+            this._selectedRows.includes(index)).length;
+            
+        const allFilteredSelected = selectedFilteredCount === filteredIndices.length;
+        const someFilteredSelected = selectedFilteredCount > 0 && !allFilteredSelected;
         
+        this._selectAllCheckbox.checked = allFilteredSelected;
+        this._selectAllCheckbox.indeterminate = someFilteredSelected;
+    } else {
+        // No filtering, use original behavior
+        const allSelected = this._selectedRows.length === this._tableData.length;
+        const someSelected = 
+            this._selectedRows.length > 0 &&
+            this._selectedRows.length < this._tableData.length;
+            
+        this._selectAllCheckbox.checked = allSelected;
+        this._selectAllCheckbox.indeterminate = (!allSelected && someSelected);
+    }
+}
 
 
         
