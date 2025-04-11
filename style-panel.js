@@ -49,6 +49,20 @@
                 flex-grow: 1;
                 margin-right: 5px;
             }
+                        .column-width-entry {
+                display: flex;
+                margin-bottom: 8px;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .column-width-entry .column-input {
+                width: 60px;
+            }
+            
+            .column-width-entry .width-select {
+                flex-grow: 1;
+            }
             .apply-button {
                 background-color: #1a73e8;
                 color: white;
