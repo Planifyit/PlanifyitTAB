@@ -162,6 +162,13 @@
                 </div>
                 <button type="button" id="add_mapping" class="add-button">+ Add Symbol Mapping</button>
             </fieldset>
+          <fieldset>
+            <legend>Column Widths</legend>
+            <div class="column-widths" id="column_widths_container">
+                <!-- Column width entries will be added here dynamically -->
+            </div>
+            <button type="button" id="add_column_width" class="add-button">+ Add Column Width</button>
+        </fieldset>
 
              <fieldset>
                 <legend>Create Buttons</legend>
@@ -210,6 +217,10 @@
             this._symbolMappingContainer = this._shadowRoot.getElementById("symbol_mapping_container");
             this._addMappingButton = this._shadowRoot.getElementById("add_mapping");
 
+                        // Add to your constructor initialization section:
+            this._columnWidthsContainer = this._shadowRoot.getElementById("column_widths_container");
+            this._addColumnWidthButton = this._shadowRoot.getElementById("add_column_width");
+
                // Dynamic buttons
             this._buttonContainer = this._shadowRoot.getElementById("button_container");
             this._addButtonButton = this._shadowRoot.getElementById("add_button");
@@ -220,6 +231,7 @@
             // Internal state
             this._symbolMappings = [];
             this._dynamicButtons = [];
+            this._columnWidths = [];
             // Connect color pickers to text inputs
             this._connectColorPickers();
             
@@ -228,6 +240,8 @@
             this._applyButton.addEventListener("click", this._submit.bind(this));
             this._addMappingButton.addEventListener("click", () => this._addMappingEntry());
             this._addButtonButton.addEventListener("click", () => this._addButtonEntry());
+            this._addColumnWidthButton.addEventListener("click", () => this._addColumnWidthEntry());
+            
             // Add initial mapping entry
             this._addMappingEntry();
             
@@ -279,6 +293,86 @@
             });
         }
 
+_addColumnWidthEntry(columnIndex = '', widthPercent = '100') {
+    const entry = document.createElement("div");
+    entry.className = "column-width-entry";
+    
+    const columnInput = document.createElement("input");
+    columnInput.type = "number";
+    columnInput.min = "1";
+    columnInput.className = "column-input";
+    columnInput.placeholder = "Col #";
+    columnInput.value = columnIndex;
+    
+    const widthSelect = document.createElement("select");
+    widthSelect.className = "width-select";
+    
+    // Width options as percentages
+    const widthOptions = [
+        { value: '25', label: '25%' },
+        { value: '50', label: '50%' },
+        { value: '75', label: '75%' },
+        { value: '100', label: '100%' },
+        { value: '125', label: '125%' },
+        { value: '150', label: '150%' },
+        { value: '200', label: '200%' }
+    ];
+    
+    widthOptions.forEach(option => {
+        const optionElement = document.createElement("option");
+        optionElement.value = option.value;
+        optionElement.textContent = option.label;
+        if (option.value === widthPercent) {
+            optionElement.selected = true;
+        }
+        widthSelect.appendChild(optionElement);
+    });
+    
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-button";
+    removeButton.textContent = "✕";
+    removeButton.addEventListener("click", () => {
+        this._columnWidthsContainer.removeChild(entry);
+        this._updateColumnWidthsState();
+    });
+    
+    entry.appendChild(columnInput);
+    entry.appendChild(widthSelect);
+    entry.appendChild(removeButton);
+    
+    this._columnWidthsContainer.appendChild(entry);
+}
+
+// Add this method to update the column widths state
+_updateColumnWidthsState() {
+    this._columnWidths = [];
+    const entries = this._columnWidthsContainer.querySelectorAll(".column-width-entry");
+    
+    entries.forEach(entry => {
+        const columnInput = entry.querySelector(".column-input");
+        const widthSelect = entry.querySelector(".width-select");
+        
+        if (columnInput.value) {
+            this._columnWidths.push({
+                columnIndex: parseInt(columnInput.value, 10),
+                widthPercent: widthSelect.value
+            });
+        }
+    });
+    
+    return this._columnWidths;
+}
+
+
+
+
+
+
+
+
+
+        
         _getSymbols() {
     return [
         { value: 'check', label: '✓ Check' },
@@ -300,6 +394,9 @@
     ];
 }
 
+
+
+        
         _addMappingEntry(columnIndex = '', value = '', symbolType = 'circle') {
             const entry = document.createElement("div");
             entry.className = "mapping-entry";
@@ -514,7 +611,9 @@ _updateButtonsState() {
             const symbolMappings = this._updateMappingsState();
                   // Update dynamic buttons state
             const dynamicButtons = this._updateButtonsState();
-            
+                     // Update column widths state
+            const columnWidths = this._updateColumnWidthsState();
+                    
             // Dispatch event with updated style properties
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
@@ -528,7 +627,8 @@ _updateButtonsState() {
                         hoverRowColor: this.hoverRowColor,
                         tableTextColor: this.tableTextColor,
                         symbolMappings: JSON.stringify(symbolMappings),
-                         dynamicButtons: JSON.stringify(dynamicButtons)
+                        dynamicButtons: JSON.stringify(dynamicButtons),
+                        columnWidths: JSON.stringify(columnWidths)
                     }
                 }
             }));
@@ -568,7 +668,42 @@ _updateButtonsState() {
             return JSON.stringify(this._updateMappingsState());
         }
 
+set columnWidths(value) {
+    try {
+        // Clear existing column width entries
+        this._columnWidthsContainer.innerHTML = '';
+        
+        // Parse incoming value
+        const widths = JSON.parse(value);
+        
+        if (Array.isArray(widths) && widths.length > 0) {
+            // Add each column width entry
+            widths.forEach(width => {
+                this._addColumnWidthEntry(
+                    width.columnIndex || '',
+                    width.widthPercent || '100'
+                );
+            });
+        } else {
+            // Add default empty column width
+            this._addColumnWidthEntry();
+        }
+        
+        this._columnWidths = widths;
+    } catch (e) {
+        console.error("Error setting column widths:", e);
+        // Add default empty column width
+        this._addColumnWidthEntry();
+    }
+}
 
+get columnWidths() {
+    return JSON.stringify(this._updateColumnWidthsState());
+}
+
+
+
+        
  set dynamicButtons(value) {
             try {
                 // Clear existing buttons
