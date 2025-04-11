@@ -1584,6 +1584,50 @@ getActiveDimensionFilter(dimensionKey) {
     return this._activeSearches[columnIndex] || "";
 }
 
+        // Method to get the count of filtered rows (SAC compatible)
+getFilteredRowCount(dimensionKey, filterValue) {
+    // If no parameters are provided, return count of current visible rows
+    if (!dimensionKey) {
+        return this._lastFilteredIndices ? String(this._lastFilteredIndices.length) : String(this._tableData.length);
+    }
+    
+    // Find the column index for the given dimension key
+    const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
+    
+    if (columnIndex === -1) {
+        console.error(`Dimension key '${dimensionKey}' not found in table columns`);
+        return "0";
+    }
+    
+    // Count matches based on the filter
+    let matchCount = 0;
+    this._tableData.forEach(rowData => {
+        const cellValue = String(rowData[dimensionKey] || '').toLowerCase();
+        const searchTerm = filterValue.toLowerCase();
+        
+        // Simple wildcard matching if filter has wildcards
+        if (searchTerm.includes('*') || searchTerm.includes('?')) {
+            // Convert wildcard pattern to regex
+            const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regexPattern = escapedSearchTerm
+                .replace(/\\\*/g, '.*')
+                .replace(/\\\?/g, '.');
+            
+            const regex = new RegExp(`^${regexPattern}$`, 'i');
+            if (regex.test(cellValue)) {
+                matchCount++;
+            }
+        } else {
+            // Simple substring match if no wildcards
+            if (cellValue.includes(searchTerm)) {
+                matchCount++;
+            }
+        }
+    });
+    
+    return String(matchCount);
+}
+
         
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
