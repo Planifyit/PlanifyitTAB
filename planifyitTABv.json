@@ -260,6 +260,22 @@
     }
   ]
 },
+"getFilteredRowCount": {
+  "returnType": "string",
+  "description": "Get the count of rows that match a filter criteria",
+  "parameters": [
+    {
+      "name": "dimensionKey",
+      "type": "string",
+      "description": "The key of the dimension to filter by (optional, returns current visible row count if not provided)"
+    },
+    {
+      "name": "filterValue",
+      "type": "string",
+      "description": "The value to filter for in the specified dimension (required if dimensionKey is provided)"
+    }
+  ]
+},	  
 "getButtonVisibility": {
   "returnType": "string",
   "description": "Retrieve the visibility state of a button based on its ID.",
