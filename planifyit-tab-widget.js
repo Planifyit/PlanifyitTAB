@@ -689,8 +689,16 @@ _handleSelectAll(e) {
             );
         }
     } else {
-        // Unselect all
-        this._selectedRows = [];
+        // Unselect all - if filtering is active, only unselect filtered rows
+        if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
+            // Remove filtered indices from selection
+            this._selectedRows = this._selectedRows.filter(
+                index => !this._lastFilteredIndices.includes(index)
+            );
+        } else {
+            // No filtering active, unselect all rows
+            this._selectedRows = [];
+        }
     }
     
     this._updateRowSelection();
