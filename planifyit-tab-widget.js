@@ -173,6 +173,7 @@
                 overflow-y: auto;
             }
 
+       /* Column width styles */
      .no-data-message {
     padding: 20px;
     text-align: center;
@@ -181,6 +182,36 @@
     background-color: #ffffff;
 }
 
+
+/* Add to your stylesheet */
+.column-width-entry {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.column-width-entry .column-input {
+    width: 80px;
+    margin-right: 8px;
+}
+
+.column-width-entry .width-select {
+    flex: 1;
+    margin-right: 8px;
+}
+
+/* Make sure the table uses table-layout: fixed for width control */
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Ensure cells use text overflow for long content */
+th, td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
        /* Symbol styles */
          
             /* Symbol styles */
@@ -418,6 +449,7 @@ th.has-active-search::after {
             this._selectedRowsData = [];
             this._isMultiSelectMode = false;
              this._symbolMappings = [];
+            this._columnWidths = [];
             this._activeSearches = {};  // Store active column searches
             this._currentSearchColumn = null;
             this._dynamicButtons = []; 
@@ -727,6 +759,35 @@ _handleCheckboxChange(index, e) {
         }
     }));
 }
+
+       /* ------------------------------------------------------------------
+         *  Column width 
+         * ------------------------------------------------------------------ */
+_applyColumnWidths() {
+    // First, reset all columns to default width
+    const headerCells = this._shadowRoot.querySelectorAll('th:not(.checkbox-column)');
+    headerCells.forEach(cell => {
+        cell.style.width = 'auto';
+    });
+    
+    // Then apply custom widths
+    if (Array.isArray(this._columnWidths) && this._columnWidths.length > 0) {
+        this._columnWidths.forEach(config => {
+            // Column index is 1-based in user input, but we need to account for checkbox column
+            // and convert to 0-based for JavaScript array indexing
+            const colIndex = config.columnIndex;
+            if (colIndex > 0 && colIndex <= headerCells.length) {
+                // We subtract 1 from colIndex for 0-based array indexing, 
+                // but there's also the checkbox column to consider
+                const targetCell = headerCells[colIndex - 1];
+                if (targetCell) {
+                    targetCell.style.width = `${config.widthPercent}%`;
+                }
+            }
+        });
+    }
+}
+
         
         /* ------------------------------------------------------------------
          *  Visual Updates for Selection
@@ -975,6 +1036,7 @@ _renderTable() {
         this._tableBody.appendChild(row);
     });
     
+    this._applyColumnWidths();
     this._updateSelectAllCheckbox();
 }
 
@@ -1154,7 +1216,17 @@ connectedCallback() {
         
 onCustomWidgetAfterUpdate(changedProperties) {
 
+if ('columnWidths' in changedProperties) {
+    try {
+        this._columnWidths = JSON.parse(changedProperties.columnWidths);
+        this._applyColumnWidths();
+        this._renderTable(); // Re-render with new widths
+    } catch (e) {
+        console.error('Invalid column widths:', e);
+    }
+}
 
+    
            // Add handling for dynamic buttons
   if ('dynamicButtons' in changedProperties) {
     try {
