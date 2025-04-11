@@ -1491,6 +1491,93 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
   
   return "";
 }
+
+   
+        /* ------------------------------------------------------------------
+         *  Filtering
+         * ------------------------------------------------------------------ */
+             // Method to set a filter on a specific dimension
+setSelectedDimensionFilter(dimensionKey, filterValue) {
+    console.log(`Setting filter: ${dimensionKey} = ${filterValue}`);
+    
+    // Store the filter in the activeSearches object (reusing existing search mechanism)
+    // First, we need to find the column index for the given dimension key
+    const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
+    
+    if (columnIndex === -1) {
+        console.error(`Dimension key '${dimensionKey}' not found in table columns`);
+        return;
+    }
+    
+    // Apply the filter using the existing search mechanism
+    this._activeSearches[columnIndex] = filterValue;
+    
+    // Render the table with the new filter applied
+    this._renderTable();
+    
+    // Dispatch an event to notify that a filter has been applied
+    this.dispatchEvent(new CustomEvent("onFilterApplied", {
+        detail: {
+            dimensionKey: dimensionKey,
+            filterValue: filterValue
+        }
+    }));
+}
+
+// Method to clear all filters
+clearAllFilters() {
+    console.log('Clearing all filters');
+    this._activeSearches = {};
+    this._currentSearchColumn = null;
+    this._renderTable();
+    
+    // Dispatch an event to notify that filters have been cleared
+    this.dispatchEvent(new CustomEvent("onFiltersCleared"));
+}
+
+// Method to clear a specific dimension filter
+clearDimensionFilter(dimensionKey) {
+    console.log(`Clearing filter for dimension: ${dimensionKey}`);
+    
+    // Find the column index for the given dimension key
+    const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
+    
+    if (columnIndex === -1) {
+        console.error(`Dimension key '${dimensionKey}' not found in table columns`);
+        return;
+    }
+    
+    // Remove the filter
+    delete this._activeSearches[columnIndex];
+    
+    // If this was the current search column, reset it
+    if (this._currentSearchColumn === columnIndex) {
+        this._currentSearchColumn = null;
+    }
+    
+    // Re-render the table
+    this._renderTable();
+    
+    // Dispatch an event to notify that a filter has been cleared
+    this.dispatchEvent(new CustomEvent("onFilterCleared", {
+        detail: {
+            dimensionKey: dimensionKey
+        }
+    }));
+}
+
+// Method to get the currently active filters
+getActiveFilters() {
+    const filters = {};
+    
+    // Convert from column indices to dimension keys
+    Object.entries(this._activeSearches).forEach(([colIndex, value]) => {
+        const columnName = this._tableColumns[colIndex].name;
+        filters[columnName] = value;
+    });
+    
+    return filters;
+}
         /* ------------------------------------------------------------------
          *  Getters / Setters (Matching planifyitTAB.json definition)
          * ------------------------------------------------------------------ */
