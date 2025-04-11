@@ -101,6 +101,10 @@
       "description": "Text color for table headers",
       "default": "#ffffff"
     },
+  "columnWidths": {
+  "type": "string",
+  "default": "[]"
+},
     "symbolMappings": {
       "type": "string",
       "default": "[]"
