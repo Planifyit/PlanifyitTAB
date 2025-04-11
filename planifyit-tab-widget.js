@@ -673,7 +673,6 @@ _createSymbolElement(symbolInfo) {
         /* ------------------------------------------------------------------
          *  Select All / Row Selection
          * ------------------------------------------------------------------ */
-       // Update in _handleSelectAll
 _handleSelectAll(e) {
     const isChecked = e.target.checked;
     
