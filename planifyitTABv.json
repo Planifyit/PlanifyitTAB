@@ -216,6 +216,40 @@
       "description": "The index of the selected row in the selectedRowsData array."
     }
   ]
+}, 
+	  "setSelectedDimensionFilter": {
+  "description": "Filter table data based on a specific dimension value",
+  "parameters": [
+    {
+      "name": "dimensionKey",
+      "type": "string",
+      "description": "The key of the dimension to filter (e.g., 'dimensions_0')"
+    },
+    {
+      "name": "filterValue",
+      "type": "string",
+      "description": "The value to filter for in the specified dimension"
+    }
+  ]
+},
+"clearAllFilters": {
+  "description": "Clear all active filters from the table",
+  "parameters": []
+},
+"clearDimensionFilter": {
+  "description": "Clear filter for a specific dimension",
+  "parameters": [
+    {
+      "name": "dimensionKey",
+      "type": "string",
+      "description": "The key of the dimension to clear the filter for"
+    }
+  ]
+},
+"getActiveFilters": {
+  "returnType": "object",
+  "description": "Get all currently active filters as a key-value object",
+  "parameters": []
 },
 "getButtonVisibility": {
   "returnType": "string",
