@@ -323,13 +323,13 @@ _addColumnWidthEntry(columnIndex = '', widthPercent = '100') {
     
     // Width options as percentages
     const widthOptions = [
-        { value: '25', label: '25%' },
-        { value: '50', label: '50%' },
-        { value: '75', label: '75%' },
-        { value: '100', label: '100%' },
-        { value: '125', label: '125%' },
-        { value: '150', label: '150%' },
-        { value: '200', label: '200%' }
+        { value: '5', label: '25%' },
+        { value: '10', label: '50%' },
+        { value: '15', label: '75%' },
+        { value: '20', label: '100%' },
+        { value: '25', label: '125%' },
+        { value: '30', label: '150%' },
+        { value: '35', label: '200%' }
     ];
     
     widthOptions.forEach(option => {
