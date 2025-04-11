@@ -638,6 +638,9 @@ _createSymbolElement(symbolInfo) {
             checkboxColumns.forEach(col => col.classList.add('show'));
             this._selectedRows = [];
             this._updateRowSelection();
+            
+                this.dispatchEvent(new Event("onSelectionModeChange"));
+            
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -658,6 +661,7 @@ _createSymbolElement(symbolInfo) {
             this._selectedRows = [];
             this._updateRowSelection();
             this._selectAllCheckbox.checked = false;
+                this.dispatchEvent(new Event("onSelectionModeChange"));
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -1727,25 +1731,34 @@ get selectedRowsData() {
             return this._isMultiSelectMode;
         }
         
-        set isMultiSelectMode(value) {
-            this._isMultiSelectMode = value;
-            if (this._isMultiSelectMode) {
-                this._multiSelectButton.style.display = 'none';
-                 this._cancelButton.style.display = 'flex';
-              
-                const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
-                checkboxColumns.forEach(col => col.classList.add('show'));
-            } else {
-                this._multiSelectButton.style.display = 'flex';
-                this._cancelButton.style.display = 'none';
-                const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
-                checkboxColumns.forEach(col => col.classList.remove('show'));
-               
-            }
-            this.dispatchEvent(new CustomEvent("propertiesChanged", {
-                detail: { properties: { isMultiSelectMode: value } }
-            }));
-        }
+set isMultiSelectMode(value) {
+
+    const valueChanged = this._isMultiSelectMode !== value;
+    
+    this._isMultiSelectMode = value;
+    if (this._isMultiSelectMode) {
+        this._multiSelectButton.style.display = 'none';
+        this._cancelButton.style.display = 'flex';
+        const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
+        checkboxColumns.forEach(col => col.classList.add('show'));
+    } else {
+        this._multiSelectButton.style.display = 'flex';
+        this._cancelButton.style.display = 'none';
+        const checkboxColumns = this._shadowRoot.querySelectorAll('.checkbox-column');
+        checkboxColumns.forEach(col => col.classList.remove('show'));
+    }
+    
+
+    if (valueChanged) {
+        this.dispatchEvent(new Event("onSelectionModeChange"));
+    }
+    
+    this.dispatchEvent(new CustomEvent("propertiesChanged", {
+        detail: { properties: { isMultiSelectMode: value } }
+    }));
+}
+
+        
     }
 
     customElements.define('planifyit-tab-widget', PlanifyITTable);
