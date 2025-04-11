@@ -324,7 +324,10 @@
     },
     "onCustomButtonClicked": {
       "description": "Called when a custom dynamic button is clicked."
-    }
+    },
+  "onSelectionModeChange": {
+    "description": "Called when the selection mode changes between single and multi-select."
+  }
   },
   "dataBindings": {
     "tableDataBinding": {
