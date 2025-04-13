@@ -203,7 +203,7 @@
             this._shadowRoot = this.attachShadow({mode: "open"});
             this._shadowRoot.appendChild(template.content.cloneNode(true));
             
-            // Get form and elements
+   
             this._form = this._shadowRoot.getElementById("form");
             
             // Text inputs
@@ -231,40 +231,40 @@
             this._symbolMappingContainer = this._shadowRoot.getElementById("symbol_mapping_container");
             this._addMappingButton = this._shadowRoot.getElementById("add_mapping");
 
-                        // Add to your constructor initialization section:
+           
             this._columnWidthsContainer = this._shadowRoot.getElementById("column_widths_container");
             this._addColumnWidthButton = this._shadowRoot.getElementById("add_column_width");
 
-               // Dynamic buttons
+           // Dynamic buttons
             this._buttonContainer = this._shadowRoot.getElementById("button_container");
             this._addButtonButton = this._shadowRoot.getElementById("add_button");
             
-            // Apply button
+
             this._applyButton = this._shadowRoot.getElementById("apply_styles");
             
-            // Internal state
+     
             this._symbolMappings = [];
             this._dynamicButtons = [];
             this._columnWidths = [];
-            // Connect color pickers to text inputs
+   
             this._connectColorPickers();
             
-            // Add event listeners
+            //  event listeners
             this._form.addEventListener("submit", this._submit.bind(this));
             this._applyButton.addEventListener("click", this._submit.bind(this));
             this._addMappingButton.addEventListener("click", () => this._addMappingEntry());
             this._addButtonButton.addEventListener("click", () => this._addButtonEntry());
             this._addColumnWidthButton.addEventListener("click", () => this._addColumnWidthEntry());
             
-            // Add initial mapping entry
+     
             this._addMappingEntry();
             
-       // Add initial button entry
+ 
             this._addButtonEntry();
         }
         
         _connectColorPickers() {
-            // Header color
+ 
             this._headerColorPicker.addEventListener("input", () => {
                 this._headerColorInput.value = this._headerColorPicker.value;
             });
@@ -272,7 +272,7 @@
                 this._headerColorPicker.value = this._headerColorInput.value;
             });
             
-            // Header text color
+
             this._headerTextColorPicker.addEventListener("input", () => {
                 this._headerTextColorInput.value = this._headerTextColorPicker.value;
             });
@@ -282,7 +282,7 @@
             
   
             
-            // Selected row color
+
             this._selectedRowColorPicker.addEventListener("input", () => {
                 this._selectedRowColorInput.value = this._selectedRowColorPicker.value;
             });
@@ -290,7 +290,7 @@
                 this._selectedRowColorPicker.value = this._selectedRowColorInput.value;
             });
             
-            // Hover row color
+    
             this._hoverRowColorPicker.addEventListener("input", () => {
                 this._hoverRowColorInput.value = this._hoverRowColorPicker.value;
             });
@@ -298,7 +298,7 @@
                 this._hoverRowColorPicker.value = this._hoverRowColorInput.value;
             });
             
-            // Table text color
+     
             this._tableTextColorPicker.addEventListener("input", () => {
                 this._tableTextColorInput.value = this._tableTextColorPicker.value;
             });
@@ -321,7 +321,7 @@ _addColumnWidthEntry(columnIndex = '', widthPercent = '100') {
     const widthSelect = document.createElement("select");
     widthSelect.className = "width-select";
     
-    // Width options as percentages
+
     const widthOptions = [
         { value: '5', label: '25%' },
         { value: '10', label: '50%' },
@@ -358,7 +358,7 @@ _addColumnWidthEntry(columnIndex = '', widthPercent = '100') {
     this._columnWidthsContainer.appendChild(entry);
 }
 
-// Add this method to update the column widths state
+
 _updateColumnWidthsState() {
     this._columnWidths = [];
     const entries = this._columnWidthsContainer.querySelectorAll(".column-width-entry");
@@ -541,7 +541,7 @@ colorPicker.type = "color";
 colorPicker.className = "button-color-picker";
 colorPicker.value = backgroundColor || '#FFFFFF';
 
-// Connect the color picker to the text input
+
 colorPicker.addEventListener("input", () => {
     colorInput.value = colorPicker.value;
 });
@@ -621,14 +621,14 @@ _updateButtonsState() {
         _submit(e) {
             e.preventDefault();
             
-            // Update symbol mappings state
+       
             const symbolMappings = this._updateMappingsState();
-                  // Update dynamic buttons state
+
             const dynamicButtons = this._updateButtonsState();
-                     // Update column widths state
+
             const columnWidths = this._updateColumnWidthsState();
                     
-            // Dispatch event with updated style properties
+
             this.dispatchEvent(new CustomEvent("propertiesChanged", {
                 detail: {
                     properties: {
@@ -650,14 +650,14 @@ _updateButtonsState() {
 
         set symbolMappings(value) {
             try {
-                // Clear existing mappings
+  
                 this._symbolMappingContainer.innerHTML = '';
                 
-                // Parse incoming value
+        
                 const mappings = JSON.parse(value);
                 
                 if (Array.isArray(mappings) && mappings.length > 0) {
-                    // Add each mapping entry
+                  
                     mappings.forEach(mapping => {
                         this._addMappingEntry(
                             mapping.columnIndex || '',
@@ -666,14 +666,14 @@ _updateButtonsState() {
                         );
                     });
                 } else {
-                    // Add default empty mapping
+                 
                     this._addMappingEntry();
                 }
                 
                 this._symbolMappings = mappings;
             } catch (e) {
                 console.error("Error setting symbol mappings:", e);
-                // Add default empty mapping
+
                 this._addMappingEntry();
             }
         }
@@ -684,14 +684,14 @@ _updateButtonsState() {
 
 set columnWidths(value) {
     try {
-        // Clear existing column width entries
+
         this._columnWidthsContainer.innerHTML = '';
         
-        // Parse incoming value
+    
         const widths = JSON.parse(value);
         
         if (Array.isArray(widths) && widths.length > 0) {
-            // Add each column width entry
+         
             widths.forEach(width => {
                 this._addColumnWidthEntry(
                     width.columnIndex || '',
@@ -699,14 +699,14 @@ set columnWidths(value) {
                 );
             });
         } else {
-            // Add default empty column width
+            
             this._addColumnWidthEntry();
         }
         
         this._columnWidths = widths;
     } catch (e) {
         console.error("Error setting column widths:", e);
-        // Add default empty column width
+  
         this._addColumnWidthEntry();
     }
 }
@@ -720,14 +720,14 @@ get columnWidths() {
         
  set dynamicButtons(value) {
             try {
-                // Clear existing buttons
+          
                 this._buttonContainer.innerHTML = '';
                 
-                // Parse incoming value
+       
                 const buttons = JSON.parse(value);
                 
                 if (Array.isArray(buttons) && buttons.length > 0) {
-                    // Add each button entry
+            
                     buttons.forEach(button => {
                         this._addButtonEntry(
                             button.id || '',
@@ -738,14 +738,14 @@ get columnWidths() {
                         );
                     });
                 } else {
-                    // Add default empty button
+           
                     this._addButtonEntry();
                 }
                 
                 this._dynamicButtons = buttons;
             } catch (e) {
                 console.error("Error setting dynamic buttons:", e);
-                // Add default empty button
+               
                 this._addButtonEntry();
             }
         }
@@ -756,7 +756,7 @@ get columnWidths() {
         }
               
         
-        // Getters and setters for title properties
+       
         get headerTitle() {
             return this._headerTitleInput.value;
         }
@@ -773,7 +773,7 @@ get columnWidths() {
             this._appTitleInput.value = value || '';
         }
         
-        // Getters and setters for style properties (existing code)
+       
         get headerColor() {
             return this._headerColorInput.value;
         }
