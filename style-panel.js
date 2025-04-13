@@ -672,7 +672,6 @@ _updateButtonsState() {
                 
                 this._symbolMappings = mappings;
             } catch (e) {
-                console.error("Error setting symbol mappings:", e);
 
                 this._addMappingEntry();
             }
@@ -705,7 +704,7 @@ set columnWidths(value) {
         
         this._columnWidths = widths;
     } catch (e) {
-        console.error("Error setting column widths:", e);
+
   
         this._addColumnWidthEntry();
     }
@@ -744,7 +743,7 @@ get columnWidths() {
                 
                 this._dynamicButtons = buttons;
             } catch (e) {
-                console.error("Error setting dynamic buttons:", e);
+       
                
                 this._addButtonEntry();
             }
