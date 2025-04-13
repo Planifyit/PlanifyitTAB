@@ -364,26 +364,26 @@ th.has-active-search::after {
     background-color: #1a73e8;
 }
 
-  /*  style for dynamic buttons */
-            .dynamic-button {
-                display: flex;
-                border: none;
-                border-radius: 4px;
-                color: white;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                font-size: 16px;
-                width: 36px;
-                height: 36px;
-                align-items: center;
-                justify-content: center;
-                background-color: #008509;
-                margin-right: 4px;
-            }
-            
-            .dynamic-button:hover {
-                background-color: rgba(255, 255, 255, 0.3);
-            }           
+      /*  style for dynamic buttons */
+                .dynamic-button {
+                    display: flex;
+                    border: none;
+                    border-radius: 4px;
+                    color: white;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+                    font-size: 16px;
+                    width: 36px;
+                    height: 36px;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #008509;
+                    margin-right: 4px;
+                }
+                
+                .dynamic-button:hover {
+                    background-color: rgba(255, 255, 255, 0.3);
+                }           
             
         </style>
 
@@ -394,7 +394,7 @@ th.has-active-search::after {
             <div class="table-header">
                 <div class="table-header-title"></div>
                 <div class="action-buttons">
-                     <!-- Dynamic buttons will be inserted here -->
+                     <!-- Dynamic buttons -->
 <button id="multiSelectButton" class="table-button" title="Select Multiple">⬜✅</button>
 <button id="cancelButton" class="table-button cancel-button" title="Cancel">✕</button>
                   
@@ -409,11 +409,11 @@ th.has-active-search::after {
                                 <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
                             </th>
     
-                            <!-- Table headers will be inserted here dynamically -->
+                            <!-- Table headers dynamically -->
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                    <!-- Table data will be inserted here dynamically -->
+                    <!-- Table data dynamically -->
                         <tr>
                             <td colspan="100%" class="no-data-message">No data available</td>
                         </tr>
@@ -441,14 +441,14 @@ th.has-active-search::after {
             this._selectedRows = [];
             this._selectedRowsData = [];
             this._isMultiSelectMode = false;
-             this._symbolMappings = [];
+            this._symbolMappings = [];
             this._columnWidths = [];
-            this._activeSearches = {};  // Store active column searches
+            this._activeSearches = {};  
             this._currentSearchColumn = null;
             this._dynamicButtons = []; 
-                this._initialized = false;
+            this._initialized = false;
             this._lastClickedButtonId = null;
-            this._symbolMap = this._buildSymbolMap(); // Create symbol map once
+            this._symbolMap = this._buildSymbolMap(); 
             // Get DOM elements
             this._multiSelectButton = this._shadowRoot.getElementById('multiSelectButton');
             this._cancelButton = this._shadowRoot.getElementById('cancelButton');
@@ -457,7 +457,7 @@ th.has-active-search::after {
             this._headerRow = this._shadowRoot.getElementById('headerRow');
             this._actionButtons = this._shadowRoot.querySelector('.action-buttons');
             
-            // Attach event listeners
+            // event listeners
             this._multiSelectButton.addEventListener('click', this._toggleMultiSelectMode.bind(this));
             this._cancelButton.addEventListener('click', this._cancelMultiSelect.bind(this));
             this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
@@ -466,7 +466,7 @@ th.has-active-search::after {
 
 
 
-// Method that returns symbol definitions
+
 _getSymbols() {
     return [
         { value: 'check', label: '✓ Check' },
@@ -487,11 +487,11 @@ _getSymbols() {
         
     ];
 }
-        // New method to build the symbol map once
+
 _buildSymbolMap() {
     const symbolMap = {};
     this._getSymbols().forEach(symbol => {
-        // Extract just the symbol character from the label (before the space)
+        
         const symbolChar = symbol.label.split(' ')[0];
         symbolMap[symbol.value] = symbolChar;
     });
@@ -499,14 +499,14 @@ _buildSymbolMap() {
 }
 
 
- // create dynamic buttons
+
   _renderDynamicButtons() {
-    // Get all existing dynamic buttons
+
     const existingButtons = this._shadowRoot.querySelectorAll('.dynamic-button');
     existingButtons.forEach(button => button.remove());
     
     try {
-        // Parse dynamic buttons if it's a string
+
         const buttons = typeof this._dynamicButtons === 'string' ? 
             JSON.parse(this._dynamicButtons) : this._dynamicButtons;
         
@@ -517,22 +517,22 @@ _buildSymbolMap() {
                     button.className = 'dynamic-button';
                     button.title = buttonConfig.tooltip || buttonConfig.id;
                     
-                    // Use the symbol map
+                  
                     button.textContent = this._symbolMap[buttonConfig.symbol] || '●';
 
-                     // Apply background color if specified
+                  
                     if (buttonConfig.backgroundColor && buttonConfig.backgroundColor.trim() !== '') {
                         button.style.backgroundColor = buttonConfig.backgroundColor;
                     }
-      // Add click handler
+  
 
                     button.addEventListener('click', () => {
     this._lastClickedButtonId = buttonConfig.id;
     
-    // Store the clicked ID as a property to make it accessible
+
     this.lastClickedButtonId = buttonConfig.id;
     
-    // Dispatch a more detailed event with the button information
+   
     this.dispatchEvent(new CustomEvent("onCustomButtonClicked", {
         detail: {
             buttonId: buttonConfig.id,
@@ -540,7 +540,7 @@ _buildSymbolMap() {
         }
     }));
     
-    // Also dispatch a properties changed event for SAC integration
+
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
@@ -552,7 +552,7 @@ _buildSymbolMap() {
                     
               
                     
-                    // Insert the button before the multiSelectButton
+           
                     this._actionButtons.insertBefore(button, this._multiSelectButton);
                 }
             });
@@ -589,11 +589,9 @@ updateButtonsState() {
 }
 
         
- /* ------------------------------------------------------------------
-         *  Symbol Mapping
-         * ------------------------------------------------------------------ */
-         
-// Update _getSymbolForValue to use the central symbol map
+ //Symbol Mapping
+        
+
 _getSymbolForValue(columnIndex, value) {
     const mapping = this._symbolMappings.find(m => 
         m.columnIndex === columnIndex && 
@@ -619,9 +617,9 @@ _createSymbolElement(symbolInfo) {
 
 
         
-        /* ------------------------------------------------------------------
-         *  Multi-Select Mode / Buttons
-         * ------------------------------------------------------------------ */
+
+        // Multi-Select Mode / Buttons
+
         
         _toggleMultiSelectMode() {
             this._isMultiSelectMode = true;
@@ -667,39 +665,38 @@ _createSymbolElement(symbolInfo) {
         
 
         
-        /* ------------------------------------------------------------------
-         *  Select All / Row Selection
-         * ------------------------------------------------------------------ */
+     
+        // Select All / Row Selection
+     
 _handleSelectAll(e) {
     const isChecked = e.target.checked;
     
-    // Check if filtering is active
+
     const isFiltered = this._lastFilteredIndices && this._lastFilteredIndices.length > 0;
     
     if (isFiltered) {
-        // For filtered view, we need to determine if we should select or deselect
+
         const filteredIndices = [...this._lastFilteredIndices];
         
-        // Count how many filtered rows are currently selected
+
         const selectedFilteredCount = filteredIndices.filter(index => 
             this._selectedRows.includes(index)).length;
         
-        // If some or none are selected, select all filtered rows
-        // If all are selected, deselect all filtered rows
+
         if (selectedFilteredCount < filteredIndices.length) {
-            // Add all filtered indices to selection (that aren't already selected)
+       
             filteredIndices.forEach(index => {
                 if (!this._selectedRows.includes(index)) {
                     this._selectedRows.push(index);
                 }
             });
         } else {
-            // Remove all filtered indices from selection
+         
             this._selectedRows = this._selectedRows.filter(index => 
                 !filteredIndices.includes(index));
         }
     } else {
-        // No filtering - use original behavior
+
         if (isChecked) {
             this._selectedRows = Array.from(
                 { length: this._tableData.length },
@@ -725,7 +722,7 @@ _handleSelectAll(e) {
     }));
 }
         
-// Update in _handleRowClick
+
 _handleRowClick(index, e) {
     if (e.target.type === 'checkbox') return;
     if (!this._isMultiSelectMode) {
@@ -750,7 +747,7 @@ _handleRowClick(index, e) {
     }
 }
 
-// Update in _handleCheckboxChange
+
 _handleCheckboxChange(index, e) {
     const isChecked = e.target.checked;
     if (isChecked) {
@@ -776,25 +773,23 @@ _handleCheckboxChange(index, e) {
     }));
 }
 
-       /* ------------------------------------------------------------------
-         *  Column width 
-         * ------------------------------------------------------------------ */
+      
+        // Column width 
+    
 _applyColumnWidths() {
-    // First, reset all columns to default width
+ 
     const headerCells = this._shadowRoot.querySelectorAll('th:not(.checkbox-column)');
     headerCells.forEach(cell => {
         cell.style.width = 'auto';
     });
     
-    // Then apply custom widths
+
     if (Array.isArray(this._columnWidths) && this._columnWidths.length > 0) {
         this._columnWidths.forEach(config => {
-            // Column index is 1-based in user input, but we need to account for checkbox column
-            // and convert to 0-based for JavaScript array indexing
+
             const colIndex = config.columnIndex;
             if (colIndex > 0 && colIndex <= headerCells.length) {
-                // We subtract 1 from colIndex for 0-based array indexing, 
-                // but there's also the checkbox column to consider
+  
                 const targetCell = headerCells[colIndex - 1];
                 if (targetCell) {
                     targetCell.style.width = `${config.widthPercent}%`;
@@ -805,16 +800,14 @@ _applyColumnWidths() {
 }
 
         
-        /* ------------------------------------------------------------------
-         *  Visual Updates for Selection
-         * ------------------------------------------------------------------ */
 
+          // Visual Updates for Selection
+       
 
 _updateRowSelection() {
     const rows = this._shadowRoot.querySelectorAll('#tableBody tr');
     rows.forEach((row, filteredIndex) => {
-        // Get the corresponding original index from the mapping;
-        // if no mapping exists, default to the filteredIndex itself.
+
         const originalIndex = (this._lastFilteredIndices && this._lastFilteredIndices[filteredIndex] !== undefined)
             ? this._lastFilteredIndices[filteredIndex]
             : filteredIndex;
@@ -846,7 +839,7 @@ _updateSelectAllCheckbox() {
         return;
     }
     
-    // If filtering is active, only consider filtered rows
+
     if (this._lastFilteredIndices && this._lastFilteredIndices.length > 0) {
         const filteredIndices = this._lastFilteredIndices;
         const selectedFilteredCount = filteredIndices.filter(index => 
@@ -858,7 +851,7 @@ _updateSelectAllCheckbox() {
         this._selectAllCheckbox.checked = allFilteredSelected;
         this._selectAllCheckbox.indeterminate = someFilteredSelected;
     } else {
-        // No filtering, use original behavior
+
         const allSelected = this._selectedRows.length === this._tableData.length;
         const someSelected = 
             this._selectedRows.length > 0 &&
@@ -871,29 +864,27 @@ _updateSelectAllCheckbox() {
 
 
         
-        /* ------------------------------------------------------------------
-         *  Main Table Rendering
-         * ------------------------------------------------------------------ */
-// Replace your existing _renderTable method with this one
-
+       
+         //  Main Table Rendering
+        
 _renderTable() {
-    // Clear header row first
+
     this._headerRow.innerHTML = `
         <th class="checkbox-column ${this._isMultiSelectMode ? 'show' : ''}">
             <input type="checkbox" id="selectAllCheckbox" class="select-checkbox">
         </th>`;
     this._tableBody.innerHTML = '';
     
-    // Re-attach the select all checkbox event listener
+   
     this._selectAllCheckbox = this._shadowRoot.querySelector('#selectAllCheckbox');
     this._selectAllCheckbox.addEventListener('change', this._handleSelectAll.bind(this));
     
-    // Render column headers with search capability
+
     this._tableColumns.forEach((col, colIndex) => {
         const th = document.createElement('th');
         
         if (this._activeSearches[colIndex] !== undefined) {
-            // Show search input if there's an active search
+         
             const searchContainer = document.createElement('div');
             searchContainer.className = 'search-container active';
             
@@ -903,7 +894,7 @@ _renderTable() {
             searchInput.value = this._activeSearches[colIndex];
             searchInput.placeholder = `Search ${col.label || col.name}...`;
             
-            // Use arrow function to maintain correct context
+
             searchInput.addEventListener('input', (e) => {
                 console.log('Search input changed:', e.target.value);
                 this._handleColumnSearch(colIndex, e.target.value);
@@ -922,13 +913,13 @@ _renderTable() {
             searchContainer.appendChild(clearButton);
             th.appendChild(searchContainer);
             
-            // Focus the input after rendering
+
          if (this._currentSearchColumn === colIndex) {
     setTimeout(() => searchInput.focus(), 0);
 }
 
         } else {
-            // Show regular header with click handler for search
+
             const headerContainer = document.createElement('div');
             headerContainer.className = 'header-content';
             headerContainer.textContent = col.label || col.name;
@@ -940,7 +931,7 @@ _renderTable() {
             
             th.appendChild(headerContainer);
             
-            // Add click handler as inline function
+
             th.addEventListener('click', () => {
                 console.log('Header clicked for column:', colIndex);
                 this._activateColumnSearch(colIndex, col);
@@ -950,12 +941,12 @@ _renderTable() {
         this._headerRow.appendChild(th);
     });
     
-    // Compute filteredData and a mapping of filteredIndices
+
     let filteredData = [];
     let filteredIndices = [];
-    // Iterate over all tableData rows to build filtered arrays
+
     this._tableData.forEach((rowData, originalIndex) => {
-        // Check if the row matches all active searches
+
         const matches = Object.entries(this._activeSearches).every(([colIndex, searchTerm]) => {
             if (!searchTerm) return true;
             
@@ -963,9 +954,9 @@ _renderTable() {
             const cellValue = String(rowData[columnName] || '').toLowerCase();
             const searchLower = searchTerm.toLowerCase();
             
-            // Simple wildcard matching
+
             if (searchLower.includes('*') || searchLower.includes('?')) {
-                // Convert wildcard pattern to regex
+              
                 const escapedSearchTerm = searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regexPattern = escapedSearchTerm
                     .replace(/\\\*/g, '.*')
@@ -974,7 +965,7 @@ _renderTable() {
                 const regex = new RegExp(`^${regexPattern}$`, 'i');
                 return regex.test(cellValue);
             } else {
-                // Simple substring match if no wildcards
+   
                 return cellValue.includes(searchLower);
             }
         });
@@ -986,7 +977,7 @@ _renderTable() {
     });
     this._lastFilteredIndices = filteredIndices;
     
-    // Show "No data" message if no data or all filtered out
+
     if (filteredData.length === 0) {
         const row = document.createElement('tr');
         const cell = document.createElement('td');
@@ -998,12 +989,12 @@ _renderTable() {
         return;
     }
     
-    // Render each row of filtered data using the mapping for original index
+
     filteredData.forEach((rowData, filteredIndex) => {
         const originalIndex = filteredIndices[filteredIndex];
         const row = document.createElement('tr');
         
-        // Add checkbox cell for selection
+
         const checkboxCell = document.createElement('td');
         checkboxCell.className = `checkbox-column ${this._isMultiSelectMode ? 'show' : ''}`;
         const checkbox = document.createElement('input');
@@ -1014,26 +1005,25 @@ _renderTable() {
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
         
-        // Add data cells
+
         this._tableColumns.forEach((col, colIndex) => {
             const cell = document.createElement('td');
             const value = rowData[col.name] || '';
             
-            // Check if this cell has a symbol mapping
+       
             const symbolInfo = this._getSymbolForValue(colIndex + 1, value);
             if (symbolInfo) {
                 cell.textContent = '';
                 const symbolElement = this._createSymbolElement(symbolInfo);
                 cell.appendChild(symbolElement);
             } else {
-                // Highlight search term if there's an active search for this column
+             
                 if (this._activeSearches[colIndex]) {
                     const searchTerm = this._activeSearches[colIndex];
                     if (searchTerm) {
-                        cell.textContent = value; // Default to plain text
+                        cell.textContent = value; 
                         
-                        // Only apply highlighting for simple matches
-                        // (Wildcard highlighting is more complex)
+           
                         if (!searchTerm.includes('*') && !searchTerm.includes('?')) {
                             try {
                                 const searchRegex = new RegExp(searchTerm, 'gi');
@@ -1042,7 +1032,7 @@ _renderTable() {
                                     match => `<span class="highlight">${match}</span>`
                                 );
                             } catch (e) {
-                                // In case of invalid regex, fall back to plain text
+                           
                                 cell.textContent = value;
                             }
                         }
@@ -1057,7 +1047,7 @@ _renderTable() {
             row.appendChild(cell);
         });
         
-        // Add row click handler using the mapped original index
+ 
         row.addEventListener('click', (e) => this._handleRowClick(originalIndex, e));
         if (this._selectedRows.includes(originalIndex)) {
             row.classList.add('selected');
@@ -1069,7 +1059,7 @@ _renderTable() {
     this._updateSelectAllCheckbox();
 }
 
-// Add these methods for search functionality
+
 _activateColumnSearch(colIndex, column) {
  console.log('Activating search for column:', column.name);
 this._activeSearches[colIndex] = '';
@@ -1094,28 +1084,27 @@ this._renderTable();
 
 }
         
-        /* ------------------------------------------------------------------
-         *  SAC Lifecycle Hooks
-         * ------------------------------------------------------------------ */
+       
+          // SAC Lifecycle Hooks
+      
         
 connectedCallback() {
-    // Only run initialization once
+
     if (!this._initialized) {
-        // Initialize empty search state only once
+
         this._activeSearches = {};
 
-        // Initialize multi-select mode flag from attributes (if provided)
         if (this.hasAttribute("isMultiSelectMode")) {
             this._isMultiSelectMode = this.getAttribute("isMultiSelectMode") === "true";
         } else {
             this._isMultiSelectMode = false;
         }
 
-        // Set button states based on initial value
+
         this._multiSelectButton.style.display = this._isMultiSelectMode ? 'none' : 'flex';
         this._cancelButton.style.display = this._isMultiSelectMode ? 'flex' : 'none';
 
-        // Read initial tableData, tableColumns, and selectedRows from attributes
+
         if (this.hasAttribute("tableData")) {
             try {
                 this._tableData = JSON.parse(this.getAttribute("tableData"));
@@ -1138,7 +1127,7 @@ connectedCallback() {
             }
         }
 
-  // Add reading of dynamic buttons
+
                 if (this.hasAttribute("dynamicButtons")) {
                     try {
                         this._dynamicButtons = JSON.parse(this.getAttribute("dynamicButtons"));
@@ -1148,17 +1137,16 @@ connectedCallback() {
                 }
 
 
-        
-        // If data binding exists, update data binding
+
         if (this.tableDataBinding) {
             this._updateDataBinding(this.tableDataBinding);
         }
         
-        // Mark initialization complete
+
         this._initialized = true;
     }
     
-    // Always re-render the table (or selectively update UI) without reinitializing state
+
     this._renderDynamicButtons();
     this._renderTable();
 }
@@ -1170,9 +1158,9 @@ connectedCallback() {
             this._props = { ...this._props, ...changedProperties };
         }
 
-        /**
-         * Handle the Data Binding 
-         */
+       
+          // Handle the Data Binding 
+        
         _updateDataBinding(dataBinding) {
             if (
                 dataBinding &&
@@ -1248,14 +1236,14 @@ if ('columnWidths' in changedProperties) {
     try {
         this._columnWidths = JSON.parse(changedProperties.columnWidths);
         this._applyColumnWidths();
-        this._renderTable(); // Re-render with new widths
+        this._renderTable(); 
     } catch (e) {
         console.error('Invalid column widths:', e);
     }
 }
 
     
-           // handling for dynamic buttons
+        
   if ('dynamicButtons' in changedProperties) {
     try {
         this._dynamicButtons = typeof changedProperties.dynamicButtons === 'string' ? 
@@ -1266,7 +1254,7 @@ if ('columnWidths' in changedProperties) {
     }
 }
     
-    //  headerTitle and appTitle
+ 
     if ('headerTitle' in changedProperties) {
         const headerTitleEl = this._shadowRoot.querySelector('.table-header-title');
         if (headerTitleEl) {
@@ -1399,7 +1387,7 @@ if ('columnWidths' in changedProperties) {
             }
         }
 
-  //  getter and setter for dynamic buttons
+
   get dynamicButtons() {
     return typeof this._dynamicButtons === 'string' ? 
         this._dynamicButtons : JSON.stringify(this._dynamicButtons);
@@ -1432,27 +1420,26 @@ set lastClickedButtonId(value) {
     }));
 }
 
-// get button visibility by ID
+
 getButtonVisibility(buttonId) {
   if (!this._dynamicButtons || !Array.isArray(this._dynamicButtons)) {
     return "";
   }
-  
-  // Find the button with the matching ID
+
   const button = this._dynamicButtons.find(btn => btn.id === buttonId);
   
-  // Return the visibility if found, otherwise empty string
+
   return button ? button.visibility : "";
 }
 
  setButtonVisibility(buttonId, visibility) {
-    // Validate visibility parameter
+
     if (visibility !== 'visible' && visibility !== 'hidden') {
         console.error("Invalid visibility value. Must be 'visible' or 'hidden'.");
         return;
     }
     
-    // Get current buttons
+
     let buttons = [];
     try {
         buttons = JSON.parse(this.dynamicButtons);
@@ -1461,7 +1448,7 @@ getButtonVisibility(buttonId) {
         return;
     }
     
-    // Find and update the button with matching ID
+
     let buttonFound = false;
     for (let i = 0; i < buttons.length; i++) {
         if (buttons[i].id === buttonId) {
@@ -1476,10 +1463,10 @@ getButtonVisibility(buttonId) {
         return;
     }
     
-    // Update the UI
+
     this.dynamicButtons = JSON.stringify(buttons);
     
-    // Dispatch event to notify of the change
+
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
         detail: {
             properties: {
@@ -1492,26 +1479,25 @@ getButtonVisibility(buttonId) {
         
         
 
-// Native function called by SAC
+
 getSelectedRowDataForSelection(key, rowIndex) {
   return this.getSelectedRowDataForSelectionImpl(key, rowIndex);
 }
 
-// Updated helper function
+
 getSelectedRowDataForSelectionImpl(key, rowIndex) {
   if (!this._selectedRowsData || this._selectedRowsData.length === 0) {
     return "";
   }
 
-  // Find the position of the rowIndex in the selectedRows array
   const positionInSelectedRows = this._selectedRows.indexOf(rowIndex);
   
-  // If the rowIndex is not in selectedRows, return empty string
+
   if (positionInSelectedRows === -1) {
     return "";
   }
   
-  // access the correct data in selectedRowsData
+
   if (this._selectedRowsData[positionInSelectedRows] && 
       this._selectedRowsData[positionInSelectedRows][key] != null) {
     return String(this._selectedRowsData[positionInSelectedRows][key]);
@@ -1521,14 +1507,14 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
 }
 
    
-        /* ------------------------------------------------------------------
-         *  Filtering
-         * ------------------------------------------------------------------ */
-           // filter on a specific dimension 
+      
+         //  Filtering
+    
+
 setSelectedDimensionFilter(dimensionKey, filterValue) {
     console.log(`Setting filter: ${dimensionKey} = ${filterValue}`);
     
-    // Find the column index for the given dimension key
+
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
     
     if (columnIndex === -1) {
@@ -1536,13 +1522,13 @@ setSelectedDimensionFilter(dimensionKey, filterValue) {
         return "error";
     }
     
-    // Apply the filter using the existing search mechanism
+
     this._activeSearches[columnIndex] = filterValue;
     
-    // Render the table with the new filter applied
+
     this._renderTable();
     
-    // Dispatch an event to notify that a filter has been applied
+
     this.dispatchEvent(new CustomEvent("onFilterApplied", {
         detail: {
             dimensionKey: dimensionKey,
@@ -1553,24 +1539,24 @@ setSelectedDimensionFilter(dimensionKey, filterValue) {
     return "success";
 }
 
-//  clear all filters 
+
 clearAllFilters() {
     console.log('Clearing all filters');
     this._activeSearches = {};
     this._currentSearchColumn = null;
     this._renderTable();
     
-    // Dispatch an event to notify that filters have been cleared
+
     this.dispatchEvent(new CustomEvent("onFiltersCleared"));
     
     return "success";
 }
 
-// clear a specific dimension filter
+
 clearDimensionFilter(dimensionKey) {
     console.log(`Clearing filter for dimension: ${dimensionKey}`);
     
-    // Find the column index for the given dimension key
+
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
     
     if (columnIndex === -1) {
@@ -1578,18 +1564,18 @@ clearDimensionFilter(dimensionKey) {
         return "error";
     }
     
-    // Remove the filter
+
     delete this._activeSearches[columnIndex];
     
-    // If the current search column, reset it
+
     if (this._currentSearchColumn === columnIndex) {
         this._currentSearchColumn = null;
     }
     
-    // Re-render the table
+
     this._renderTable();
     
-    // Dispatch an event to notify that a filter has been cleared
+
     this.dispatchEvent(new CustomEvent("onFilterCleared", {
         detail: {
             dimensionKey: dimensionKey
@@ -1599,27 +1585,27 @@ clearDimensionFilter(dimensionKey) {
     return "success";
 }
 
-// get active filter for a specific dimension
+
 getActiveDimensionFilter(dimensionKey) {
-    // Find the column index for the given dimension key
+
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
     
     if (columnIndex === -1) {
         return "";
     }
     
-    // Return the active filter or empty string if no filter is set
+
     return this._activeSearches[columnIndex] || "";
 }
 
-        // get the count of filtered rows 
+   
 getFilteredRowCount(dimensionKey, filterValue) {
-    // If no parameters are provided, return count of current visible rows
+
     if (!dimensionKey) {
         return this._lastFilteredIndices ? String(this._lastFilteredIndices.length) : String(this._tableData.length);
     }
     
-    // Find the column index for the given dimension key
+
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
     
     if (columnIndex === -1) {
@@ -1627,15 +1613,15 @@ getFilteredRowCount(dimensionKey, filterValue) {
         return "0";
     }
     
-    // Count matches based on the filter
+
     let matchCount = 0;
     this._tableData.forEach(rowData => {
         const cellValue = String(rowData[dimensionKey] || '').toLowerCase();
         const searchTerm = filterValue.toLowerCase();
         
-        // wildcard matching if filter has wildcards
+
         if (searchTerm.includes('*') || searchTerm.includes('?')) {
-            // Convert wildcard pattern to regex
+
             const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regexPattern = escapedSearchTerm
                 .replace(/\\\*/g, '.*')
@@ -1646,7 +1632,7 @@ getFilteredRowCount(dimensionKey, filterValue) {
                 matchCount++;
             }
         } else {
-            //  substring match if no wildcards
+
             if (cellValue.includes(searchTerm)) {
                 matchCount++;
             }
@@ -1657,9 +1643,9 @@ getFilteredRowCount(dimensionKey, filterValue) {
 }
 
         
-        /* ------------------------------------------------------------------
-         *  Getters / Setters 
-         * ------------------------------------------------------------------ */
+       
+         // Getters / Setters 
+   
         
         get tableData() {
             return JSON.stringify(this._tableData);
