@@ -2,7 +2,6 @@
     let tmpl = document.createElement('template');
     tmpl.innerHTML = `
         <style>
-            /* Ensure the container takes the full height available (e.g. widget height) */
             .table-container {
                 display: flex;
                 flex-direction: column;
@@ -167,7 +166,7 @@
                 display: table-cell;
             }
 
-            /* Use flex to allow the table body to take remaining space and scroll */
+
             .table-body {
                 flex: 1;
                 overflow-y: auto;
@@ -183,7 +182,6 @@
 }
 
 
-/* Add to your stylesheet */
 .column-width-entry {
     display: flex;
     margin-bottom: 8px;
@@ -200,13 +198,12 @@
     margin-right: 8px;
 }
 
-/* Make sure the table uses table-layout: fixed for width control */
 table {
     table-layout: fixed;
     width: 100%;
 }
 
-/* Ensure cells use text overflow for long content */
+
 th, td {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -214,7 +211,7 @@ th, td {
 }
        /* Symbol styles */
          
-            /* Symbol styles */
+
             .symbol {
                 display: inline-block;
                 width: 16px;
@@ -343,15 +340,11 @@ th {
     padding: 8px 10px;
 }
 
-
-
-
-/* Add visual indicator for columns with active search */
 th:has(.search-container.active) {
     background-color: #f0f8ff;
 }
 
-/* Alternative for browsers that don't support :has */
+
 th.has-active-search {
     background-color: #f0f8ff;
 }
@@ -1178,8 +1171,7 @@ connectedCallback() {
         }
 
         /**
-         * Handle the Data Binding from SAC.
-         * Transforms dynamic dimensions/measures from metadata into columns & rows.
+         * Handle the Data Binding 
          */
         _updateDataBinding(dataBinding) {
             if (
@@ -1263,7 +1255,7 @@ if ('columnWidths' in changedProperties) {
 }
 
     
-           // Add handling for dynamic buttons
+           // handling for dynamic buttons
   if ('dynamicButtons' in changedProperties) {
     try {
         this._dynamicButtons = typeof changedProperties.dynamicButtons === 'string' ? 
@@ -1407,7 +1399,7 @@ if ('columnWidths' in changedProperties) {
             }
         }
 
-  // Add getter and setter for dynamic buttons
+  //  getter and setter for dynamic buttons
   get dynamicButtons() {
     return typeof this._dynamicButtons === 'string' ? 
         this._dynamicButtons : JSON.stringify(this._dynamicButtons);
@@ -1440,7 +1432,7 @@ set lastClickedButtonId(value) {
     }));
 }
 
-// Method to get button visibility by ID
+// get button visibility by ID
 getButtonVisibility(buttonId) {
   if (!this._dynamicButtons || !Array.isArray(this._dynamicButtons)) {
     return "";
@@ -1519,7 +1511,7 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
     return "";
   }
   
-  // Use the position in selectedRows to access the correct data in selectedRowsData
+  // access the correct data in selectedRowsData
   if (this._selectedRowsData[positionInSelectedRows] && 
       this._selectedRowsData[positionInSelectedRows][key] != null) {
     return String(this._selectedRowsData[positionInSelectedRows][key]);
@@ -1532,7 +1524,7 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
         /* ------------------------------------------------------------------
          *  Filtering
          * ------------------------------------------------------------------ */
-           // Method to set a filter on a specific dimension (SAC compatible)
+           // filter on a specific dimension 
 setSelectedDimensionFilter(dimensionKey, filterValue) {
     console.log(`Setting filter: ${dimensionKey} = ${filterValue}`);
     
@@ -1561,7 +1553,7 @@ setSelectedDimensionFilter(dimensionKey, filterValue) {
     return "success";
 }
 
-// Method to clear all filters (SAC compatible)
+//  clear all filters 
 clearAllFilters() {
     console.log('Clearing all filters');
     this._activeSearches = {};
@@ -1574,7 +1566,7 @@ clearAllFilters() {
     return "success";
 }
 
-// Method to clear a specific dimension filter (SAC compatible)
+// clear a specific dimension filter
 clearDimensionFilter(dimensionKey) {
     console.log(`Clearing filter for dimension: ${dimensionKey}`);
     
@@ -1589,7 +1581,7 @@ clearDimensionFilter(dimensionKey) {
     // Remove the filter
     delete this._activeSearches[columnIndex];
     
-    // If this was the current search column, reset it
+    // If the current search column, reset it
     if (this._currentSearchColumn === columnIndex) {
         this._currentSearchColumn = null;
     }
@@ -1607,7 +1599,7 @@ clearDimensionFilter(dimensionKey) {
     return "success";
 }
 
-// Method to get active filter for a specific dimension (SAC compatible)
+// get active filter for a specific dimension
 getActiveDimensionFilter(dimensionKey) {
     // Find the column index for the given dimension key
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
@@ -1620,7 +1612,7 @@ getActiveDimensionFilter(dimensionKey) {
     return this._activeSearches[columnIndex] || "";
 }
 
-        // Method to get the count of filtered rows (SAC compatible)
+        // get the count of filtered rows 
 getFilteredRowCount(dimensionKey, filterValue) {
     // If no parameters are provided, return count of current visible rows
     if (!dimensionKey) {
@@ -1641,7 +1633,7 @@ getFilteredRowCount(dimensionKey, filterValue) {
         const cellValue = String(rowData[dimensionKey] || '').toLowerCase();
         const searchTerm = filterValue.toLowerCase();
         
-        // Simple wildcard matching if filter has wildcards
+        // wildcard matching if filter has wildcards
         if (searchTerm.includes('*') || searchTerm.includes('?')) {
             // Convert wildcard pattern to regex
             const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1654,7 +1646,7 @@ getFilteredRowCount(dimensionKey, filterValue) {
                 matchCount++;
             }
         } else {
-            // Simple substring match if no wildcards
+            //  substring match if no wildcards
             if (cellValue.includes(searchTerm)) {
                 matchCount++;
             }
@@ -1666,7 +1658,7 @@ getFilteredRowCount(dimensionKey, filterValue) {
 
         
         /* ------------------------------------------------------------------
-         *  Getters / Setters (Matching planifyitTAB.json definition)
+         *  Getters / Setters 
          * ------------------------------------------------------------------ */
         
         get tableData() {
