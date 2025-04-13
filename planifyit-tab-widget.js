@@ -395,8 +395,8 @@ th.has-active-search::after {
                 <div class="table-header-title"></div>
                 <div class="action-buttons">
                      <!-- Dynamic buttons -->
-<button id="multiSelectButton" class="table-button" title="Select Multiple">⬜✅</button>
-<button id="cancelButton" class="table-button cancel-button" title="Cancel">✕</button>
+<button id="multiSelectButton" class="table-button" title="Mehrfachauswahl">⬜✅</button>
+<button id="cancelButton" class="table-button cancel-button" title="Abbrechen">✕</button>
                   
                 </div>
             </div>
@@ -415,14 +415,14 @@ th.has-active-search::after {
                     <tbody id="tableBody">
                     <!-- Table data dynamically -->
                         <tr>
-                            <td colspan="100%" class="no-data-message">No data available</td>
+                            <td colspan="100%" class="no-data-message">Keine Daten verfuegbar</td>
                         </tr>
                                     </tbody>
                 </table>
             </div>
             
             <a href="https://www.linkedin.com/company/planifyit" target="_blank" class="follow-link">
-                Follow us on LinkedIn - Planifyit
+                Folge uns auf LinkedIn - Planifyit
             </a>
         </div>
     `;
@@ -983,7 +983,7 @@ _renderTable() {
         const cell = document.createElement('td');
         cell.colSpan = this._tableColumns.length + 1;
         cell.className = 'no-data-message';
-        cell.textContent = this._tableData.length > 0 ? 'No matching data found' : 'No data available';
+        cell.textContent = this._tableData.length > 0 ? 'Keine übereinstimmenden Daten gefunden' : 'Keine Daten verfuegbar';
         row.appendChild(cell);
         this._tableBody.appendChild(row);
         return;
