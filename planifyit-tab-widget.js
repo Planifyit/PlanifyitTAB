@@ -892,11 +892,11 @@ _renderTable() {
             searchInput.type = 'text';
             searchInput.className = 'header-search';
             searchInput.value = this._activeSearches[colIndex];
-            searchInput.placeholder = `Search ${col.label || col.name}...`;
+            searchInput.placeholder = `${col.label || col.name}`;
             
 
             searchInput.addEventListener('input', (e) => {
-                console.log('Search input changed:', e.target.value);
+       
                 this._handleColumnSearch(colIndex, e.target.value);
             });
             
@@ -905,7 +905,7 @@ _renderTable() {
             clearButton.innerHTML = '✕';
             clearButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                console.log('Clear search clicked for column:', colIndex);
+             
                 this._clearColumnSearch(colIndex);
             });
             
@@ -933,7 +933,7 @@ _renderTable() {
             
 
             th.addEventListener('click', () => {
-                console.log('Header clicked for column:', colIndex);
+          
                 this._activateColumnSearch(colIndex, col);
             });
         }
@@ -1061,7 +1061,7 @@ _renderTable() {
 
 
 _activateColumnSearch(colIndex, column) {
- console.log('Activating search for column:', column.name);
+
 this._activeSearches[colIndex] = '';
 this._currentSearchColumn = colIndex;
 this._renderTable();
@@ -1069,13 +1069,13 @@ this._renderTable();
 }
 
 _handleColumnSearch(colIndex, value) {
-    console.log('Search value changed for column', colIndex, ':', value);
+
     this._activeSearches[colIndex] = value;
     this._renderTable();
 }
 
 _clearColumnSearch(colIndex) {
- console.log('Clearing search for column:', colIndex);
+
 delete this._activeSearches[colIndex];
 if (this._currentSearchColumn === colIndex) {
     this._currentSearchColumn = null;
@@ -1167,7 +1167,7 @@ connectedCallback() {
                 dataBinding.state === 'success' &&
                 Array.isArray(dataBinding.data)
             ) {
-                console.log('Data binding successful:', dataBinding);
+              
                 const columns = [];
                 const dims = dataBinding.metadata && dataBinding.metadata.dimensions;
                 if (dims && typeof dims === "object" && !Array.isArray(dims)) {
@@ -1512,7 +1512,7 @@ getSelectedRowDataForSelectionImpl(key, rowIndex) {
     
 
 setSelectedDimensionFilter(dimensionKey, filterValue) {
-    console.log(`Setting filter: ${dimensionKey} = ${filterValue}`);
+
     
 
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
@@ -1541,7 +1541,7 @@ setSelectedDimensionFilter(dimensionKey, filterValue) {
 
 
 clearAllFilters() {
-    console.log('Clearing all filters');
+
     this._activeSearches = {};
     this._currentSearchColumn = null;
     this._renderTable();
@@ -1554,7 +1554,7 @@ clearAllFilters() {
 
 
 clearDimensionFilter(dimensionKey) {
-    console.log(`Clearing filter for dimension: ${dimensionKey}`);
+
     
 
     const columnIndex = this._tableColumns.findIndex(col => col.name === dimensionKey);
@@ -1686,7 +1686,7 @@ getFilteredRowCount(dimensionKey, filterValue) {
 get selectedRowsData() {
 
       return JSON.stringify(this._selectedRowsData);
-    console.log(this._selectedRowsData);
+
 }
 
 
