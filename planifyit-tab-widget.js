@@ -289,10 +289,9 @@ td {
 }
 
 .search-icon {
-  visibility: visible !important;
-  opacity: 0.5;
-  font-size: 12px;
-  margin-left: 5px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .header-content:hover .search-icon {
