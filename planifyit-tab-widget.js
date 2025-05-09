@@ -1043,7 +1043,8 @@ _renderTable() {
                     cell.textContent = value;
                 }
             }
-            
+               cell.title = value;
+
             row.appendChild(cell);
         });
         
