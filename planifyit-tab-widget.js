@@ -290,12 +290,11 @@ td {
 
 .search-icon {
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .header-content:hover .search-icon {
-    visibility: visible;
+  opacity: 0.5;
 }
 
 .search-container {
