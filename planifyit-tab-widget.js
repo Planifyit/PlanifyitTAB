@@ -110,7 +110,8 @@
             table {
                 width: 100%;
                 border-collapse: collapse;
-            }
+                table-layout: fixed;
+             }
 
             .column-headers {
                 position: sticky;
@@ -198,17 +199,23 @@
     margin-right: 8px;
 }
 
-table {
-    table-layout: fixed;
-    width: 100%;
+td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#headerRow th {
+   overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-all;
+  height: auto;
+  vertical-align: middle;
 }
 
 
-th, td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
        /* Symbol styles */
          
 
@@ -264,13 +271,16 @@ th, td {
 
 /* Column Search Styling */
 .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: 6px 2px;
-    width: 100%;
-    box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 6px 2px;
+  width: 100%;
+  box-sizing: border-box;
+
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .header-content:hover {
@@ -279,10 +289,10 @@ th, td {
 }
 
 .search-icon {
-    opacity: 0.5;
-    font-size: 12px;
-    margin-left: 5px;
-    visibility: hidden;
+  visibility: visible !important;
+  opacity: 0.5;
+  font-size: 12px;
+  margin-left: 5px;
 }
 
 .header-content:hover .search-icon {
